@@ -34,6 +34,8 @@ show_menu() {
   echo "------------------------------"
   echo " 9) Arrêter le docker compose"
   echo "------------------------------"
+  echo "10) Voir l'état des conteneurs Docker"
+  echo "------------------------------"
   echo " 0) Quitter"
   echo "=============================="
   echo -n "Votre choix : "
@@ -136,6 +138,14 @@ while true; do
       docker-compose down
       echo ""
       echo ">>> Docker compose arrêté."
+      echo ""
+      read -p "Appuyez sur [Entrée] pour revenir au menu..."
+      ;;
+    10)
+      echo ""
+      echo ">>> Etat des conteneurs Docker..."
+      echo ""
+      docker ps
       echo ""
       read -p "Appuyez sur [Entrée] pour revenir au menu..."
       ;;
