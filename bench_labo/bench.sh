@@ -38,6 +38,8 @@ show_menu() {
   echo "------------------------------"
   echo "11) Build les applications frontend (React + Vue + Angular)"
   echo "------------------------------"
+  echo "12) Seed des bases de données"
+  echo "------------------------------"
   echo " 0) Quitter"
   echo "=============================="
   echo -n "Votre choix : "
@@ -162,6 +164,17 @@ while true; do
       npm i
       echo ""
       echo ">>> Build des applications frontend terminé."
+      echo ""
+      read -p "Appuyez sur [Entrée] pour revenir au menu..."
+      ;;
+    12) 
+      echo ""
+      echo ">>> Seeding des bases de données..."
+      echo ""
+      docker compose exec db-bench-app node scripts/seed.js
+      
+      echo ""
+      echo ">>> Seeding des bases de données terminé."
       echo ""
       read -p "Appuyez sur [Entrée] pour revenir au menu..."
       ;;
