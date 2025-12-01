@@ -36,6 +36,8 @@ show_menu() {
   echo "------------------------------"
   echo "10) Voir l'état des conteneurs Docker"
   echo "------------------------------"
+  echo "11) Build les applications frontend (React + Vue + Angular)"
+  echo "------------------------------"
   echo " 0) Quitter"
   echo "=============================="
   echo -n "Votre choix : "
@@ -146,6 +148,20 @@ while true; do
       echo ">>> Etat des conteneurs Docker..."
       echo ""
       docker ps
+      echo ""
+      read -p "Appuyez sur [Entrée] pour revenir au menu..."
+      ;;
+    11)
+      echo ""
+      echo ">>> Build des applications frontend (React + Vue + Angular)..."
+      echo ""
+      # Build les applications frontend en mode production
+      cd frontend-react && npm i && npm run build && cd .. && \
+      cd frontend-vue && npm i && npm run build && cd .. && \
+      cd frontend-angular && npm i && ng build --configuration production && cd .. && \
+      npm i
+      echo ""
+      echo ">>> Build des applications frontend terminé."
       echo ""
       read -p "Appuyez sur [Entrée] pour revenir au menu..."
       ;;
