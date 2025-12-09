@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('taches', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id_tache')->autoIncrement();
+            $table->string('nom_tache');
+            $table->text('description')->nullable();
+            $table->dateTime('heure_debut_globale')->nullable();
+            $table->dateTime('heure_fin_globale')->nullable();
             $table->timestamps();
         });
     }
