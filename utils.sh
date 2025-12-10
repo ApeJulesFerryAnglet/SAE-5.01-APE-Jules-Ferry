@@ -8,7 +8,7 @@ show_menu() {
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "------------------------------"
     echo " 1) Lancer le front en mode dev"
-    echo " 2) Lancer le back en mode production"
+    echo " 2) Lancer le front en mode production"
     echo " 3) Generer un composant Angular"
     echo " 4) Generer un service Angular"
     echo " 5) Generer un modele Angular"
@@ -22,7 +22,11 @@ show_menu() {
     echo " 12) Lancer le back en mode production"
     echo " 13) Generer un modele Laravel"
     echo " 14) Generer un modele Laravel avec migration"
-
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo "        Base de données       "
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo "------------------------------"
+    echo " 21) Lancer la base de données"
     echo "------------------------------"
     echo " 0) Quitter"
     echo "=============================="
@@ -110,6 +114,15 @@ while true; do
             ;;
         14)
             generate_model_laravel_with_migration
+            ;;
+        21)
+            docker run --name ape-postgres -d \
+            -e POSTGRES_DB=ape_db \
+            -e POSTGRES_USER=ape_user \
+            -e POSTGRES_PASSWORD=ape_password \
+            -p 5432:5432 \
+            -v ./db-data:/var/lib/postgresql/data \
+            postgres:16
             ;;
         0)
             echo "Au revoir!"
