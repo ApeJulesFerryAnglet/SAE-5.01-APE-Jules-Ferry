@@ -27,7 +27,14 @@ class CreneauController extends Controller
     public function store(Request $request)
     {
         $creneau = Creneau::create($request->all());
-        return response()->json($creneau, 201);
+        if($creneau)
+        {
+            return response()->json($creneau, 201);
+        }
+        else {
+            return response()->json(['message' => 'Erreur lors de la création du créneau'], 500);
+        }
+        
     }
     public function update(Request $request, $id)
     {

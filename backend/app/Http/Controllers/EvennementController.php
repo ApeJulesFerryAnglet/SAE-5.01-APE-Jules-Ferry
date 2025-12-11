@@ -27,7 +27,11 @@ class EvennementController extends Controller
     public function store(Request $request)
     {
         $evennement = Evennement::create($request->all());
-        return response()->json($evennement, 201);
+        if ($evennement) {
+            return response()->json($evennement, 201);
+        } else {
+            return response()->json(['message' => 'Erreur lors de la création de l\'évènement'], 500);
+        }
     }
     public function update(Request $request, $id)
     {
@@ -42,8 +46,7 @@ class EvennementController extends Controller
     public function destroy($id)
     {
         $evennement = Evennement::find($id);
-        if($evennement)
-        {
+        if ($evennement) {
             $evennement->delete();
             return response()->json(['message' => 'Évènement supprimé']);
         } else {

@@ -27,7 +27,13 @@ class ActualiteController extends Controller
     public function store(Request $request)
     {
         $actualite = Actualite::create($request->all());
-        return response()->json($actualite, 201);
+        if($actualite)
+        {
+            return response()->json($actualite, 201);
+        }
+        else {
+            return response()->json(['message' => 'Erreur lors de la création de l\'actualité'], 500);
+        }
     }
     public function update(Request $request, $id)
     {
