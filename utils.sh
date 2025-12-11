@@ -27,6 +27,7 @@ show_menu() {
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "------------------------------"
     echo " 21) Lancer la base de données"
+    echo " 22) Arrêter la base de données"
     echo "------------------------------"
     echo " 0) Quitter"
     echo "=============================="
@@ -123,6 +124,10 @@ while true; do
             -p 5432:5432 \
             -v ./db-data:/var/lib/postgresql/data \
             postgres:16
+            ;;
+        22)
+            docker stop ape-postgres
+            docker rm ape-postgres
             ;;
         0)
             echo "Au revoir!"
