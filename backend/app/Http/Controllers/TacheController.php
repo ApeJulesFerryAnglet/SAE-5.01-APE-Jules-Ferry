@@ -27,11 +27,9 @@ class TacheController extends Controller
     public function store(Request $request)
     {
         $tache = Tache::create($request->all());
-        if($tache)
-        {
+        if ($tache) {
             return response()->json($tache, 201);
-        }
-        else {
+        } else {
             return response()->json(['message' => 'Erreur lors de la création de la tâche'], 500);
         }
     }
