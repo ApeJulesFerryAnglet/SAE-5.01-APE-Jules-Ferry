@@ -9,7 +9,11 @@ class ActualiteController extends Controller
     public function index()
     {
         $actualites = Actualite::all();
-        return response()->json($actualites);
+        if ($actualites) {
+            return response()->json($actualites);
+        } else {
+            return response()->json(['message' => 'Aucune actualité trouvée'], 404);
+        }
     }
     public function show($id)
     {
@@ -35,7 +39,8 @@ class ActualiteController extends Controller
             return response()->json(['message' => 'Actualité non trouvée'], 404);
         }
     }
-    public function destroy($id){
+    public function destroy($id)
+    {
         $actualite = Actualite::find($id);
         if ($actualite) {
             $actualite->delete();
