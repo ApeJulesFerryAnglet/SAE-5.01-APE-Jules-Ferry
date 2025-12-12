@@ -13,6 +13,7 @@ show_menu() {
     echo " 4) Generer un service Angular"
     echo " 5) Generer un modele Angular"
     echo " 6) Generer une page Angular"
+    echo " 7) Generer un enum Angular"
     echo "------------------------------"
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "       Backend Laravel        "
@@ -31,6 +32,13 @@ show_menu() {
     echo "------------------------------"
     echo " 21) Lancer la base de données"
     echo " 22) Arrêter la base de données"
+    echo "------------------------------"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo "          GIT Commands        "
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    echo "------------------------------"
+    echo " 31) Tirer les dernières modifications"
+    echo " 32) Pousser les modifications locales"
     echo "------------------------------"
     echo " 0) Quitter"
     echo "=============================="
@@ -68,6 +76,14 @@ generate_model_angular() {
     echo "Appuyez sur une touche pour continuer..."
     read -n 1
 }
+generate_enum_angular() {
+    echo -n "Entrez le nom de l'énum Angular à générer : "
+    read enum_name
+    cd frontend && ng generate enum enums/"$enum_name"/"$enum_name" && cd ..
+    echo "Énumération '$enum_name' générée avec succès."
+    echo "Appuyez sur une touche pour continuer..."
+    read -n 1
+}
 generate_model_laravel() {
     echo -n "Entrez le nom du modèle Laravel à générer : "
     read model_name
@@ -100,6 +116,22 @@ generate_middleware_laravel() {
     echo "Appuyez sur une touche pour continuer..."
     read -n 1
 }
+git_pull() {
+    git pull origin $(git branch --show-current)
+    echo "Mises à jour tirées avec succès."
+    echo "Appuyez sur une touche pour continuer..."
+    read -n 1
+}
+git_push() {
+    echo -n "Entrez le message de commit : "
+    read commit_message
+    git add .
+    git commit -m "$commit_message"
+    git push origin $(git branch --show-current)
+    echo "Modifications poussées avec succès."
+    echo "Appuyez sur une touche pour continuer..."
+    read -n 1
+}
 while true; do
     show_menu
     read choice
@@ -122,6 +154,9 @@ while true; do
             ;;
         6)
             generate_page_angular
+            ;;
+        7)
+            generate_enum_angular
             ;;
         11)
             cd backend && php artisan serve && cd ..
@@ -153,6 +188,12 @@ while true; do
         22)
             docker stop ape-postgres
             docker rm ape-postgres
+            ;;
+        31)
+            git_pull
+            ;;
+        32)
+            git_push
             ;;
         0)
             echo "Au revoir!"
