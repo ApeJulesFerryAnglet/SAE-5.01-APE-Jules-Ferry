@@ -16,6 +16,10 @@ class ImageConverterService
      */
     function convertImageToWebp(string $source, string $destination, int $quality = 80): bool
 {
+    if (!file_exists($source)) {
+        return false;
+    }
+    
     $info = @getimagesize($source);
     if ($info === false) {
         return false; 
