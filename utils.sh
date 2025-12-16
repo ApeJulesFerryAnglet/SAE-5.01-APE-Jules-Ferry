@@ -14,6 +14,7 @@ show_menu() {
     echo " 5) Generer un modele Angular"
     echo " 6) Generer une page Angular"
     echo " 7) Generer un enum Angular"
+    echo " 8) Generer un guard Angular"
     echo "------------------------------"
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "       Backend Laravel        "
@@ -81,6 +82,14 @@ generate_enum_angular() {
     read enum_name
     cd frontend && ng generate enum enums/"$enum_name"/"$enum_name" && cd ..
     echo "Énumération '$enum_name' générée avec succès."
+    echo "Appuyez sur une touche pour continuer..."
+    read -n 1
+}
+generate_guard_angular() {
+    echo -n "Entrez le nom du Guard Angular à générer : "
+    read guard_name
+    cd frontend && ng generate guard guard/"$guard_name"/"$guard_name" && cd ..
+    echo "Guard '$guard_name' généré avec succès."
     echo "Appuyez sur une touche pour continuer..."
     read -n 1
 }
@@ -157,6 +166,9 @@ while true; do
             ;;
         7)
             generate_enum_angular
+            ;;
+        8)
+            generate_guard_angular
             ;;
         11)
             cd backend && php artisan serve && cd ..
