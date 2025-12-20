@@ -3,6 +3,13 @@
     <h2>Les actualités</h2>
     <button class="btn btn-primary" routerLink="/actualites">Voir toutes les actualités</button>
 </div>
+<div class="flex text-center">
+    <app-actualite-card
+[titre]='"test"'
+[contenu]='"Loreum ipsum dolor sit amet, consectetur adipiscing elit. balalalalalalalalalalllllllllllllllaaaa"'
+[datePublication]="Date"></app-actualite-card>
+</div>
+
 @if(this.listeActualites){
 
     @for(actualite of this.listeActualites; track actualite.id_actualite){

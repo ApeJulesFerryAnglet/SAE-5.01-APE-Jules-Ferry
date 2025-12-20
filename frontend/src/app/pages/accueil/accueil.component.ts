@@ -18,6 +18,7 @@ export class AccueilComponent {
   public listeEvennements: Evennement[] = [];
   private readonly actualiteService = inject(ActualiteService);
   private readonly evennementService = inject(EvennementService);
+Date: string = new Date().toLocaleDateString('fr-FR');
   ngOnInit() {
     this.actualiteService.getAllActualites().subscribe((data) => {
       this.listeActualites = data;
