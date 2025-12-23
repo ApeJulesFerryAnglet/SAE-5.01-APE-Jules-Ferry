@@ -19,5 +19,4 @@ export class ActualiteCardComponent  {
   public convertDateToString(date: Date): string {
     return date.toLocaleDateString('fr-FR');
   }
-  
 }

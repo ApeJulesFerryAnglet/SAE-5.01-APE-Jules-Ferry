@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HeaderComponent } from "../../components/header/header.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ActualiteService } from '../../services/Actualite/actualite.service';
@@ -13,7 +13,7 @@ import { ActualiteCardComponent } from '../../components/actualite-card/actualit
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
 })
-export class AccueilComponent {
+export class AccueilComponent implements OnInit {
   public listeActualites: Actualite[] = [];
   public listeEvennements: Evennement[] = [];
   private readonly actualiteService = inject(ActualiteService);
