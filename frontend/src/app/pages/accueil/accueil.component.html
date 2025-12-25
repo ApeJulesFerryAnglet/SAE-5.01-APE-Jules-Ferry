@@ -1,7 +1,7 @@
 <app-header></app-header>
 <div class="flex justify-between items-center my-6">
     <h1>Les actualités</h1>
-    <button class="bg-gray-200 rounded hover:shadow" routerLink="/actualites">Voir toutes les actualités</button>
+    <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" routerLink="/actualites">Voir toutes les actualités</button>
 </div>
 <div class="flex text-center">
     <app-actualite-card
@@ -26,18 +26,20 @@
     <h2>Les évènements</h2>
     <button class="btn btn-primary" routerLink="/evennements">Voir tous les évènements</button>
 </div>
+<app-evennement-card
+            [titre]="'test'"
+            [image_url]="'evennement.image_url'"
+            [description]="'Loreum ipsum dolor sit amet, consectetur adipiscing elit. balalalalalalalalalalllllllllllllllaaaa'"
+            [date_evennement]="Date"
+            [heure_debut]="'11h30'"
+            [heure_fin]="'13h30'"
+            [lieu]="'Lycée Jules Ferry'"
+        ></app-evennement-card>
 @if(this.listeEvennements){
     @for(evennement of this.listeEvennements.slice(0,3); track evennement.id_evennement){
-        <app-evennement-card
-            [titre]="evennement.titre"
-            [image_url]="evennement.image_url"
-            [description]="evennement.description"
-            [date_evennement]="evennement.date_evennement"
-            [id_evennement]="evennement.id_evennement"
-        ></app-evennement-card>
+        
     }
 }
 @else {
     <p>Aucun évènement disponible pour le moment.</p>
 }
-<app-footer></app-footer>
