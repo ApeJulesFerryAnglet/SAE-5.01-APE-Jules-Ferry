@@ -3,7 +3,13 @@
     <h2 class="text-2xl font-semibold">Les actualités</h2>
     <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" routerLink="/actualites">Voir toutes les actualités</button>
 </div>
-@if(this.listeActualites.length > 0){
+@if(this.loadingActualites){
+    <app-spinner></app-spinner>
+}
+@else if (this.errorActualites) {
+    <p class="text-red-500">Erreur lors du chargement des actualités</p> <!-- Petite modale en bas a doite a mettre -->
+}
+@else {
     @for(actualite of this.listeActualites.slice(0, 3); track actualite.id_actualite){
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <app-actualite-card 
@@ -13,17 +19,19 @@
             [datePublication]="actualite.date_publication">
             </app-actualite-card>
         </div>
-        
     } 
-}
-@else {
-    <p>Aucune actualité disponible pour le moment.</p>
 }
 <div class="flex justify-between items-center my-6">
     <h2 class="text-2xl font-semibold">Les évènements</h2>
     <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" routerLink="/evennements">Voir tous les évènements</button>
 </div>
-@if(this.listeEvennements.length > 0){
+@if(this.loadingEvents){
+    <app-spinner></app-spinner>
+}
+@else if (this.errorEvents) {
+    <p class="text-red-500">Erreur lors du chargement des évènements</p> <!-- Petite modale en bas a doite a mettre -->
+}
+@else {
     @for(evennement of this.listeEvennements.slice(0,3); track evennement.id_evennement){
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <app-evennement-card
@@ -37,7 +45,4 @@
             ></app-evennement-card>
         </div>
     }
-}
-@else {
-    <p>Aucun évènement disponible pour le moment.</p>
 }
