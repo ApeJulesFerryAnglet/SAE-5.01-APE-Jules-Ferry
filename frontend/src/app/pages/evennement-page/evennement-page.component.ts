@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { EvennementService } from '../../services/Evennement/evennement.service';
 import { Evennement } from '../../models/Evennement/evennement';
-import { EvennementCardComponent } from "../../components/evennement-card/evennement-card.component";
+import { EvennementCardComponent } from "../../components/card/evennement-card/evennement-card.component";
 
 @Component({
   selector: 'app-evennement-page',

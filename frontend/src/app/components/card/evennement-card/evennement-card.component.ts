@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { StatutEvennement } from '../../enums/StatutEvennement/statut-evennement';
+import { StatutEvennement } from '../../../enums/StatutEvennement/statut-evennement';
 import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-evennement-card',

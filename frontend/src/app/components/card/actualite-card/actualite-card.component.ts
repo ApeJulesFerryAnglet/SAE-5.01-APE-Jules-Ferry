@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { StatutActualite } from '../../enums/StatutActualite/statut-actualite';
+import { StatutActualite } from '../../../enums/StatutActualite/statut-actualite';
 import { RouterLink } from '@angular/router';
 
 @Component({
