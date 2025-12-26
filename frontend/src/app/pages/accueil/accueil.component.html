@@ -1,6 +1,6 @@
 <app-header></app-header>
 <div class="flex justify-between items-center my-6">
-    <h2 class="text-2xl font-semibold">Les actualités</h2>
+    <h2>Les actualités</h2>
     <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" routerLink="/actualites">Voir toutes les actualités</button>
 </div>
 @if(this.loadingActualites){
@@ -21,8 +21,8 @@
         </div>
     } 
 }
-<div class="flex justify-between items-center my-6">
-    <h2 class="text-2xl font-semibold">Les évènements</h2>
+<div class="flex justify-between items-center my-6 mz-3">
+    <h2>Les évènements</h2>
     <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" routerLink="/evennements">Voir tous les évènements</button>
 </div>
 @if(this.loadingEvents){
