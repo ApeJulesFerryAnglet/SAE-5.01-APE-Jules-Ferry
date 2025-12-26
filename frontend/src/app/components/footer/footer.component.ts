@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoleUtilisateur } from '../../enums/RoleUtilisateur/role-utilisateur';
 import { UtilisateurService } from '../../services/Utilisateur/utilisateur.service';
@@ -12,12 +12,15 @@ import { Observable } from 'rxjs';
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css'
 })
-export class FooterComponent {
-  utilisateurCourant$: Observable<Utilisateur | null>;
+export class FooterComponent implements OnInit {
+  utilisateurCourant!: Observable<Utilisateur | null>;
   RoleUtilisateur = RoleUtilisateur;
 
-  constructor(public utilisateurService: UtilisateurService) {
-    this.utilisateurCourant$ = this.utilisateurService.utilisateurCourant;
+  utilisateurService = inject(UtilisateurService);
+  constructor() {}
+
+  ngOnInit() {
+    this.utilisateurCourant = this.utilisateurService.utilisateurCourant;
   }
 
   setUtilisateur(utilisateur: Utilisateur | null) {
