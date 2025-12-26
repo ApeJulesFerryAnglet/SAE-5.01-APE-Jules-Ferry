@@ -19,4 +19,7 @@
     footer{
         background-color: var(--primary-light-blue);
     }
+    a{
+        cursor: pointer;
+    }
 }
