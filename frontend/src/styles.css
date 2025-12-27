@@ -15,3 +15,11 @@
     --warning-color:#FFC107;
     --error-color:#D32F2F;
 }
+@layer base {
+    footer{
+        background-color: var(--primary-light-blue);
+    }
+    a{
+        cursor: pointer;
+    }
+}
