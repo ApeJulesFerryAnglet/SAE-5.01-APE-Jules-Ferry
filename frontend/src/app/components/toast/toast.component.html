@@ -1,1 +1,13 @@
-<p>toast works!</p>
+@if (toast(); as toast) {
+<div
+  class="flex flex-wrap justify-between w-32 fixed bottom-4 right-4 z-50 rounded w-fit max-w-sm"
+  [class]="toast.type"
+>
+  <div
+    class="bg-green-500 text-black rounded-lg px-4 py-3 flex items-start gap-3"
+  >
+    <p class="text-sm leading-snug break-all">{{ toast.message }}</p>
+    <button class="close" (click)="close()">×</button>
+  </div>
+</div>
+}
