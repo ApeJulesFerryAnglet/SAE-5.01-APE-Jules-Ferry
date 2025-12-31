@@ -16,7 +16,11 @@ export class ActualiteCardComponent  {
   @Input() image_url!: string;
   @Input() datePublication!: Date;
   @Input() statut!: StatutActualite;
-  public convertDateToString(date: Date): string {
-    return date.toLocaleDateString('fr-FR');
+  public convertDateToString(date: Date| string): string {
+    return new Date(date).toLocaleDateString('fr-FR');
+  }
+
+  constructor() {
+    console.log(this.id_actualite);
   }
 }

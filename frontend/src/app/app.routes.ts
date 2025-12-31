@@ -8,7 +8,7 @@ import { EvennementDetailComponent } from './pages/evennement-detail/evennement-
 export const routes: Routes = [
     { path: '', component: AccueilComponent },
     { path:'actualites', component: ActualitePageComponent },
-    { path: 'actualites/:id', component: ActualiteDetailComponent },
+    { path: 'actualite/:id', component: ActualiteDetailComponent },
     { path: 'evennements', component: EvennementPageComponent },
-    { path: 'evennements/:id', component: EvennementDetailComponent }
+    { path: 'evennement/:id', component: EvennementDetailComponent }
 ];

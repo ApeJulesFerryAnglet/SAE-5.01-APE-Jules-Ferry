@@ -18,7 +18,7 @@ export class EvennementCardComponent {
   @Input() lieu!: string;
   @Input() image_url!: string;
   @Input() statut!: StatutEvennement;
-  public convertDateToString(date: Date): string {
-    return date.toLocaleDateString('fr-FR');
+  public convertDateToString(date: Date| string): string {
+    return new Date(date).toLocaleDateString('fr-FR');
   }
 }
