@@ -12,7 +12,7 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
 @Component({
   selector: 'app-accueil',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, ActualiteCardComponent, EvennementCardComponent, SpinnerComponent],
+  imports: [ActualiteCardComponent, EvennementCardComponent, SpinnerComponent],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
 })
@@ -53,7 +53,7 @@ export class AccueilComponent implements OnInit {
     this.sortEvennementByDate(this.listeEvennements);
   }
   public sortEvennementByDate(a: Evennement[]): Evennement[] {
-    return a.sort((a, b) => a.date_evennement.getTime() - b.date_evennement.getTime());
+    return a.sort((a, b) => a.date_evenement.getTime() - b.date_evenement.getTime());
   }
   public sortActualiteByDate(a: Actualite[]): Actualite[] {
     return a.sort((a, b) => a.date_publication.getTime() - b.date_publication.getTime());

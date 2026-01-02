@@ -2,13 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Evennement } from '../../models/Evennement/evennement';
 import { EvennementService } from '../../services/Evennement/evennement.service';
 import { ActivatedRoute } from '@angular/router';
-import { EvennementCardComponent } from "../../components/card/evennement-card/evennement-card.component";
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 @Component({
   selector: 'app-evennement-detail',
   standalone: true,
-  imports: [EvennementCardComponent, SpinnerComponent],
+  imports: [SpinnerComponent],
   templateUrl: './evennement-detail.component.html',
   styleUrl: './evennement-detail.component.css'
 })
@@ -32,5 +31,11 @@ export class EvennementDetailComponent implements OnInit {
         this.errorEvennement = true;
       }
     });
+  }
+  public convertDateToString(date: Date| string): string {
+    return new Date(date).toLocaleDateString('fr-FR');
+  }
+  goBack(): void {
+    window.history.back();
   }
 }

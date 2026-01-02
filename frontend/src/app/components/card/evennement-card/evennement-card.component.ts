@@ -9,10 +9,10 @@ import { RouterLink } from '@angular/router';
   styleUrl: './evennement-card.component.css'
 })
 export class EvennementCardComponent {
-  @Input() id_evennement!: number;
+  @Input() id_evenement!: number;
   @Input() titre!: string;
   @Input() description!: string;
-  @Input() date_evennement!: Date;
+  @Input() date_evenement!: Date;
   @Input() heure_debut!: string;
   @Input() heure_fin!: string;
   @Input() lieu!: string;

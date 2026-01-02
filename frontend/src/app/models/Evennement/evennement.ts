@@ -2,10 +2,10 @@ import { StatutEvennement } from "../../enums/StatutEvennement/statut-evennement
 
 
 export interface Evennement {
-    id_evennement: number;
+    id_evenement: number;
     titre: string;
     description: string;
-    date_evennement: Date;
+    date_evenement: Date;
     heure_debut: string;
     heure_fin: string;
     lieu: string;

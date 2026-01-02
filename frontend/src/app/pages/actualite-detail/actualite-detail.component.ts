@@ -3,12 +3,10 @@ import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
 import { ActivatedRoute } from '@angular/router';
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
-import { ActualiteCardComponent } from "../../components/card/actualite-card/actualite-card.component";
-
 @Component({
   selector: 'app-actualite-detail',
   standalone: true,
-  imports: [SpinnerComponent, ActualiteCardComponent],
+  imports: [SpinnerComponent],
   templateUrl: './actualite-detail.component.html',
   styleUrl: './actualite-detail.component.css'
 })
@@ -31,5 +29,11 @@ export class ActualiteDetailComponent implements OnInit {
         this.errorActualite = true;
       }
     });
+  }
+    public convertDateToString(date: Date| string): string {
+    return new Date(date).toLocaleDateString('fr-FR');
+  }
+  goBack(): void {
+    window.history.back();
   }
 }

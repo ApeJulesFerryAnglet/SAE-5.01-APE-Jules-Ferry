@@ -32,6 +32,6 @@ export class EvennementPageComponent implements OnInit {
     this.sortEvennementByDate(this.listeEvennements);
   }
   public sortEvennementByDate(a: Evennement[]): Evennement[] {
-    return a.sort((a, b) => a.date_evennement.getTime() - b.date_evennement.getTime());
+    return a.sort((a, b) => a.date_evenement.getTime() - b.date_evenement.getTime());
   }
 }

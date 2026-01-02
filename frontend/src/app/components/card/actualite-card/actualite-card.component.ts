@@ -20,7 +20,4 @@ export class ActualiteCardComponent  {
     return new Date(date).toLocaleDateString('fr-FR');
   }
 
-  constructor() {
-    console.log(this.id_actualite);
-  }
 }
