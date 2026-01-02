@@ -5,13 +5,13 @@
             ← Retour à l'accueil
         </button>
 
-    @if(this.loadingEvennements){
+    @if(this.loadingEvenements){
         <div class="flex justify-center items-center h-64">
             <app-spinner></app-spinner>
         </div>
     }
 
-    @else if (this.errorEvennements) {
+    @else if (this.errorEvenements) {
         <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm" role="alert">
             <div class="flex">
                 <div class="flex-shrink-0">
@@ -26,7 +26,7 @@
         </div>
     }
 
-    @else if (this.listeEvennements.length === 0) {
+    @else if (this.listeEvenements.length === 0) {
         <div class="text-center py-12 bg-gray-50 rounded-lg">
             <p class="text-gray-500 text-lg">Aucun événement pour le moment.</p>
         </div>
@@ -35,19 +35,19 @@
     @else {
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             
-    @for(evennement of this.listeEvennements; track evennement.id_evenement){
+    @for(evenement of this.listeEvenements; track evenement.id_evenement){
         
-        <app-evennement-card 
+        <app-evenement-card 
             class="h-full block"
-            [id_evenement]="evennement.id_evenement"
-            [titre]="evennement.titre"
-            [image_url]="evennement.image_url"
-            [description]="evennement.description"
-            [date_evenement]="evennement.date_evenement"
-            [heure_debut]="evennement.heure_debut"
-            [heure_fin]="evennement.heure_fin"
-            [lieu]="evennement.lieu">
-        </app-evennement-card>
+            [id_evenement]="evenement.id_evenement"
+            [titre]="evenement.titre"
+            [image_url]="evenement.image_url"
+            [description]="evenement.description"
+            [date_evenement]="evenement.date_evenement"
+            [heure_debut]="evenement.heure_debut"
+            [heure_fin]="evenement.heure_fin"
+            [lieu]="evenement.lieu">
+        </app-evenement-card>
 
     } 
 </div>

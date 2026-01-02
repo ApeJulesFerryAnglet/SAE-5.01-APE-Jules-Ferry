@@ -1,29 +1,29 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
-import { EvennementService } from '../../services/Evennement/evennement.service';
-import { Evennement } from '../../models/Evennement/evennement';
+import { EvenementService } from '../../services/Evenement/evenement.service';
+import { Evenement } from '../../models/Evenement/evenement';
 import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteCardComponent } from '../../components/card/actualite-card/actualite-card.component';
-import { EvennementCardComponent } from "../../components/card/evennement-card/evennement-card.component";
+import { EvenementCardComponent } from "../../components/card/evenement-card/evenement-card.component";
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 @Component({
   selector: 'app-accueil',
   standalone: true,
-  imports: [ActualiteCardComponent, EvennementCardComponent, SpinnerComponent, RouterLink],
+  imports: [ActualiteCardComponent, EvenementCardComponent, SpinnerComponent, RouterLink],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
 })
 export class AccueilComponent implements OnInit {
   public listeActualites: Actualite[] = [];
-  public listeEvennements: Evennement[] = [];
+  public listeEvenements: Evenement[] = [];
   loadingEvents: boolean = true;
   loadingActualites: boolean = true;
   errorEvents: boolean = false;
   errorActualites: boolean = false;
   private readonly actualiteService = inject(ActualiteService);
-  private readonly evennementService = inject(EvennementService);
+  private readonly evenementService = inject(EvenementService);
   Date: Date = new Date();
   ngOnInit() {
     this.actualiteService.getAllActualites().subscribe( {
@@ -38,9 +38,9 @@ export class AccueilComponent implements OnInit {
       }
     });
     this.sortActualiteByDate(this.listeActualites);
-    this.evennementService.getAllEvennements().subscribe({
+    this.evenementService.getAllEvenements().subscribe({
       next: (data) => {
-        this.listeEvennements = data;
+        this.listeEvenements = data;
         this.loadingEvents = false;
       },
       error: (err) => {
@@ -49,9 +49,9 @@ export class AccueilComponent implements OnInit {
         this.errorEvents = true;
       }
     });
-    this.sortEvennementByDate(this.listeEvennements);
+    this.sortEvenementByDate(this.listeEvenements);
   }
-  public sortEvennementByDate(a: Evennement[]): Evennement[] {
+  public sortEvenementByDate(a: Evenement[]): Evenement[] {
     return a.sort((a, b) => a.date_evenement.getTime() - b.date_evenement.getTime());
   }
   public sortActualiteByDate(a: Actualite[]): Actualite[] {

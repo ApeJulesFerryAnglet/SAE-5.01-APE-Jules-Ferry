@@ -1,9 +1,9 @@
-@if(this.loadingEvennement){
+@if(this.loadingEvenement){
     <div class="flex justify-center items-center h-64">
         <app-spinner></app-spinner>
     </div>
 
-} @else if (this.errorEvennement) {
+} @else if (this.errorEvenement) {
     <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 my-6" role="alert">
         <p class="font-bold">Erreur</p>
         <p>Impossible de charger l'événement. Veuillez réessayer plus tard.</p>
@@ -22,8 +22,8 @@
         <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
             
             <div class="h-64 md:h-96 w-full relative overflow-hidden bg-gray-100">
-                @if(evennement.image_url) {
-                    <img [src]="evennement.image_url" [alt]="evennement.titre" class="w-full h-full object-cover">
+                @if(evenement.image_url) {
+                    <img [src]="evenement.image_url" [alt]="evenement.titre" class="w-full h-full object-cover">
                 } @else {
                     <div class="flex items-center justify-center h-full text-gray-400">
                         <span class="text-lg italic">Aucune image disponible</span>
@@ -36,26 +36,26 @@
                     
                     <div class="flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ convertDateToString(evennement.date_evenement) }}
+                        {{ convertDateToString(evenement.date_evenement) }}
                     </div>
 
                     <div class="flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        {{ evennement.heure_debut }} - {{ evennement.heure_fin }}
+                        {{ evenement.heure_debut }} - {{ evenement.heure_fin }}
                     </div>
 
                     <div class="flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        {{ evennement.lieu }}
+                        {{ evenement.lieu }}
                     </div>
                 </div>
 
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                    {{ evennement.titre }}
+                    {{ evenement.titre }}
                 </h1>
 
                 <div class="prose max-w-none text-gray-700 text-lg leading-relaxed whitespace-pre-line">
-                    {{ evennement.description }}
+                    {{ evenement.description }}
                 </div>
 
                 <div class="mt-12 pt-6 border-t border-gray-100 flex items-center">

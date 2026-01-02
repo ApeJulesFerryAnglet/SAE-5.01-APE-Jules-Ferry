@@ -1,7 +1,7 @@
-import { StatutEvennement } from "../../enums/StatutEvennement/statut-evennement";
+import { StatutEvenement } from "../../enums/StatutEvenement/statut-evenement";
 
 
-export interface Evennement {
+export interface Evenement {
     id_evenement: number;
     titre: string;
     description: string;
@@ -10,5 +10,5 @@ export interface Evennement {
     heure_fin: string;
     lieu: string;
     image_url: string;
-    statut: StatutEvennement;
+    statut: StatutEvenement;
 }

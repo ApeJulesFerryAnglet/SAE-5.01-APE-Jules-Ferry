@@ -39,16 +39,16 @@
 @else {
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 ml-3 mr-3 mb-3">
         
-        @for(evennement of this.listeEvennements.slice(0,3); track evennement.id_evenement){
-            <app-evennement-card
-                [titre]="evennement.titre"
-                [image_url]="evennement.image_url"
-                [description]="evennement.description"
-                [date_evenement]="evennement.date_evenement"
-                [heure_debut]="evennement.heure_debut"
-                [heure_fin]="evennement.heure_fin"
-                [lieu]="evennement.lieu">
-                </app-evennement-card>
+        @for(evenement of this.listeEvenements.slice(0,3); track evenement.id_evenement){
+            <app-evenement-card
+                [titre]="evenement.titre"
+                [image_url]="evenement.image_url"
+                [description]="evenement.description"
+                [date_evenement]="evenement.date_evenement"
+                [heure_debut]="evenement.heure_debut"
+                [heure_fin]="evenement.heure_fin"
+                [lieu]="evenement.lieu">
+                </app-evenement-card>
         }
         
     </div>
