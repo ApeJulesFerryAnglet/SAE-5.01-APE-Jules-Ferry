@@ -41,6 +41,7 @@
         
         @for(evenement of this.listeEvenements.slice(0,3); track evenement.id_evenement){
             <app-evenement-card
+                [id_evenement]="evenement.id_evenement"
                 [titre]="evenement.titre"
                 [image_url]="evenement.image_url"
                 [description]="evenement.description"
