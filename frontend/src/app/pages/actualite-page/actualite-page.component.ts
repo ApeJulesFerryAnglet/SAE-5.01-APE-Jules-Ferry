@@ -2,13 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
 import { ActualiteCardComponent } from "../../components/card/actualite-card/actualite-card.component";
-import { HeaderComponent } from "../../components/header/header.component";
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
 
 @Component({
   selector: 'app-actualite-page',
   standalone: true,
-  imports: [ActualiteCardComponent, HeaderComponent, SpinnerComponent],
+  imports: [ActualiteCardComponent, SpinnerComponent],
   templateUrl: './actualite-page.component.html',
   styleUrl: './actualite-page.component.css'
 })
