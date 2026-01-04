@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { StatutEvennement } from '../../../enums/StatutEvennement/statut-evennement';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+
 @Component({
   selector: 'app-evennement-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './evennement-card.component.html',
   styleUrl: './evennement-card.component.css'
 })

@@ -22,7 +22,7 @@
     </p>
     <div class="flex justify-between items-center mt-4">
       <span class="text-sm text-[var(--black-text-color)]">{{
-        convertDateToString(date_evennement)
+        date_evennement | date:'dd/MM/yyyy'
       }}</span>
       <span class="text-sm text-[var(--black-text-color)]">
         {{ heure_debut }} - {{ heure_fin }}

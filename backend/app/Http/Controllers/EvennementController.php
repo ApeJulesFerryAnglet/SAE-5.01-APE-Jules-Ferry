@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Evennement;
+use App\Models\Evenement;
 class EvennementController extends Controller
 {
     public function index()
     {
-        $evennements = Evennement::all();
+        $evennements = Evenement::all();
         if ($evennements) {
             return response()->json($evennements);
         } else {
@@ -17,7 +17,7 @@ class EvennementController extends Controller
     }
     public function show($id)
     {
-        $evennement = Evennement::find($id);
+        $evennement = Evenement::find($id);
         if ($evennement) {
             return response()->json($evennement);
         } else {
@@ -26,7 +26,7 @@ class EvennementController extends Controller
     }
     public function store(Request $request)
     {
-        $evennement = Evennement::create($request->all());
+        $evennement = Evenement::create($request->all());
         if ($evennement) {
             return response()->json($evennement, 201);
         } else {
@@ -35,7 +35,7 @@ class EvennementController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $evennement = Evennement::find($id);
+        $evennement = Evenement::find($id);
         if ($evennement) {
             $evennement->update($request->all());
             return response()->json($evennement);
@@ -45,7 +45,7 @@ class EvennementController extends Controller
     }
     public function destroy($id)
     {
-        $evennement = Evennement::find($id);
+        $evennement = Evenement::find($id);
         if ($evennement) {
             $evennement->delete();
             return response()->json(['message' => 'Évènement supprimé']);
