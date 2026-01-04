@@ -21,7 +21,7 @@ export class EvennementDetailComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.evennementService.getEvennementById(id).subscribe({
+    this.evennementService.getEvennementById(Number(id)).subscribe({
       next: (data) => {
         this.evennement = data;
         this.loadingEvennement = false;

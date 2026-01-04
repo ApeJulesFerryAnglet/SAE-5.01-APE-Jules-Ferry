@@ -11,6 +11,7 @@
     @for(evennement of this.listeEvennements; track evennement.id_evennement){
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <app-evennement-card
+            [id_evennement]="evennement.id_evennement"
             [titre]="evennement.titre"
             [image_url]="evennement.image_url"
             [description]="evennement.description"

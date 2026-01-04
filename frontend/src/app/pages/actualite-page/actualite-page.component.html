@@ -11,6 +11,7 @@
     @for(actualite of this.listeActualites; track actualite.id_actualite){
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <app-actualite-card 
+            [id_actualite]="actualite.id_actualite"
             [titre]="actualite.titre"
             [image_url]="actualite.image_url">
             </app-actualite-card>
