@@ -11,7 +11,7 @@
                 {{ titre }}
             </h3>
             <p class="text-sm text-gray-700">
-                {{ convertDateToString(datePublication) }} 
+                {{ datePublication | date:'dd/MM/yyyy' }} 
             </p>
         </div>
     </div>

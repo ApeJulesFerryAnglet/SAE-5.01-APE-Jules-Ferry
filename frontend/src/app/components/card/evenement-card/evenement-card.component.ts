@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { StatutEvenement } from '../../../enums/StatutEvenement/statut-evenement';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
+
 @Component({
   selector: 'app-evenement-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './evenement-card.component.html',
   styleUrl: './evenement-card.component.css'
 })
@@ -18,7 +20,4 @@ export class EvenementCardComponent {
   @Input() lieu!: string;
   @Input() image_url!: string;
   @Input() statut!: StatutEvenement;
-  public convertDateToString(date: Date| string): string {
-    return new Date(date).toLocaleDateString('fr-FR');
-  }
 }

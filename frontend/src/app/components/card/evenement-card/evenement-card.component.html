@@ -11,7 +11,7 @@
                 {{ titre }}
             </h3>
             <p class="text-sm text-gray-700">
-                {{ convertDateToString(date_evenement) }} · {{ heure_debut }} - {{ heure_fin }}
+                {{ date_evenement | date:'dd/MM/yyyy' }} · {{ heure_debut }} - {{ heure_fin }}
             </p>
         </div>
     </div>
