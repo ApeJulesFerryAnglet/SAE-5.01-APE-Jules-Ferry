@@ -55,10 +55,10 @@
                     </div>
                 <div>
                         <p class="text-sm text-gray-500">Publié par</p>
-                            @if(this.errorAuteur) {
-                                <p class="text-lg font-medium text-gray-900">Auteur inconnu</p>
+                            @if(!this.errorAuteur) {
+                                <p class="text-lg font-medium">{{ auteur.nom }} {{ auteur.prenom }}</p>
                             } @else {
-                            <p class="text-lg font-medium text-gray-900">{{ auteur.nom }} {{ auteur.prenom }}</p>
+                                <p class="text-[var(--error-color)]">Erreur de chargement</p>
                             }
                     </div>
                 </div>
