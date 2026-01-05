@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { RouterLink } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { inject } from '@angular/core'; // ✅ Ajouter
 import { AuthService } from '../../services/Auth/auth.service';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink, RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  menuOpen: boolean = false;
   private readonly authService = inject(AuthService);
   currentUser: Utilisateur | null = null;
   isAuthenticated: boolean = false;
@@ -37,5 +39,15 @@ export class HeaderComponent implements OnInit {
         }
       });
     }
+  }
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+  @HostListener('document:keydown.escape')
+  onEsc(): void {
+    this.closeMenu();
   }
 }
