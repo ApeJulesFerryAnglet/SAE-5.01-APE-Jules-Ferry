@@ -32,10 +32,12 @@ export class ActualitePageComponent implements OnInit {
     });
   }
 public sortActualiteByDate(): void {
-    this.listeActualites.sort((a, b) => {
+    const sortedList = [...this.listeActualites];
+    sortedList.sort((a, b) => {
       const dateA = new Date(a.date_publication).getTime();
       const dateB = new Date(b.date_publication).getTime();
       return dateB - dateA; 
     });
+    this.listeActualites = sortedList;
   }
 }

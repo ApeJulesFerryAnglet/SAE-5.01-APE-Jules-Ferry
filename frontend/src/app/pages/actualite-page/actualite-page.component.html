@@ -37,8 +37,7 @@
             
     @for(actualite of this.listeActualites; track actualite.id_actualite){
         
-        <app-actualite-card 
-            class="h-full block" 
+        <app-actualite-card  
             [id_actualite]="actualite.id_actualite"
             [titre]="actualite.titre"
             [contenu]="actualite.contenu"

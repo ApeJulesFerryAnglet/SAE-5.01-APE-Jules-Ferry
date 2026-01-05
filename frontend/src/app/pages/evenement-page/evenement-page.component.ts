@@ -32,10 +32,12 @@ export class EvenementPageComponent implements OnInit {
     });
   }
 public sortEvenementByDate(): void {
-    this.listeEvenements.sort((a, b) => {
+  const sortedList = [...this.listeEvenements];
+    sortedList.sort((a, b) => {
       const dateA = new Date(a.date_evenement).getTime();
       const dateB = new Date(b.date_evenement).getTime();
       return dateB - dateA; 
     });
+    this.listeEvenements = sortedList;
   }
 }

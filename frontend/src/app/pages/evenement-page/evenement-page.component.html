@@ -38,7 +38,6 @@
     @for(evenement of this.listeEvenements; track evenement.id_evenement){
         
         <app-evenement-card 
-            class="h-full block"
             [id_evenement]="evenement.id_evenement"
             [titre]="evenement.titre"
             [image_url]="evenement.image_url"
