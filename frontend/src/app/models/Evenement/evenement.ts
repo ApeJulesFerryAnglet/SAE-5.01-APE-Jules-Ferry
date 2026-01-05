@@ -11,4 +11,5 @@ export interface Evenement {
     lieu: string;
     image_url: string;
     statut: StatutEvenement;
+    id_auteur: number;
 }
