@@ -26,6 +26,10 @@ class EvenementController extends Controller
     }
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
         $evenement = Evenement::create($request->all());
         if ($evenement) {
             return response()->json($evenement, 201);
@@ -35,6 +39,10 @@ class EvenementController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
         $evenement = Evenement::find($id);
         if ($evenement) {
             $evenement->update($request->all());
@@ -43,8 +51,12 @@ class EvenementController extends Controller
             return response()->json(['message' => 'Évènement non trouvé'], 404);
         }
     }
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['message' => 'Accès refusé'], 403);
+        }
         $evenement = Evenement::find($id);
         if ($evenement) {
             $evenement->delete();
