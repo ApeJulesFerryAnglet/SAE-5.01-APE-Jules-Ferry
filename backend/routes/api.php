@@ -32,13 +32,20 @@ Route::middleware('auth:sanctum')->group(function () {
             'user' => $request->user(),
         ]);
     });
+
+    // Routes protégées pour la gestion
+    Route::post('/evenements', [EvenementController::class, 'store']);
+    Route::put('/evenements/{evenement}', [EvenementController::class, 'update']);
+    Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy']);
+    
+    Route::apiResource('creneaux', CreneauController::class);
+    Route::apiResource('formulaires', FormulaireController::class);
+    Route::apiResource('inscriptions', InscriptionController::class);
+    Route::apiResource('taches', TacheController::class);
+    Route::apiResource('utilisateurs', UtilisateurController::class);
 });
 
-
+// Routes publiques
+Route::get('/evenements', [EvenementController::class, 'index']);
+Route::get('/evenements/{evenement}', [EvenementController::class, 'show']);
 Route::apiResource('actualites', ActualiteController::class);
-Route::apiResource('creneaux', CreneauController::class);
-Route::apiResource('evenements', EvenementController::class);
-Route::apiResource('formulaires', FormulaireController::class);
-Route::apiResource('inscriptions', InscriptionController::class);
-Route::apiResource('taches', TacheController::class);
-Route::apiResource('utilisateurs', UtilisateurController::class);

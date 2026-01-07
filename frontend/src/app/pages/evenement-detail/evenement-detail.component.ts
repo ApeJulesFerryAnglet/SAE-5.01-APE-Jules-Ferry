@@ -47,6 +47,11 @@ export class EvenementDetailComponent implements OnInit {
    this.location.back();
   }
   delete(id: number): void {
-    this.evenementService.deleteEvenement(id).subscribe(() => this.goBack());
+    if (confirm('Voulez-vous vraiment supprimer cet événement ?')) {
+      this.evenementService.deleteEvenement(id).subscribe({
+        next: () => this.goBack(),
+        error: () => alert('Erreur lors de la suppression de l\'événement.')
+      });
+    }
   }
 }

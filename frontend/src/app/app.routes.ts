@@ -5,6 +5,7 @@ import { ActualitePageComponent } from './pages/actualite-page/actualite-page.co
 import { EvenementDetailComponent } from './pages/evenement-detail/evenement-detail.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { adminGuard } from './guards/admin.guard';
 import { EvenementPageComponent } from './pages/evenement-page/evenement-page.component';
 
 export const routes: Routes = [
@@ -24,5 +25,14 @@ export const routes: Routes = [
     { path: 'actualites/:id', loadComponent: () => import('./pages/actualite-detail/actualite-detail.component').then(m => m.ActualiteDetailComponent) },
     { path: 'evenements', loadComponent: () => import('./pages/evenement-page/evenement-page.component').then(m => m.EvenementPageComponent) },
     { path: 'evenements/:id', loadComponent: () => import('./pages/evenement-detail/evenement-detail.component').then(m => m.EvenementDetailComponent) },
-    { path: 'admin', loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent),}
+    { 
+        path: 'evenements/:id/edit', 
+        loadComponent: () => import('./pages/evenement-edit/evenement-edit.component').then(m => m.EvenementEditComponent),
+        canActivate: [adminGuard]
+    },
+    { 
+        path: 'admin', 
+        loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent),
+        canActivate: [adminGuard]
+    }
 ];

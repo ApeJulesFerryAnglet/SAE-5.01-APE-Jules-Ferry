@@ -1,10 +1,12 @@
 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <h1 class="text-2xl font-semibold mb-6">Espace Administrateur</h1>
-  <nav class="mb-8 flex gap-4">
-    <a [routerLink]="['/']" class="text-blue-600 hover:underline">Accueil</a>
-    <a [routerLink]="['/actualites']" class="text-blue-600 hover:underline">Actualités</a>
-    <a [routerLink]="['/evenements']" class="text-blue-600 hover:underline">Événements</a>
-  </nav>
+  
+  <div class="flex justify-between items-center mb-8">
+    <a [routerLink]="['/evenements', 'new', 'edit']" 
+       class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition-colors font-bold shadow-md">
+       + Créer un événement
+    </a>
+  </div>
 
   <section>
     <h2 class="text-xl font-bold mb-4">Gestion des événements</h2>
@@ -24,7 +26,7 @@
       </div>
     }
     @else {
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         @for (evenement of this.listeEvenements; track evenement.id_evenement) {
           <app-evenement-card
             [id_evenement]="evenement.id_evenement"
@@ -36,10 +38,6 @@
             [heure_fin]="evenement.heure_fin"
             [lieu]="evenement.lieu"
           ></app-evenement-card>
-          <div class="flex gap-2 mt-2">
-            <button [routerLink]="['/evenements', evenement.id_evenement, 'edit']" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Modifier</button>
-            <button (click)="deleteEvenement(evenement.id_evenement)" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Supprimer</button>
-          </div>
         }
       </div>
     }

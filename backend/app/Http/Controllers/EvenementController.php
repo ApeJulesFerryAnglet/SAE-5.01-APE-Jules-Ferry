@@ -30,7 +30,11 @@ class EvenementController extends Controller
         if (!$user || strtolower($user->role) !== 'administrateur') {
             return response()->json(['message' => 'Accès refusé'], 403);
         }
-        $evenement = Evenement::create($request->all());
+        
+        $data = $request->all();
+        $data['id_auteur'] = $user->id_utilisateur;
+        
+        $evenement = Evenement::create($data);
         if ($evenement) {
             return response()->json($evenement, 201);
         } else {

@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit {
   private readonly authService = inject(AuthService);
   currentUser: Utilisateur | null = null;
   isAuthenticated: boolean = false;
+  isAdmin: boolean = false;
 
   constructor() {}
 
@@ -25,6 +26,7 @@ export class HeaderComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.isAuthenticated = user !== null;
+      this.isAdmin = this.authService.hasRole('administrateur');
     });
   }
 
