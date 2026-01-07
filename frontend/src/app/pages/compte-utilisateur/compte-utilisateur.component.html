@@ -1,1 +1,31 @@
-<p>compte-utilisateur works!</p>
+@if(this.currentUser == null){
+    Erreur de chaergement des informations utilisateur.
+}
+@else {
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="p-8 md:p-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
+                    Compte utilisateur
+                </h1>
+                <div class="prose max-w-none text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                    <p><strong>Nom :</strong> {{ utilisateurInfo.nom }}</p>
+                    <p><strong>Prénom :</strong> {{ utilisateurInfo.prenom }}</p>
+                    <p><strong>Email :</strong> {{ utilisateurInfo.email }}</p>
+                </div>
+            </div>
+            <div class = "flex justify-between items-center">
+                <div class ="m-5" >
+                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow">
+                        Supprimer mon compte
+                    </button>
+                </div>
+                <div class = "flex-col gap-4 m-5">
+                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow">Test</button>
+                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow">Test</button>
+                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow">Test</button>
+                </div>
+            </div>
+        </article>
+    </div>
+}

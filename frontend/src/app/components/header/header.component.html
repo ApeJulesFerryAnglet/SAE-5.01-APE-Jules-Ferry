@@ -34,14 +34,9 @@
         </button>
       }
       @if(isAuthenticated && currentUser) {
-         <span class="hidden md:inline text-sm font-medium mr-2 text-gray-700">
-           {{ currentUser.prenom }}
-         </span>
-         <button (click)="logout()" class="p-2 text-white bg-red-500 hover:bg-red-600 rounded-full shadow-sm transition-colors" title="Déconnexion">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-         </button>
+        <button class="bg-white text-[var(--primary-blue)] border border-[var(--primary-blue)] font-bold py-1.5 px-4 rounded-full text-sm hover:bg-blue-50 transition-colors" title="Compte" [routerLink]="'/compte'">
+            Compte
+        </button>
       }
     </div>
   </div>
