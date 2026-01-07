@@ -1,0 +1,47 @@
+<div class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-2xl font-semibold mb-6">Espace Administrateur</h1>
+  <nav class="mb-8 flex gap-4">
+    <a [routerLink]="['/']" class="text-blue-600 hover:underline">Accueil</a>
+    <a [routerLink]="['/actualites']" class="text-blue-600 hover:underline">Actualités</a>
+    <a [routerLink]="['/evenements']" class="text-blue-600 hover:underline">Événements</a>
+  </nav>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">Gestion des événements</h2>
+    @if (this.loadingEvenements) {
+      <div class="flex justify-center items-center h-64">
+        <app-spinner></app-spinner>
+      </div>
+    }
+    @else if (this.errorEvenements) {
+      <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm" role="alert">
+        <p class="text-sm text-red-700">Erreur lors du chargement des événements.</p>
+      </div>
+    }
+    @else if (this.listeEvenements.length === 0) {
+      <div class="text-center py-12 bg-gray-50 rounded-lg">
+        <p class="text-gray-500 text-lg">Aucun événement.</p>
+      </div>
+    }
+    @else {
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+        @for (evenement of this.listeEvenements; track evenement.id_evenement) {
+          <app-evenement-card
+            [id_evenement]="evenement.id_evenement"
+            [titre]="evenement.titre"
+            [image_url]="evenement.image_url"
+            [description]="evenement.description"
+            [date_evenement]="evenement.date_evenement"
+            [heure_debut]="evenement.heure_debut"
+            [heure_fin]="evenement.heure_fin"
+            [lieu]="evenement.lieu"
+          ></app-evenement-card>
+          <div class="flex gap-2 mt-2">
+            <button [routerLink]="['/evenements', evenement.id_evenement, 'edit']" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Modifier</button>
+            <button (click)="deleteEvenement(evenement.id_evenement)" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Supprimer</button>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

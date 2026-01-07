@@ -1,14 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { AuthService } from '../../services/Auth/auth.service';
 import { Evenement } from '../../models/Evenement/evenement';
 import { EvenementService } from '../../services/Evenement/evenement.service';
 import { ActivatedRoute } from '@angular/router';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { ErreurModaleComponent } from '../../components/erreur-modale/erreur-modale.component';
 import { Location } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-evenement-detail',
   standalone: true,
-  imports: [SpinnerComponent, ErreurModaleComponent],
+  imports: [SpinnerComponent, ErreurModaleComponent, RouterModule],
   templateUrl: './evenement-detail.component.html',
   styleUrl: './evenement-detail.component.css'
 })
@@ -17,10 +20,13 @@ export class EvenementDetailComponent implements OnInit {
   evenement !: Evenement;
   loadingEvenement: boolean = true;
   errorEvenement : boolean = false;
+  isAdmin: boolean = false;
   private readonly evenementService: EvenementService = inject(EvenementService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
+  private readonly authService: AuthService = inject(AuthService);
   ngOnInit(): void {
+    this.isAdmin = this.authService.hasRole('administrateur');
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.evenementService.getEvenementById(id).subscribe({
       next: (data) => {
@@ -39,5 +45,8 @@ export class EvenementDetailComponent implements OnInit {
   }
   goBack(): void {
    this.location.back();
+  }
+  delete(id: number): void {
+    this.evenementService.deleteEvenement(id).subscribe(() => this.goBack());
   }
 }
