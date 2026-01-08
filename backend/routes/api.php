@@ -12,6 +12,7 @@ use App\Http\Controllers\FormulaireController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\TacheController;
 use App\Http\Controllers\UtilisateurController;
+use App\Http\Controllers\NewsletterController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,6 +22,7 @@ use App\Http\Controllers\UtilisateurController;
 // Routes publiques (pas besoin d'être connecté)
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'store']);
 
 // Routes protégées (nécessitent un token Sanctum)
 Route::middleware('auth:sanctum')->group(function () {

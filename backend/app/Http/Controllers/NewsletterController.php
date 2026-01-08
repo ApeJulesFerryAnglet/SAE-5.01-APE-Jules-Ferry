@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\NewsletterService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class NewsletterController extends Controller
+{
+    protected $newsletterService;
+
+    public function __construct(NewsletterService $newsletterService)
+    {
+        $this->newsletterService = $newsletterService;
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $this->newsletterService->inscrire($request->email);
+
+        return response()->json(['message' => 'Merci ! Ton inscription est bien prise en compte.'], 201);
+    }
+}

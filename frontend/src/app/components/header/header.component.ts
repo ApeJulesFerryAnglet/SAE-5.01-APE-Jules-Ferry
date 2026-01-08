@@ -1,5 +1,4 @@
 import { Component, HostListener, inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { RouterLink } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -16,6 +15,7 @@ import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 export class HeaderComponent implements OnInit {
   menuOpen: boolean = false;
   private readonly authService = inject(AuthService);
+  
   currentUser: Utilisateur | null = null;
   isAuthenticated: boolean = false;
 
@@ -31,21 +31,20 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
       this.authService.logout().subscribe({
-        next: () => {
-          console.log('Déconnexion réussie');
-        },
-        error: (error) => {
-          console.error('Erreur lors de la déconnexion', error);
-        }
+        next: () => console.log('Déconnexion réussie'),
+        error: (error) => console.error('Erreur lors de la déconnexion', error)
       });
     }
   }
+
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
+
   closeMenu(): void {
     this.menuOpen = false;
   }
+
   @HostListener('document:keydown.escape')
   onEsc(): void {
     this.closeMenu();

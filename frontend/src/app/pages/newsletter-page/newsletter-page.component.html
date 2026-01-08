@@ -1,0 +1,42 @@
+<section class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
+      <div class="text-center">
+        <h2 class="mt-6 text-3xl font-extrabold text-[var(--black-text-color)]">
+          Rejoignez notre communauté
+        </h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Inscrivez-vous à la newsletter pour recevoir toutes les dernières actualités directement dans votre boîte mail.
+        </p>
+      </div>
+  
+      <form class="mt-8 space-y-6" (ngSubmit)="onSubscribe()">
+        <div class="rounded-md shadow-sm -space-y-px">
+          <div>
+            <label for="email-address" class="sr-only">Adresse email</label>
+            <input 
+              id="email-address" 
+              name="email" 
+              type="email" 
+              [(ngModel)]="emailNewsletter"
+              required 
+              class="appearance-none rounded-2xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[var(--primary-blue)] focus:border-[var(--primary-blue)] focus:z-10 sm:text-sm" 
+              placeholder="votre@email.com"
+            >
+          </div>
+        </div>
+  
+        <div>
+          <button 
+            type="submit" 
+            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-2xl text-white bg-[var(--primary-blue)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-blue)] transition-all"
+          >
+            S'inscrire gratuitement
+          </button>
+        </div>
+      </form>
+      
+      <p class="text-center text-xs text-gray-400 mt-4">
+        Garanti sans spam. Vous pouvez vous désabonner à tout moment.
+      </p>
+    </div>
+  </section>
