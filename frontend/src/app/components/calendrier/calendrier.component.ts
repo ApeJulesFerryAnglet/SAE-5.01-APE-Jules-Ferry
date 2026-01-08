@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, OnInit, inject, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FullCalendarModule, FullCalendarComponent } from "@fullcalendar/angular"; 
@@ -23,15 +23,20 @@ export class CalendrierComponent implements OnInit {
 
   private readonly evenementService = inject(EvenementService);
 
+  //Références aux éléments du template
   @ViewChild('calendar') calendarComponent: FullCalendarComponent | undefined;
+  @ViewChild('calendarContainer') calendarContainer: ElementRef | undefined;
+  @ViewChild('eventDetails') eventDetails: ElementRef | undefined;
   
   selectedEvent: Evenement | null = null;
   eventsList: Evenement[] = [];
   isLoading = true;
   errorMessage: string | null = null;
   
+  // Détection du mode mobile selon la largeur de la fenêtre
   private isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+  // Options du calendrier
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
     initialView:'dayGridMonth',
@@ -95,6 +100,7 @@ export class CalendrierComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     
+    // Récupération des événements depuis le service
     this.evenementService.getAllEvenements().subscribe({
       next: (evenements) => {
         this.eventsList = evenements;
@@ -126,13 +132,20 @@ export class CalendrierComponent implements OnInit {
     const clickedEvent = this.eventsList.find(e => e.id_evenement.toString() === arg.event.id);
     if (clickedEvent) {
       this.selectedEvent = clickedEvent;
+      setTimeout(() => {
+        this.eventDetails?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     }
   }
   
   closeEventDetails(): void {
     this.selectedEvent = null;
+    setTimeout(() => {
+      this.calendarContainer?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   }
 
+  // Gestion du redimensionnement de la fenêtre
   handleResize(calendarApi: any): void {
     const wasMobile = this.isMobile;
     this.isMobile = window.innerWidth < 768;

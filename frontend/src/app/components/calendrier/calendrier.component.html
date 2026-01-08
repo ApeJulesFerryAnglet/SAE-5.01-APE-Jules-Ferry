@@ -1,4 +1,4 @@
-<h1 class="text-3xl font-bold mb-6 text-center">Calendrier</h1>
+<h1 class="text-3xl font-bold mb-3 text-center">Calendrier</h1>
 <div class="p-5 bg-white font-sans max-w-6xl mx-auto md:p-4 sm:p-2.5">
   
   @if (isLoading) {
@@ -18,13 +18,13 @@
   }
   
   @if (!isLoading && !errorMessage) {
-    <div class="main-calendar bg-white rounded-lg shadow-md p-4 sm:p-2.5 border border-gray-100"> 
+    <div #calendarContainer class="main-calendar bg-white rounded-lg shadow-md p-4 sm:p-2.5 border border-gray-100"> 
       <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     </div>
   }
   
   @if (selectedEvent) {
-    <div class="mt-6 bg-white border border-gray-200 rounded-xl shadow-lg p-6 relative max-w-2xl mx-auto">
+    <div #eventDetails class="mt-6 bg-white border border-gray-200 rounded-xl shadow-lg p-6 relative max-w-2xl mx-auto">
       
       <button 
         (click)="closeEventDetails()" 
