@@ -29,13 +29,15 @@ export class CalendrierComponent implements OnInit {
   eventsList: Evenement[] = [];
   isLoading = true;
   errorMessage: string | null = null;
+  
+  private isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
-    initialView: 'dayGridMonth',
+    initialView:'dayGridMonth',
     locale: frLocale,
     height: 'auto', 
-    allDaySlot:false,
+    allDaySlot: false,
     
     slotMinTime: '07:00:00',
     slotMaxTime: '20:00:00',
@@ -46,15 +48,26 @@ export class CalendrierComponent implements OnInit {
       }
     },
 
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
-
-    },
-    footerToolbar: {
-      left:'prevYear,nextYear'
-    },
+    headerToolbar: this.isMobile 
+      ? {
+          left: '',
+          center: 'title',
+          right: ''
+        }
+      : {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+    footerToolbar: this.isMobile 
+      ? {
+          left: 'prev,next',
+          center: 'listWeek,dayGridMonth,timeGridDay today',
+          right: ''
+        }
+      : {
+          left: 'prevYear,nextYear'
+        },
     
     weekNumbers: true,
     weekText: '',
@@ -121,13 +134,36 @@ export class CalendrierComponent implements OnInit {
   }
 
   handleResize(calendarApi: any): void {
-    if (window.innerWidth < 768) {
-      if (calendarApi.view.type === 'timeGridWeek') {
-        calendarApi.changeView('listWeek'); 
-      }
-    } else {
-      if (calendarApi.view.type === 'listWeek') {
-        calendarApi.changeView('timeGridWeek');
+    const wasMobile = this.isMobile;
+    this.isMobile = window.innerWidth < 768;
+    
+    if (this.isMobile !== wasMobile) {
+      calendarApi.setOption('headerToolbar', this.isMobile 
+        ? {
+            left: '',
+            center: 'title',
+            right: ''
+          }
+        : {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+          });
+      
+      calendarApi.setOption('footerToolbar', this.isMobile 
+        ? {
+            left: 'prev,next',
+            center: 'listWeek,dayGridMonth',
+            right: ''
+          }
+        : {
+            left: 'prevYear,nextYear'
+          });
+      
+      if (this.isMobile) {
+        if (calendarApi.view.type === 'timeGridWeek' || calendarApi.view.type === 'timeGridDay') {
+          calendarApi.changeView('listWeek');
+        }
       }
     }
   }
