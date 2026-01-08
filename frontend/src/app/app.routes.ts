@@ -7,6 +7,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { guestGuard } from './guards/guest.guard';
 import { EvenementPageComponent } from './pages/evenement-page/evenement-page.component';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
     { path: '', component: AccueilComponent },
@@ -25,5 +26,6 @@ export const routes: Routes = [
     { path: 'actualites', loadComponent: () => import('./pages/actualite-page/actualite-page.component').then(m => m.ActualitePageComponent) },
     { path: 'actualites/:id', loadComponent: () => import('./pages/actualite-detail/actualite-detail.component').then(m => m.ActualiteDetailComponent) },
     { path: 'evenements', loadComponent: () => import('./pages/evenement-page/evenement-page.component').then(m => m.EvenementPageComponent) },
-    { path: 'evenements/:id', loadComponent: () => import('./pages/evenement-detail/evenement-detail.component').then(m => m.EvenementDetailComponent) }
+    { path: 'evenements/:id', loadComponent: () => import('./pages/evenement-detail/evenement-detail.component').then(m => m.EvenementDetailComponent) },
+    {path: 'admin/utilisateurs',loadComponent: () => import('./pages/admin-utilisateurs/admin-utilisateurs.component').then(m => m.AdminUtilisateursComponent), canActivate: [adminGuard] },
 ];
