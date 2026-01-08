@@ -16,9 +16,9 @@
                         Erreur lors du chargement des informations utilisateur.
                     }
                     @else {
-                        <p><strong>Nom :</strong> {{ utilisateurInfo.nom }}</p>
-                        <p><strong>Prénom :</strong> {{ utilisateurInfo.prenom }}</p>
-                        <p><strong>Email :</strong> {{ utilisateurInfo.email }}</p>
+                        <p><strong>Nom :</strong> {{ this.currentUser.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ this.currentUser.prenom }}</p>
+                        <p><strong>Email :</strong> {{ this.currentUser.email }}</p>
                     }
                 </div>
             </div>
