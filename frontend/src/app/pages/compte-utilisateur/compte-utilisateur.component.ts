@@ -44,9 +44,10 @@ export class CompteUtilisateurComponent {
     });
   }
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const oldPassword = control.get('mot_de_passe_actuel');
     const password = control.get('nouveau_mot_de_passe');
     const confirmPassword = control.get('confirmation_nouveau_mot_de_passe');
-    if (!password || !confirmPassword) {
+    if (!password || !confirmPassword || !oldPassword) {
       return null;
     }
     // Nettoyage de l'erreur si tout est OK
@@ -86,7 +87,9 @@ export class CompteUtilisateurComponent {
   get confirmation_nouveau_mot_de_passe() {
     return this.modificationMdpForm.get('confirmation_nouveau_mot_de_passe');
   }
-
+  get motDePasseActuelInvalid(): boolean {
+    return this.modificationMdpForm.hasError('passwordMismatchOldNew');
+  }
   get passwordMismatch(): boolean {
     return this.modificationMdpForm.hasError('passwordMismatch');
   }

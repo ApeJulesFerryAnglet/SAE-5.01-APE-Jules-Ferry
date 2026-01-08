@@ -80,13 +80,16 @@
                     @if (nouveau_mot_de_passe?.invalid && nouveau_mot_de_passe?.touched) {
                     <div class="mt-1">
                         @if (nouveau_mot_de_passe?.errors?.['required']) {
-                        <p class="text-red-600 text-xs">Le mot de passe est obligatoire</p>
+                            <p class="text-red-600 text-xs">Le mot de passe est obligatoire</p>
                         }
                         @if (nouveau_mot_de_passe?.errors?.['minlength']) {
-                        <p class="text-red-600 text-xs">Le mot de passe doit contenir au moins 8 caractères</p>
+                            <p class="text-red-600 text-xs">Le mot de passe doit contenir au moins 8 caractères</p>
                         }
                         @if(nouveau_mot_de_passe?.errors?.['pattern']) {
-                        <p class="text-red-600 text-xs">Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial</p>
+                            <p class="text-red-600 text-xs">Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial</p>
+                        }
+                        @if(motDePasseActuelInvalid) {
+                            <p class="text-red-600 text-xs">Le nouveau mot de passe doit être différent de l'ancien</p>
                         }
                     </div>
                     }
