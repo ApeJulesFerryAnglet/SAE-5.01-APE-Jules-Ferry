@@ -25,7 +25,8 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   utilisateurOriginal: Utilisateur | null = null;
 
   modeCreation: boolean = false;
-  nouvelUtilisateur: any = {
+  nouvelUtilisateur: Utilisateur = {
+    id_utilisateur: 0,
     nom: '',
     prenom: '',
     email: '',
@@ -127,8 +128,13 @@ export class AdminGestionUtilisateursComponent implements OnInit {
 
   reinitialiserNouvelUtilisateur(): void {
     this.nouvelUtilisateur = {
-      nom: '', prenom: '', email: '', mot_de_passe: '',
-      role: RoleUtilisateur.parent, statut_compte: StatutCompte.actif
+      id_utilisateur: 0,
+      nom: '',
+      prenom: '',
+      email: '',
+      mot_de_passe: '',
+      role: RoleUtilisateur.parent,
+      statut_compte: StatutCompte.actif
     };
   }
 
