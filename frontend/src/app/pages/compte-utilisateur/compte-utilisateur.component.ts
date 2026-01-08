@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 import { AuthService } from '../../services/Auth/auth.service';
+import { UtilisateurService } from '../../services/Utilisateur/utilisateur.service';
 
 @Component({
   selector: 'app-compte-utilisateur',
@@ -13,7 +14,10 @@ export class CompteUtilisateurComponent {
   currentUser: Utilisateur | null = null;
   isAuthenticated: boolean = false;
   loadingUser: boolean = true;
+  utilisateurMdp!: Utilisateur;
   erreurLoadingUser: boolean = false;
+  modifierMdp: boolean = false;
+  private readonly utilisateurService = inject(UtilisateurService);
   private readonly authService = inject(AuthService);
   ngOnInit(): void {
     this.authService.currentUser$.subscribe({
@@ -38,5 +42,9 @@ export class CompteUtilisateurComponent {
         console.error('Erreur lors de la déconnexion', error);
       }
     });
+  }
+  public modifierMotDePasse(): void {
+    this.modifierMdp = true;
+    
   }
 }

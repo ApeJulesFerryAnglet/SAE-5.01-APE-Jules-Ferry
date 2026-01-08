@@ -1,8 +1,9 @@
-@if(this.currentUser == null){
+@if(this.currentUser == null && !this.isAuthenticated){
     Erreur de chargement des informations utilisateur.
 }
 @else {
-    <div class="max-w-4xl mx-auto px-4 py-8">
+    @if(!this.modifierMdp){
+        <div class="max-w-4xl mx-auto px-4 py-8">
         <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div class="p-8 md:p-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
@@ -16,9 +17,9 @@
                         Erreur lors du chargement des informations utilisateur.
                     }
                     @else {
-                        <p><strong>Nom :</strong> {{ this.currentUser.nom }}</p>
-                        <p><strong>Prénom :</strong> {{ this.currentUser.prenom }}</p>
-                        <p><strong>Email :</strong> {{ this.currentUser.email }}</p>
+                        <p><strong>Nom :</strong> {{ this.currentUser?.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ this.currentUser?.prenom }}</p>
+                        <p><strong>Email :</strong> {{ this.currentUser?.email }}</p>
                     }
                 </div>
             </div>
@@ -29,10 +30,14 @@
                     </button>
                 </div>
                 <div class = "flex flex-col gap-4 m-5">
-                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow">Modifier mon mot de passe</button>
+                    <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow" (click)="modifierMotDePasse()">Modifier mon mot de passe</button>
                     <button class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-shadow" (click)="logout()">Deconnexion</button>
                 </div>
             </div>
         </article>
     </div>
+    }
+    @else {
+        test
+    }
 }
