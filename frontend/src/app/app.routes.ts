@@ -29,10 +29,5 @@ export const routes: Routes = [
         path: 'evenements/:id/edit', 
         loadComponent: () => import('./pages/evenement-edit/evenement-edit.component').then(m => m.EvenementEditComponent),
         canActivate: [adminGuard]
-    },
-    { 
-        path: 'admin', 
-        loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent),
-        canActivate: [adminGuard]
     }
 ];

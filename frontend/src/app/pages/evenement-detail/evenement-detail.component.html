@@ -65,15 +65,6 @@
                        <!-- récup l'id organisateur pour avoir l'organisateur -->
                    </div>
                 </div>
-
-                                
-                                @if(this.isAdmin) {
-                                    <div class="flex gap-2 mt-8">
-                                        <a [routerLink]="['/evenements', evenement.id_evenement, 'edit']" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600 inline-block">Modifier</a>
-                                        <button (click)="delete(evenement.id_evenement)" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Supprimer</button>
-                                    </div>
-                                }
-
             </div>
         </article>
     </div>

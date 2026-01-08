@@ -20,13 +20,11 @@ export class EvenementDetailComponent implements OnInit {
   evenement !: Evenement;
   loadingEvenement: boolean = true;
   errorEvenement : boolean = false;
-  isAdmin: boolean = false;
   private readonly evenementService: EvenementService = inject(EvenementService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private location: Location = inject(Location);
   private readonly authService: AuthService = inject(AuthService);
   ngOnInit(): void {
-    this.isAdmin = this.authService.hasRole('administrateur');
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.evenementService.getEvenementById(id).subscribe({
       next: (data) => {
@@ -45,13 +43,5 @@ export class EvenementDetailComponent implements OnInit {
   }
   goBack(): void {
    this.location.back();
-  }
-  delete(id: number): void {
-    if (confirm('Voulez-vous vraiment supprimer cet événement ?')) {
-      this.evenementService.deleteEvenement(id).subscribe({
-        next: () => this.goBack(),
-        error: () => alert('Erreur lors de la suppression de l\'événement.')
-      });
-    }
   }
 }

@@ -89,15 +89,6 @@
     </div>
 
     <nav class="p-4">
-      @if (isAdmin) {
-        <a
-          routerLink="/admin"
-          (click)="closeMenu()"
-          class="block py-2 hover:bg-gray-100 rounded px-2 text-center w-full hover:shadow-lg transition-shadow"
-        >
-          Espace Admin
-        </a>
-      }
       <a
         routerLink="/actualites"
         (click)="closeMenu()"

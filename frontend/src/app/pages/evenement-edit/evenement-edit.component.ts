@@ -62,7 +62,7 @@ export class EvenementEditComponent implements OnInit {
       },
       error: () => {
         alert('Erreur lors du chargement de l\'événement');
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/evenements']);
       }
     });
   }
@@ -77,7 +77,7 @@ export class EvenementEditComponent implements OnInit {
       this.evenementService.updateEvenement(body, this.idEvenement).subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/evenements']);
         },
         error: () => {
           this.saving = false;
@@ -88,7 +88,7 @@ export class EvenementEditComponent implements OnInit {
       this.evenementService.createEvenement(body).subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/evenements']);
         },
         error: () => {
           this.saving = false;

@@ -49,7 +49,7 @@ export class AuthService {
         this.tokenService.saveToken(response.token);
         this.currentUserSubject.next(response.user);
         if (String(response.user.role).toLowerCase() === 'administrateur') {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/evenements']);
         } else {
           this.router.navigate(['/']);
         }
