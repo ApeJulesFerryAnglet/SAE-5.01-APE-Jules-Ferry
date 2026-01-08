@@ -87,6 +87,11 @@
       <a routerLink="/contact" (click)="closeMenu()"
         routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
         class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Contact</a>
+      @if(isAuthenticated && currentUser?.role === RoleUtilisateur.administrateur) {
+      <a routerLink="/admin/utilisateurs" (click)="closeMenu()"
+        routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
+        class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Administration</a>
+      }
     </nav>
 
   </aside>

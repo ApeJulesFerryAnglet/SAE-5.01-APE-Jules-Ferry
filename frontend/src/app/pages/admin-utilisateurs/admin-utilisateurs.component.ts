@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from '../../components/header/header.component';
-import { FooterComponent } from '../../components/footer/footer.component';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { UtilisateurService } from '../../services/Utilisateur/utilisateur.service';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
@@ -20,111 +18,137 @@ import { StatutCompte } from '../../enums/StatutCompte/statut-compte';
 })
 export class AdminUtilisateursComponent implements OnInit {
   utilisateurs: Utilisateur[] = [];
-  isLoading = true;
+  chargementEnCours = true;
+  texteRecherche: string = '';
 
-  searchText: string = '';
+  idEnEdition: number | null = null;
+  utilisateurOriginal: Utilisateur | null = null;
 
-  showCreationForm: boolean = false;
-  newUser: any = { // Objet temporaire pour le formulaire
+  modeCreation: boolean = false;
+  nouvelUtilisateur: any = {
     nom: '',
     prenom: '',
     email: '',
-    mot_de_passe: '', // Obligatoire pour la création
+    mot_de_passe: '',
     role: RoleUtilisateur.parent,
     statut_compte: StatutCompte.actif
   };
-  
-  // Pour utiliser l'enum dans le HTML
+
   RoleUtilisateur = RoleUtilisateur;
   StatutCompte = StatutCompte;
+  listeRoles = Object.values(RoleUtilisateur);
+  listeStatuts = Object.values(StatutCompte);
 
   constructor(
     private utilisateurService: UtilisateurService,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.chargerUtilisateurs();
   }
 
   chargerUtilisateurs(): void {
-    this.isLoading = true;
+    this.chargementEnCours = true;
     this.utilisateurService.getAllUtilisateurs().subscribe({
       next: (data) => {
         this.utilisateurs = data;
-        this.isLoading = false;
+        this.chargementEnCours = false;
       },
-      error: (err) => {
-        this.toastService.show('Erreur lors du chargement des utilisateurs', TypeErreurToast.ERROR);
-        this.isLoading = false;
+      error: () => {
+        this.toastService.show('Erreur chargement utilisateurs', TypeErreurToast.ERROR);
+        this.chargementEnCours = false;
       }
     });
   }
 
-  get filteredUtilisateurs(): Utilisateur[] {
-    if (!this.searchText) {
-      return this.utilisateurs;
+  demarrerEdition(user: Utilisateur): void {
+    if (this.idEnEdition !== null) {
+      this.annulerEdition();
     }
-    const search = this.searchText.toLowerCase();
-    return this.utilisateurs.filter(u => 
-      u.nom.toLowerCase().includes(search) || 
-      u.prenom.toLowerCase().includes(search) || 
-      u.email.toLowerCase().includes(search)
-    );
+    this.idEnEdition = user.id_utilisateur;
+    this.utilisateurOriginal = { ...user };
   }
 
-  toggleCreationForm(): void {
-    this.showCreationForm = !this.showCreationForm;
+  validerEdition(user: Utilisateur): void {
+    this.utilisateurService.updateUtilisateur(user, user.id_utilisateur).subscribe({
+      next: (updatedUser) => {
+        this.toastService.show('Utilisateur modifié', TypeErreurToast.SUCCESS);
+        this.idEnEdition = null;
+        this.utilisateurOriginal = null;
+      },
+      error: () => {
+        this.toastService.show('Erreur lors de la modification', TypeErreurToast.ERROR);
+      }
+    });
   }
 
-  creerUtilisateur(): void {
-    if (!this.newUser.nom || !this.newUser.prenom || !this.newUser.email || !this.newUser.mot_de_passe) {
-      this.toastService.show('Veuillez remplir tous les champs obligatoires.', TypeErreurToast.ERROR);
+  annulerEdition(): void {
+    if (this.idEnEdition !== null && this.utilisateurOriginal) {
+      const index = this.utilisateurs.findIndex(u => u.id_utilisateur === this.idEnEdition);
+      if (index !== -1) {
+        this.utilisateurs[index] = { ...this.utilisateurOriginal };
+      }
+    }
+    this.idEnEdition = null;
+    this.utilisateurOriginal = null;
+  }
+
+  afficherLigneCreation(): void {
+    if (this.idEnEdition) this.annulerEdition();
+
+    this.modeCreation = true;
+    setTimeout(() => window.scrollTo(0, document.body.scrollHeight), 100);
+  }
+
+  validerCreation(): void {
+    if (!this.nouvelUtilisateur.nom || !this.nouvelUtilisateur.prenom || !this.nouvelUtilisateur.email || !this.nouvelUtilisateur.mot_de_passe) {
+      this.toastService.show('Champs obligatoires manquants', TypeErreurToast.WARNING);
       return;
     }
 
-    // Appel au service (cast en Utilisateur car l'ID est généré par le back)
-    this.utilisateurService.createUtilisateur(this.newUser as Utilisateur).subscribe({
+    this.utilisateurService.createUtilisateur(this.nouvelUtilisateur).subscribe({
       next: (userCree) => {
-        this.toastService.show('Utilisateur créé avec succès !', TypeErreurToast.SUCCESS);
-        this.utilisateurs.push(userCree); // Ajout direct à la liste
-        this.showCreationForm = false; // Fermer le formulaire
-        this.resetNewUser();
+        this.toastService.show('Utilisateur créé !', TypeErreurToast.SUCCESS);
+        this.utilisateurs.push(userCree);
+        this.modeCreation = false;
+        this.reinitialiserNouvelUtilisateur();
       },
-      error: (err) => {
-        console.error(err);
-        this.toastService.show('Erreur lors de la création (Email déjà pris ?)', TypeErreurToast.ERROR);
+      error: () => {
+        this.toastService.show('Erreur création (Email pris ?)', TypeErreurToast.ERROR);
       }
     });
   }
 
-  resetNewUser(): void {
-    this.newUser = {
-      nom: '',
-      prenom: '',
-      email: '',
-      mot_de_passe: '',
-      role: RoleUtilisateur.parent,
-      statut_compte: StatutCompte.actif
+  annulerCreation(): void {
+    this.modeCreation = false;
+    this.reinitialiserNouvelUtilisateur();
+  }
+
+  reinitialiserNouvelUtilisateur(): void {
+    this.nouvelUtilisateur = {
+      nom: '', prenom: '', email: '', mot_de_passe: '',
+      role: RoleUtilisateur.parent, statut_compte: StatutCompte.actif
     };
   }
 
-  modifierUtilisateur(id: number): void {
-    // CORRECTION : Utilisation de WARNING ou ERROR selon ce que tu as
-    this.toastService.show('Fonctionnalité de modification à venir', TypeErreurToast.ERROR);
-  }
-
   supprimerUtilisateur(id: number): void {
-    if(confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+    if (confirm('Supprimer cet utilisateur ?')) {
       this.utilisateurService.deleteUtilisateur(id).subscribe({
         next: () => {
-          this.toastService.show('Utilisateur supprimé avec succès', TypeErreurToast.SUCCESS);
-          this.chargerUtilisateurs();
+          this.utilisateurs = this.utilisateurs.filter(u => u.id_utilisateur !== id);
+          this.toastService.show('Utilisateur supprimé', TypeErreurToast.SUCCESS);
         },
-        error: () => {
-          this.toastService.show('Impossible de supprimer l\'utilisateur', TypeErreurToast.ERROR);
-        }
+        error: () => this.toastService.show('Erreur suppression', TypeErreurToast.ERROR)
       });
     }
+  }
+
+  get utilisateursFiltres(): Utilisateur[] {
+    if (!this.texteRecherche) return this.utilisateurs;
+    const s = this.texteRecherche.toLowerCase();
+    return this.utilisateurs.filter(u =>
+      u.nom.toLowerCase().includes(s) || u.prenom.toLowerCase().includes(s) || u.email.toLowerCase().includes(s)
+    );
   }
 }
