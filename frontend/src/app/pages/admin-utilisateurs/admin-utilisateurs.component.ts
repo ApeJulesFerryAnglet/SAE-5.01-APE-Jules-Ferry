@@ -109,9 +109,22 @@ export class AdminGestionUtilisateursComponent implements OnInit {
     }, 100);
   }
 
+  private estMotDePasseRobuste(mdp: string): boolean {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+    return regex.test(mdp);
+  }
+
   validerCreation(): void {
     if (!this.nouvelUtilisateur.nom || !this.nouvelUtilisateur.prenom || !this.nouvelUtilisateur.email || !this.nouvelUtilisateur.mot_de_passe) {
       this.toastService.show('Champs obligatoires manquants', TypeErreurToast.WARNING);
+      return;
+    }
+
+    if (!this.estMotDePasseRobuste(this.nouvelUtilisateur.mot_de_passe)) {
+      this.toastService.show(
+        'Le mot de passe doit contenir 12 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial.',
+        TypeErreurToast.WARNING
+      );
       return;
     }
 

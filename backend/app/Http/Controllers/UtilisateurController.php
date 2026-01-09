@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Utilisateur;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 class UtilisateurController extends Controller
 {
     public function index()
@@ -26,13 +28,24 @@ class UtilisateurController extends Controller
     }
     public function store(Request $request)
     {
-        $utilisateur = Utilisateur::create($request->all());
+        $request->validate([
+            'mot_de_passe' => ['required', Password::min(8)],
+        ]);
+        $donnees = $request->all();
+
+        if (isset($donnees['mot_de_passe'])) {
+            $donnees['mot_de_passe'] = Hash::make($donnees['mot_de_passe']);
+        }
+
+        $utilisateur = Utilisateur::create($donnees);
+
         if ($utilisateur) {
             return response()->json($utilisateur, 201);
         } else {
             return response()->json(['message' => 'Erreur lors de la création de l\'utilisateur'], 500);
         }
     }
+    
     public function update(Request $request, $id)
     {
         $utilisateur = Utilisateur::find($id);
