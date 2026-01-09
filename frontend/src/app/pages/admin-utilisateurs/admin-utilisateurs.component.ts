@@ -8,11 +8,12 @@ import { ToastService } from '../../services/Toast/toast.service';
 import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { RoleUtilisateur } from '../../enums/RoleUtilisateur/role-utilisateur';
 import { StatutCompte } from '../../enums/StatutCompte/statut-compte';
+import { AlertComponent } from '../../components/alert/alert.component';
 
 @Component({
   selector: 'app-admin-utilisateurs',
   standalone: true,
-  imports: [CommonModule, SpinnerComponent, FormsModule],
+  imports: [CommonModule, SpinnerComponent, FormsModule, AlertComponent],
   templateUrl: './admin-utilisateurs.component.html',
   styleUrls: ['./admin-utilisateurs.component.css']
 })
@@ -25,6 +26,8 @@ export class AdminGestionUtilisateursComponent implements OnInit {
 
   idEnEdition: number | null = null;
   utilisateurOriginal: Utilisateur | null = null;
+
+  idUtilisateurASupprimer: number | null = null; // Pour gérer l'affichage de l'alerte quand on demande a supprimer
 
   modeCreation: boolean = false;
   nouvelUtilisateur: Utilisateur = this.creerUtilisateurVide();
@@ -148,6 +151,33 @@ export class AdminGestionUtilisateursComponent implements OnInit {
 
   reinitialiserNouvelUtilisateur(): void {
     this.nouvelUtilisateur = this.creerUtilisateurVide();
+  }
+
+  demanderSuppression(id: number): void {
+    this.idUtilisateurASupprimer = id;
+  }
+
+  confirmerSuppression(): void {
+    if (this.idUtilisateurASupprimer !== null) {
+      const id = this.idUtilisateurASupprimer;
+
+      this.utilisateurService.deleteUtilisateur(id).subscribe({
+        next: (reponse: any) => {
+          this.utilisateurs = this.utilisateurs.filter(u => u.id_utilisateur !== id);
+          this.toastService.show(reponse.message, TypeErreurToast.SUCCESS);
+
+          this.idUtilisateurASupprimer = null;
+        },
+        error: () => {
+          this.toastService.show('Erreur suppression', TypeErreurToast.ERROR);
+          this.idUtilisateurASupprimer = null;
+        }
+      });
+    }
+  }
+
+  annulerSuppression(): void {
+    this.idUtilisateurASupprimer = null;
   }
 
   supprimerUtilisateur(id: number): void {
