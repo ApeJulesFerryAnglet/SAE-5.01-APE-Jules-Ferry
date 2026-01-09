@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
 use Illuminate\Http\Request;
 use App\Models\Utilisateur;
 class UtilisateurController extends Controller
@@ -52,5 +53,17 @@ class UtilisateurController extends Controller
         } else {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
+    }
+    public function updatePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = Utilisateur::findOrFail($id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->noContent();
     }
 }

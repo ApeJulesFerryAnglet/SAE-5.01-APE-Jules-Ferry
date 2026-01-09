@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-
+Route::patch('utilisateurs/{id}/mot-de-passe', [UtilisateurController::class, 'updatePassword']);
 Route::apiResource('actualites', ActualiteController::class);
 Route::apiResource('creneaux', CreneauController::class);
 Route::apiResource('evenements', EvenementController::class);

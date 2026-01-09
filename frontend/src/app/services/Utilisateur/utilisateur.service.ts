@@ -35,4 +35,7 @@ export class UtilisateurService {
   deleteUtilisateur(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/utilisateurs/${id}`);
   }
+  updatePassword(id: number, motDePasse: string): Observable<Utilisateur> {
+    return this.http.patch<Utilisateur>(`${environment.apiUrl}/utilisateurs/${id}/mot-de-passe`, { motDePasse });
+  }
 }

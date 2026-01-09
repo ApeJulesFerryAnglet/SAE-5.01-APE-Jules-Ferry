@@ -55,7 +55,16 @@ export class CompteUtilisateurComponent {
     this.resetKey++;
   }
   onMdpSubmitted(payload: { motDePasse: string }): void {
-    //Faire la transimission au service => backend
+    this.utilisateurService.updatePassword(this.currentUser!.id_utilisateur, payload.motDePasse).subscribe({
+      next: () => {
+        console.log('Mot de passe mis à jour avec succès');
+        this.modifierMdp = false;
+        this.resetKey++;
+      },
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du mot de passe', error);
+      }
+    });
   }
   onMdpCancelled(): void {
     this.modifierMdp = false;
