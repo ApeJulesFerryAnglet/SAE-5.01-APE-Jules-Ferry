@@ -27,15 +27,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   utilisateurOriginal: Utilisateur | null = null;
 
   modeCreation: boolean = false;
-  nouvelUtilisateur: Utilisateur = {
-    id_utilisateur: 0,
-    nom: '',
-    prenom: '',
-    email: '',
-    mot_de_passe: '',
-    role: RoleUtilisateur.parent,
-    statut_compte: StatutCompte.actif
-  };
+  nouvelUtilisateur: Utilisateur = this.creerUtilisateurVide();
 
   RoleUtilisateur = RoleUtilisateur;
   StatutCompte = StatutCompte;
@@ -45,6 +37,18 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   @ViewChild('bottomAnchor') bottomAnchor!: ElementRef;
 
   constructor() { }
+
+  private creerUtilisateurVide(): Utilisateur {
+    return {
+      id_utilisateur: 0,
+      nom: '',
+      prenom: '',
+      email: '',
+      mot_de_passe: '',
+      role: RoleUtilisateur.parent,
+      statut_compte: StatutCompte.actif
+    };
+  }
 
   ngOnInit(): void {
     this.chargerUtilisateurs();
@@ -130,15 +134,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   }
 
   reinitialiserNouvelUtilisateur(): void {
-    this.nouvelUtilisateur = {
-      id_utilisateur: 0,
-      nom: '',
-      prenom: '',
-      email: '',
-      mot_de_passe: '',
-      role: RoleUtilisateur.parent,
-      statut_compte: StatutCompte.actif
-    };
+    this.nouvelUtilisateur = this.creerUtilisateurVide();
   }
 
   supprimerUtilisateur(id: number): void {
