@@ -34,7 +34,7 @@ export class CalendrierComponent implements OnInit {
   isLoading = true;
   errorMessage: string | null = null;
   
-  calendarState: 'compact' | 'expanded' | 'closed' = 'compact';
+  calendarState: 'compact' | 'expanded' | 'closed' = 'closed';
   
   // Détection du mode mobile selon la largeur de la fenêtre
   private isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -177,7 +177,7 @@ export class CalendrierComponent implements OnInit {
   }
 
   openCalendar(): void {
-    this.calendarState = 'compact';
+    this.calendarState = 'expanded';
   }
 
   // Gestion du redimensionnement de la fenêtre
