@@ -217,9 +217,9 @@ export class AdminGestionUtilisateursComponent implements OnInit {
     const id = this.idUtilisateurASupprimer;
 
     this.utilisateurService.deleteUtilisateur(id).subscribe({
-      next: () => {
+      next: (data) => {
         this.utilisateurs = this.utilisateurs.filter(u => u.id_utilisateur !== id);
-        this.toastService.show('Utilisateur supprimé', TypeErreurToast.SUCCESS);
+        this.toastService.show(data.message, TypeErreurToast.SUCCESS);
         this.idUtilisateurASupprimer = null;
       },
       error: () => {

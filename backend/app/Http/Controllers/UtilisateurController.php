@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Utilisateur;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 class UtilisateurController extends Controller
 {
@@ -32,10 +31,6 @@ class UtilisateurController extends Controller
             'mot_de_passe' => ['required', Password::min(8)],
         ]);
         $donnees = $request->all();
-
-        if (isset($donnees['mot_de_passe'])) {
-            $donnees['mot_de_passe'] = Hash::make($donnees['mot_de_passe']);
-        }
 
         $utilisateur = Utilisateur::create($donnees);
 
