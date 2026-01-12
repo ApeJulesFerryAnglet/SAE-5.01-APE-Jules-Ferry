@@ -12,23 +12,24 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
   templateUrl: './evenement-edit.component.html',
 })
 export class EvenementEditComponent implements OnInit {
-    imageError: string | null = null;
+  imageError: string | null = null;
+  selectedImageFile: File | null = null;
 
-    onImageFileChange(event: Event): void {
-      this.imageError = null;
-      const input = event.target as HTMLInputElement;
-      if (!input.files || input.files.length === 0) {
-        this.evenementForm.patchValue({ image_url: '' });
-        return;
-      }
-      const file = input.files[0];
-      if (file.type !== 'image/webp' && !file.name.endsWith('.webp')) {
-        this.imageError = 'Seuls les fichiers WebP convertis sont autorisés.';
-        this.evenementForm.patchValue({ image_url: '' });
-        return;
-      }
-      this.evenementForm.patchValue({ image_url: file.name });
+  onImageFileChange(event: Event): void {
+    this.imageError = null;
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      this.selectedImageFile = null;
+      return;
     }
+    const file = input.files[0];
+    if (file.type !== 'image/webp' && !file.name.endsWith('.webp')) {
+      this.imageError = 'Seuls les fichiers WebP convertis sont autorisés.';
+      this.selectedImageFile = null;
+      return;
+    }
+    this.selectedImageFile = file;
+  }
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -49,7 +50,7 @@ export class EvenementEditComponent implements OnInit {
       heure_debut: ['', [Validators.required]],
       heure_fin: ['', [Validators.required]],
       lieu: ['', [Validators.required, Validators.maxLength(255)]],
-      image_url: ['', [Validators.maxLength(255)]],
+      // image_url retiré du formControl, géré par fichier
     });
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
@@ -86,10 +87,16 @@ export class EvenementEditComponent implements OnInit {
     if (this.evenementForm.invalid) return;
 
     this.saving = true;
-    const body = this.evenementForm.value;
+    const formData = new FormData();
+    Object.entries(this.evenementForm.value).forEach(([key, value]) => {
+      formData.append(key, value as string);
+    });
+    if (this.selectedImageFile) {
+      formData.append('image', this.selectedImageFile);
+    }
 
     if (this.isEditMode && this.idEvenement) {
-      this.evenementService.updateEvenement(body, this.idEvenement).subscribe({
+      this.evenementService.updateEvenement(formData, this.idEvenement).subscribe({
         next: () => {
           this.saving = false;
           this.goBack();
@@ -100,7 +107,7 @@ export class EvenementEditComponent implements OnInit {
         }
       });
     } else {
-      this.evenementService.createEvenement(body).subscribe({
+      this.evenementService.createEvenement(formData).subscribe({
         next: () => {
           this.saving = false;
           this.goBack();

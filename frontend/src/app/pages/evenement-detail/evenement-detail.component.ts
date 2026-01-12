@@ -16,6 +16,11 @@ import { Location } from '@angular/common';
   styleUrl: './evenement-detail.component.css'
 })
 export class EvenementDetailComponent implements OnInit {
+    getImageUrl(image_url: string): string {
+      if (!image_url) return '';
+      if (image_url.startsWith('http')) return image_url;
+      return 'http://localhost:8000' + image_url;
+    }
   Date: Date = new Date();
   evenement !: Evenement;
   loadingEvenement: boolean = true;

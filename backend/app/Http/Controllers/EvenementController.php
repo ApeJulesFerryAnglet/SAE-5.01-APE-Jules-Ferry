@@ -33,7 +33,14 @@ class EvenementController extends Controller
         
         $data = $request->all();
         $data['id_auteur'] = $user->id_utilisateur;
-        
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = uniqid('event_') . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('evenements', $filename, 'public');
+            $data['image_url'] = '/storage/' . $path;
+        }
+
         $evenement = Evenement::create($data);
         if ($evenement) {
             return response()->json($evenement, 201);
@@ -49,7 +56,14 @@ class EvenementController extends Controller
         }
         $evenement = Evenement::find($id);
         if ($evenement) {
-            $evenement->update($request->all());
+            $data = $request->all();
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = uniqid('event_') . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('evenements', $filename, 'public');
+                $data['image_url'] = '/storage/' . $path;
+            }
+            $evenement->update($data);
             return response()->json($evenement);
         } else {
             return response()->json(['message' => 'Évènement non trouvé'], 404);

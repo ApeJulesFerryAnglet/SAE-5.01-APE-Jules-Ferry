@@ -33,7 +33,7 @@
 
     <div class="h-48 w-full bg-gray-200 relative">
         @if(image_url) {
-            <img [src]="image_url" [alt]="titre" class="w-full h-full object-cover" loading="lazy">
+            <img [src]="getImageUrl(image_url)" [alt]="titre" class="w-full h-full object-cover" loading="lazy">
         } @else {
             <div class="w-full h-full flex items-center justify-center bg-gray-100 opacity-50">
                 <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">

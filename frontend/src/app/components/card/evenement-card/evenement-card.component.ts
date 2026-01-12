@@ -14,6 +14,11 @@ import { EvenementService } from '../../../services/Evenement/evenement.service'
   styleUrl: './evenement-card.component.css'
 })
 export class EvenementCardComponent {
+    getImageUrl(image_url: string): string {
+      if (!image_url) return '';
+      if (image_url.startsWith('http')) return image_url;
+      return 'http://localhost:8000' + image_url;
+    }
   @Input() id_evenement!: number;
   @Input() titre!: string;
   @Input() description!: string;
