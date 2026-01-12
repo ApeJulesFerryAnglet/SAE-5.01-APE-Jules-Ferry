@@ -12,6 +12,23 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
   templateUrl: './evenement-edit.component.html',
 })
 export class EvenementEditComponent implements OnInit {
+    imageError: string | null = null;
+
+    onImageFileChange(event: Event): void {
+      this.imageError = null;
+      const input = event.target as HTMLInputElement;
+      if (!input.files || input.files.length === 0) {
+        this.evenementForm.patchValue({ image_url: '' });
+        return;
+      }
+      const file = input.files[0];
+      if (file.type !== 'image/webp' && !file.name.endsWith('.webp')) {
+        this.imageError = 'Seuls les fichiers WebP convertis sont autorisés.';
+        this.evenementForm.patchValue({ image_url: '' });
+        return;
+      }
+      this.evenementForm.patchValue({ image_url: file.name });
+    }
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
