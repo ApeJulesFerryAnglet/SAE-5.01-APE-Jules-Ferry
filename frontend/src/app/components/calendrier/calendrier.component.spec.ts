@@ -5,6 +5,7 @@ import { Evenement } from '../../models/Evenement/evenement';
 import { of, throwError } from 'rxjs';
 import { CalendarApi } from '@fullcalendar/core';
 import { StatutEvenement } from '../../enums/StatutEvenement/statut-evenement';
+import { EventClickArg } from '@fullcalendar/core';
 
 describe('CalendrierComponent', () => {
   let component: CalendrierComponent;
@@ -129,7 +130,13 @@ describe('CalendrierComponent', () => {
       component.loadEvenements();
 
       setTimeout(() => {
-        const calendarEvents = component.calendarOptions.events as any[];
+        const calendarEvents = component.calendarOptions.events as Array<{
+          id: string;
+          title: string;
+          start: string;
+          end: string;
+          extendedProps: { lieu: string };
+        }>;
         expect(calendarEvents.length).toBe(2);
         expect(calendarEvents[0].id).toBe('1');
         expect(calendarEvents[0].title).toBe('Réunion d\'équipe');
@@ -169,13 +176,13 @@ describe('CalendrierComponent', () => {
     });
 
     it('should select event when clicked', (done) => {
-      const mockEventClickArg = {
+      const mockEventClickArg: Partial<EventClickArg> = {
         event: {
           id: '1'
-        }
-      } as any;
+        } as EventClickArg['event']
+      };
 
-      component.handleEventClick(mockEventClickArg);
+      component.handleEventClick(mockEventClickArg as EventClickArg);
 
       setTimeout(() => {
         expect(component.selectedEvent).toBeTruthy();
@@ -186,13 +193,13 @@ describe('CalendrierComponent', () => {
     });
 
     it('should not select event if ID does not match', () => {
-      const mockEventClickArg = {
+      const mockEventClickArg: Partial<EventClickArg> = {
         event: {
           id: '999'
-        }
-      } as any;
+        } as EventClickArg['event']
+      };
 
-      component.handleEventClick(mockEventClickArg);
+      component.handleEventClick(mockEventClickArg as EventClickArg);
 
       expect(component.selectedEvent).toBeNull();
     });
@@ -321,7 +328,7 @@ describe('CalendrierComponent', () => {
   describe('Configuration du calendrier', () => {
     it('should have correct calendar plugins configured', () => {
       expect(component.calendarOptions.plugins).toBeTruthy();
-      expect((component.calendarOptions.locale as any)?.code || component.calendarOptions.locale).toBe('fr');
+      expect((component.calendarOptions.locale as { code: string })?.code || component.calendarOptions.locale).toBe('fr');
     });
 
     it('should have correct initial view settings', () => {
@@ -350,7 +357,7 @@ describe('CalendrierComponent', () => {
       setTimeout(() => {
         expect(component.eventsList.length).toBe(2);
         expect(component.isLoading).toBe(false);
-        expect((component.calendarOptions.events as any[]).length).toBe(2);
+        expect((component.calendarOptions.events as unknown[]).length).toBe(2);
         done();
       }, 0);
     });
@@ -369,10 +376,10 @@ describe('CalendrierComponent', () => {
         expect(component.calendarState).toBe('compact');
 
         // Cliquer sur un événement
-        const mockEventClickArg = {
-          event: { id: '1' }
-        } as any;
-        component.handleEventClick(mockEventClickArg);
+        const mockEventClickArg: Partial<EventClickArg> = {
+          event: { id: '1' } as EventClickArg['event']
+        };
+        component.handleEventClick(mockEventClickArg as EventClickArg);
 
         setTimeout(() => {
           expect(component.selectedEvent).toBeTruthy();
