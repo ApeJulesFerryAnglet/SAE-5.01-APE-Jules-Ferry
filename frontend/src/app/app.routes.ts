@@ -6,7 +6,7 @@ import { EvenementDetailComponent } from './pages/evenement-detail/evenement-det
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { guestGuard } from './guards/guest.guard';
-import { EvenementPageComponent } from './pages/evenement-page/evenement-page.component';
+// import { EvenementPageComponent } from './pages/evenement-page/evenement-page.component';
 import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [

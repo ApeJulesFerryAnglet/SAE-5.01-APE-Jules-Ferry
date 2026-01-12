@@ -45,7 +45,11 @@ class UtilisateurController extends Controller
     {
         $utilisateur = Utilisateur::find($id);
         if ($utilisateur) {
-            $utilisateur->update($request->all());
+            $donnees = $request->all();
+            if (empty($donnees['mot_de_passe'])) {
+                unset($donnees['mot_de_passe']);
+            }
+            $utilisateur->update($donnees);
             return response()->json($utilisateur);
         } else {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);

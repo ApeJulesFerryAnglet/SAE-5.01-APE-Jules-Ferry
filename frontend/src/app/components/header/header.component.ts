@@ -15,13 +15,11 @@ import { RoleUtilisateur } from '../../enums/RoleUtilisateur/role-utilisateur';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  menuOpen: boolean = false;
+  menuOpen = false;
   private readonly authService = inject(AuthService);
   currentUser: Utilisateur | null = null;
-  isAuthenticated: boolean = false;
+  isAuthenticated = false;
   roleUtilisateur = RoleUtilisateur;
-
-  constructor() { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {

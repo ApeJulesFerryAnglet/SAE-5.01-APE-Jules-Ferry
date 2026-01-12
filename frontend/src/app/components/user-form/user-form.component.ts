@@ -14,9 +14,9 @@ import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 })
 export class UserFormComponent implements OnInit {
     @Input() user?: Utilisateur;
-    @Input() isCreation: boolean = false;
+    @Input() isCreation = false;
     @Output() save = new EventEmitter<Utilisateur>();
-    @Output() cancel = new EventEmitter<void>();
+    @Output() cancelForm = new EventEmitter<void>();
 
     private fb = inject(FormBuilder);
     userForm!: FormGroup;

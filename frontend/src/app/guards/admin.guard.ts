@@ -6,7 +6,7 @@ import { map, take } from 'rxjs/operators';
 import { ToastService } from '../services/Toast/toast.service';
 import { TypeErreurToast } from '../enums/TypeErreurToast/type-erreur-toast';
 
-export const adminGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
   const toastService = inject(ToastService);

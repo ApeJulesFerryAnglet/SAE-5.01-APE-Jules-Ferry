@@ -46,7 +46,7 @@
 
             @for (user of utilisateursFiltres; track user.id_utilisateur) {
             @if (idEnEdition === user.id_utilisateur) {
-            <tr app-user-form [user]="user" (save)="validerEdition($event)" (cancel)="annulerEdition()">
+            <tr app-user-form [user]="user" (save)="validerEdition($event)" (cancelForm)="annulerEdition()">
             </tr>
             } @else {
             <tr>
@@ -124,7 +124,7 @@
             }
 
             @if (modeCreation) {
-            <tr app-user-form [isCreation]="true" (save)="validerCreation($event)" (cancel)="annulerCreation()"
+            <tr app-user-form [isCreation]="true" (save)="validerCreation($event)" (cancelForm)="annulerCreation()"
               class="bg-indigo-50 border-t-2 border-indigo-200 animate-pulse-soft">
             </tr>
             }

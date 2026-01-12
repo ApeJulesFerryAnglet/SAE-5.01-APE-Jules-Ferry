@@ -9,9 +9,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './alert.component.css'
 })
 export class AlertComponent {
-  @Input() message: string = 'Voulez-vous continuer ?';
-  @Input() texteBoutonValider: string = 'Valider';
-  @Input() texteBoutonAnnuler: string = 'Annuler';
+  @Input() message = 'Voulez-vous continuer ?';
+  @Input() texteBoutonValider = 'Valider';
+  @Input() texteBoutonAnnuler = 'Annuler';
 
   @Output() valider = new EventEmitter<void>();
   @Output() annuler = new EventEmitter<void>();

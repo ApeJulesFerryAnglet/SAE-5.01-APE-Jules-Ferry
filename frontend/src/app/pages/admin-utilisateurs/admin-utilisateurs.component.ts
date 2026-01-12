@@ -30,7 +30,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   idConnecte: number | null = null;
   idUtilisateurASupprimer: number | null = null; // Pour gérer l'affichage de l'alerte quand on demande a supprimer
 
-  modeCreation: boolean = false;
+  modeCreation = false;
 
 
   roleUtilisateur = RoleUtilisateur;
@@ -39,8 +39,6 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   listeStatuts = Object.values(StatutCompte);
 
   @ViewChild('bottomAnchor') bottomAnchor!: ElementRef;
-
-  constructor() { }
 
   private creerUtilisateurVide(): Utilisateur {
     return {
@@ -112,7 +110,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
 
   validerEdition(user: Utilisateur): void {
     this.utilisateurService.updateUtilisateur(user, user.id_utilisateur).subscribe({
-      next: (updatedUser) => {
+      next: () => {
         this.toastService.show('Utilisateur modifié', TypeErreurToast.SUCCESS);
         this.idEnEdition = null;
         this.utilisateurOriginal = null;
