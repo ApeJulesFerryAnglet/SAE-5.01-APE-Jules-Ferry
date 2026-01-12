@@ -16,6 +16,7 @@
     --error-color:#D32F2F;
     --black-text-color:#1F2937;
     --gray-text-color: #6B7280;
+    --modal-overlay: #4b5563;
 }
 @layer base {
   app-root {

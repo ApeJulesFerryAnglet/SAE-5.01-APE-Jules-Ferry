@@ -1,4 +1,4 @@
-<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 transition-opacity">
+<div class="fixed inset-0 bg-[var(--modal-overlay)]/50 flex items-center justify-center z-50 transition-opacity">
 
     <div class="bg-[#FFFBF0] rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all scale-100">
 
@@ -14,7 +14,7 @@
             </button>
 
             <button (click)="onAnnuler()"
-                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full shadow-md transition-colors duration-200 font-medium">
+                class="bg-[var(--success-color)] hover:bg-[var(--secondary-green)] text-white px-6 py-2 rounded-full shadow-md transition-colors duration-200 font-medium">
                 {{ texteBoutonAnnuler }}
             </button>
 
