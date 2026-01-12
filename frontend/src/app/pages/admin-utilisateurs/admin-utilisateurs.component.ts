@@ -32,7 +32,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   modeCreation: boolean = false;
   nouvelUtilisateur: Utilisateur = this.creerUtilisateurVide();
 
-  RoleUtilisateur = RoleUtilisateur;
+  roleUtilisateur = RoleUtilisateur;
   StatutCompte = StatutCompte;
   listeRoles = Object.values(RoleUtilisateur);
   listeStatuts = Object.values(StatutCompte);

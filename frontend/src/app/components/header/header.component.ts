@@ -19,9 +19,9 @@ export class HeaderComponent implements OnInit {
   private readonly authService = inject(AuthService);
   currentUser: Utilisateur | null = null;
   isAuthenticated: boolean = false;
-  RoleUtilisateur = RoleUtilisateur;
+  roleUtilisateur = RoleUtilisateur;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {

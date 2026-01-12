@@ -13,8 +13,6 @@ export class AlertComponent {
   @Input() texteBoutonValider: string = 'Valider';
   @Input() texteBoutonAnnuler: string = 'Annuler';
 
-  @Input() couleurBoutonValider: string = 'bg-red-600 hover:bg-red-700';
-
   @Output() valider = new EventEmitter<void>();
   @Output() annuler = new EventEmitter<void>();
 

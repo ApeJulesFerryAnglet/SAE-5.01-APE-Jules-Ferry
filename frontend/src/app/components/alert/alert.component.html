@@ -9,7 +9,7 @@
         <div class="flex justify-center gap-10">
 
             <button (click)="onValider()"
-                [class]="'text-white px-6 py-2 rounded-full shadow-md transition-colors duration-200 font-medium ' + couleurBoutonValider">
+                class="text-white px-6 py-2 rounded-full shadow-md transition-colors duration-200 font-medium bg-[var(--error-color)] hover:bg-[var(--error-dark-color)]">
                 {{ texteBoutonValider }}
             </button>
 

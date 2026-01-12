@@ -80,9 +80,9 @@
                 } @else {
                 <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                   [ngClass]="{
-                          'bg-purple-50 text-purple-700 ring-purple-700/10': user.role === RoleUtilisateur.administrateur, 
-                          'bg-blue-50 text-blue-700 ring-blue-700/10': user.role === RoleUtilisateur.membre_bureau,
-                          'bg-gray-50 text-gray-600 ring-gray-500/10': user.role === RoleUtilisateur.parent
+                          'bg-purple-50 text-purple-700 ring-purple-700/10': user.role === roleUtilisateur.administrateur, 
+                          'bg-blue-50 text-blue-700 ring-blue-700/10': user.role === roleUtilisateur.membre_bureau,
+                          'bg-gray-50 text-gray-600 ring-gray-500/10': user.role === roleUtilisateur.parent
                         }">
                   {{ user.role }}
                 </span>

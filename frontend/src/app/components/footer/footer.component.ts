@@ -14,10 +14,10 @@ import { Observable } from 'rxjs';
 })
 export class FooterComponent implements OnInit {
   utilisateurCourant!: Observable<Utilisateur | null>;
-  RoleUtilisateur = RoleUtilisateur;
+  roleUtilisateur = RoleUtilisateur;
 
   utilisateurService = inject(UtilisateurService);
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.utilisateurCourant = this.utilisateurService.utilisateurCourant;

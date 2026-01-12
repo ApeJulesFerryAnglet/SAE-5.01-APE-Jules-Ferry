@@ -25,7 +25,7 @@
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">Newsletter</a>
         <a routerLink="/contact" class="text-[var(--black-text-color)]"
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">Contact</a>
-        @if(isAuthenticated && currentUser?.role === RoleUtilisateur.administrateur) {
+        @if(isAuthenticated && currentUser?.role === roleUtilisateur.administrateur) {
         <a routerLink="/admin/utilisateurs" class="text-[var(--black-text-color)]"
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">
           Administration
@@ -87,7 +87,7 @@
       <a routerLink="/contact" (click)="closeMenu()"
         routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
         class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Contact</a>
-      @if(isAuthenticated && currentUser?.role === RoleUtilisateur.administrateur) {
+      @if(isAuthenticated && currentUser?.role === roleUtilisateur.administrateur) {
       <a routerLink="/admin/utilisateurs" (click)="closeMenu()"
         routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
         class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Administration</a>
