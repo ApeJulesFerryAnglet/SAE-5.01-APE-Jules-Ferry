@@ -11,6 +11,7 @@ describe('CalendrierComponent', () => {
   let fixture: ComponentFixture<CalendrierComponent>;
   let evenementService: jasmine.SpyObj<EvenementService>;
 
+  // Mock data
   const mockEvenements: Evenement[] = [
     {
       id_evenement: 1,
@@ -53,6 +54,7 @@ describe('CalendrierComponent', () => {
     component = fixture.componentInstance;
   });
 
+  //Test création du composant et initialisation des propriétés
   describe('Initialisation du composant', () => {
     it('should create', () => {
       expect(component).toBeTruthy();
@@ -76,6 +78,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour le chargement des événements et gestion des erreurs
   describe('Chargement des événements', () => {
     it('should load evenements successfully', (done) => {
       evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
@@ -138,6 +141,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour le formatage des dates
   describe('Formatage des dates', () => {
     it('should format event date correctly', () => {
       const date = new Date('2026-01-15');
@@ -156,6 +160,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour la gestion des clics sur les événements
   describe('Gestion des clics sur événements', () => {
     beforeEach(() => {
       evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
@@ -201,6 +206,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour la gestion de l'état du calendrier
   describe('Gestion de l\'état du calendrier', () => {
     it('should expand calendar', () => {
       component.calendarState = 'compact';
@@ -235,6 +241,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour la gestion du redimensionnement
   describe('Gestion du redimensionnement', () => {
     it('should handle window resize', () => {
       const mockCalendarApi = {
@@ -310,6 +317,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests pour la configuration du calendrier
   describe('Configuration du calendrier', () => {
     it('should have correct calendar plugins configured', () => {
       expect(component.calendarOptions.plugins).toBeTruthy();
@@ -333,6 +341,7 @@ describe('CalendrierComponent', () => {
     });
   });
 
+  //Tests d'intégration complète
   describe('Intégration complète', () => {
     it('should load events and display calendar correctly', (done) => {
       evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
