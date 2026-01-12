@@ -16,14 +16,14 @@ describe('CalendrierComponent', () => {
   const mockEvenements: Evenement[] = [
     {
       id_evenement: 1,
-      titre: 'Réunion d\'équipe',
+      titre: "Réunion d'équipe",
       description: 'Réunion mensuelle',
       date_evenement: new Date('2026-01-15'),
       heure_debut: '10:00',
       heure_fin: '11:00',
       lieu: 'Salle A',
       image_url: 'image1.jpg',
-      statut: StatutEvenement.publie
+      statut: StatutEvenement.publie,
     },
     {
       id_evenement: 2,
@@ -34,23 +34,23 @@ describe('CalendrierComponent', () => {
       heure_fin: '16:00',
       lieu: 'Salle B',
       image_url: 'image2.jpg',
-      statut: StatutEvenement.publie
-    }
+      statut: StatutEvenement.publie,
+    },
   ];
 
   beforeEach(async () => {
     const evenementServiceSpy = jasmine.createSpyObj('EvenementService', [
-      'getAllEvenements'
+      'getAllEvenements',
     ]);
 
     await TestBed.configureTestingModule({
       imports: [CalendrierComponent],
-      providers: [
-        { provide: EvenementService, useValue: evenementServiceSpy }
-      ]
+      providers: [{ provide: EvenementService, useValue: evenementServiceSpy }],
     }).compileComponents();
 
-    evenementService = TestBed.inject(EvenementService) as jasmine.SpyObj<EvenementService>;
+    evenementService = TestBed.inject(
+      EvenementService
+    ) as jasmine.SpyObj<EvenementService>;
     fixture = TestBed.createComponent(CalendrierComponent);
     component = fixture.componentInstance;
   });
@@ -95,13 +95,17 @@ describe('CalendrierComponent', () => {
 
     it('should handle error when loading evenements', (done) => {
       const error = new Error('API error');
-      evenementService.getAllEvenements.and.returnValue(throwError(() => error));
-      
+      evenementService.getAllEvenements.and.returnValue(
+        throwError(() => error)
+      );
+
       component.loadEvenements();
 
       setTimeout(() => {
         expect(component.isLoading).toBe(false);
-        expect(component.errorMessage).toBe('Impossible de charger les événements.');
+        expect(component.errorMessage).toBe(
+          'Impossible de charger les événements.'
+        );
         expect(component.eventsList.length).toBe(0);
         done();
       }, 0);
@@ -110,18 +114,18 @@ describe('CalendrierComponent', () => {
     it('should set isLoading to false after loading evenements', () => {
       evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
       component.isLoading = true;
-      
+
       component.loadEvenements();
-      
+
       expect(component.isLoading).toBe(false);
     });
 
     it('should clear error message when loading new evenements', () => {
       component.errorMessage = 'Previous error';
       evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
-      
+
       component.loadEvenements();
-      
+
       expect(component.errorMessage).toBeNull();
     });
 
@@ -130,16 +134,16 @@ describe('CalendrierComponent', () => {
       component.loadEvenements();
 
       setTimeout(() => {
-        const calendarEvents = component.calendarOptions.events as Array<{
+        const calendarEvents = component.calendarOptions.events as {
           id: string;
           title: string;
           start: string;
           end: string;
           extendedProps: { lieu: string };
-        }>;
+        }[];
         expect(calendarEvents.length).toBe(2);
         expect(calendarEvents[0].id).toBe('1');
-        expect(calendarEvents[0].title).toBe('Réunion d\'équipe');
+        expect(calendarEvents[0].title).toBe("Réunion d'équipe");
         expect(calendarEvents[0].start).toContain('2026-01-15T10:00');
         expect(calendarEvents[0].end).toContain('2026-01-15T11:00');
         expect(calendarEvents[0].extendedProps.lieu).toBe('Salle A');
@@ -178,8 +182,8 @@ describe('CalendrierComponent', () => {
     it('should select event when clicked', (done) => {
       const mockEventClickArg: Partial<EventClickArg> = {
         event: {
-          id: '1'
-        } as EventClickArg['event']
+          id: '1',
+        } as EventClickArg['event'],
       };
 
       component.handleEventClick(mockEventClickArg as EventClickArg);
@@ -187,7 +191,7 @@ describe('CalendrierComponent', () => {
       setTimeout(() => {
         expect(component.selectedEvent).toBeTruthy();
         expect(component.selectedEvent?.id_evenement).toBe(1);
-        expect(component.selectedEvent?.titre).toBe('Réunion d\'équipe');
+        expect(component.selectedEvent?.titre).toBe("Réunion d'équipe");
         done();
       }, 100);
     });
@@ -195,8 +199,8 @@ describe('CalendrierComponent', () => {
     it('should not select event if ID does not match', () => {
       const mockEventClickArg: Partial<EventClickArg> = {
         event: {
-          id: '999'
-        } as EventClickArg['event']
+          id: '999',
+        } as EventClickArg['event'],
       };
 
       component.handleEventClick(mockEventClickArg as EventClickArg);
@@ -206,44 +210,44 @@ describe('CalendrierComponent', () => {
 
     it('should close event details', () => {
       component.selectedEvent = mockEvenements[0];
-      
+
       component.closeEventDetails();
-      
+
       expect(component.selectedEvent).toBeNull();
     });
   });
 
   //Tests pour la gestion de l'état du calendrier
-  describe('Gestion de l\'état du calendrier', () => {
+  describe("Gestion de l'état du calendrier", () => {
     it('should expand calendar', () => {
       component.calendarState = 'compact';
-      
+
       component.expandCalendar();
-      
+
       expect(component.calendarState).toBe('expanded');
     });
 
     it('should collapse calendar', () => {
       component.calendarState = 'expanded';
-      
+
       component.collapseCalendar();
-      
+
       expect(component.calendarState).toBe('compact');
     });
 
     it('should close calendar', () => {
       component.calendarState = 'expanded';
-      
+
       component.closeCalendar();
-      
+
       expect(component.calendarState).toBe('closed');
     });
 
     it('should open calendar', () => {
       component.calendarState = 'closed';
-      
+
       component.openCalendar();
-      
+
       expect(component.calendarState).toBe('expanded');
     });
   });
@@ -254,13 +258,13 @@ describe('CalendrierComponent', () => {
       const mockCalendarApi = {
         setOption: jasmine.createSpy('setOption'),
         view: { type: 'dayGridMonth' },
-        changeView: jasmine.createSpy('changeView')
+        changeView: jasmine.createSpy('changeView'),
       } as unknown as CalendarApi;
 
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
-        value: 1024
+        value: 1024,
       });
       component['isMobile'] = false;
 
@@ -273,13 +277,13 @@ describe('CalendrierComponent', () => {
       const mockCalendarApi = {
         setOption: jasmine.createSpy('setOption'),
         view: { type: 'dayGridMonth' },
-        changeView: jasmine.createSpy('changeView')
+        changeView: jasmine.createSpy('changeView'),
       } as unknown as CalendarApi;
 
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
-        value: 1024
+        value: 1024,
       });
 
       component['isMobile'] = true;
@@ -290,7 +294,7 @@ describe('CalendrierComponent', () => {
         jasmine.objectContaining({
           left: jasmine.any(String),
           center: 'title',
-          right: jasmine.any(String)
+          right: jasmine.any(String),
         })
       );
     });
@@ -299,15 +303,15 @@ describe('CalendrierComponent', () => {
       const mockCalendarApi = {
         setOption: jasmine.createSpy('setOption'),
         view: {
-          type: 'dayGridMonth'
+          type: 'dayGridMonth',
         },
-        changeView: jasmine.createSpy('changeView')
+        changeView: jasmine.createSpy('changeView'),
       } as unknown as CalendarApi;
 
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
-        value: 500
+        value: 500,
       });
 
       component['isMobile'] = false;
@@ -318,7 +322,7 @@ describe('CalendrierComponent', () => {
         jasmine.objectContaining({
           left: '',
           center: 'title',
-          right: ''
+          right: '',
         })
       );
     });
@@ -328,7 +332,10 @@ describe('CalendrierComponent', () => {
   describe('Configuration du calendrier', () => {
     it('should have correct calendar plugins configured', () => {
       expect(component.calendarOptions.plugins).toBeTruthy();
-      expect((component.calendarOptions.locale as { code: string })?.code || component.calendarOptions.locale).toBe('fr');
+      expect(
+        (component.calendarOptions.locale as { code: string })?.code ||
+          component.calendarOptions.locale
+      ).toBe('fr');
     });
 
     it('should have correct initial view settings', () => {
@@ -377,7 +384,7 @@ describe('CalendrierComponent', () => {
 
         // Cliquer sur un événement
         const mockEventClickArg: Partial<EventClickArg> = {
-          event: { id: '1' } as EventClickArg['event']
+          event: { id: '1' } as EventClickArg['event'],
         };
         component.handleEventClick(mockEventClickArg as EventClickArg);
 
