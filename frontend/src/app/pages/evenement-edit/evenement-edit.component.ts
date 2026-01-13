@@ -23,8 +23,8 @@ export class EvenementEditComponent implements OnInit {
       return;
     }
     const file = input.files[0];
-    if (file.type !== 'image/webp' && !file.name.endsWith('.webp')) {
-      this.imageError = 'Seuls les fichiers WebP convertis sont autorisés.';
+    if (!file.type.startsWith('image/')) {
+      this.imageError = 'Seuls les fichiers images sont autorisés.';
       this.selectedImageFile = null;
       return;
     }
@@ -50,7 +50,7 @@ export class EvenementEditComponent implements OnInit {
       heure_debut: ['', [Validators.required]],
       heure_fin: ['', [Validators.required]],
       lieu: ['', [Validators.required, Validators.maxLength(255)]],
-      // image_url retiré du formControl, géré par fichier
+      image_url: [''],
     });
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
@@ -122,6 +122,5 @@ export class EvenementEditComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/evenements']);
-    // Si vous souhaitez utiliser location.back() à la place, injectez Location et utilisez : this.location.back();
   }
 }

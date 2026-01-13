@@ -25,15 +25,17 @@ export class EvenementDetailComponent implements OnInit {
   evenement !: Evenement;
   loadingEvenement: boolean = true;
   errorEvenement : boolean = false;
-  private readonly services = {
+  private readonly appServices = {
     evenement: inject(EvenementService),
-    route: inject(ActivatedRoute),
-    location: inject(Location),
     auth: inject(AuthService)
   };
+  private readonly angularServices = {
+    route: inject(ActivatedRoute),
+    location: inject(Location)
+  };
   ngOnInit(): void {
-    const id = Number(this.services.route.snapshot.paramMap.get('id'));
-    this.services.evenement.getEvenementById(id).subscribe({
+    const id = Number(this.angularServices.route.snapshot.paramMap.get('id'));
+    this.appServices.evenement.getEvenementById(id).subscribe({
       next: (data) => {
         this.evenement = data;
         this.loadingEvenement = false;
@@ -49,6 +51,6 @@ export class EvenementDetailComponent implements OnInit {
     return new Date(date).toLocaleDateString('fr-FR');
   }
   goBack(): void {
-    this.services.location.back();
+    this.angularServices.location.back();
   }
 }
