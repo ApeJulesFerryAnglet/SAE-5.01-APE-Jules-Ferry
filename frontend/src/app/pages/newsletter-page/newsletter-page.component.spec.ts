@@ -16,7 +16,7 @@ export class NewsletterPageComponent {
   private readonly newsletterService = inject(NewsletterService);
   private readonly toastService = inject(ToastService);
   
-  emailNewsletter: string = '';
+  emailNewsletter = "";
 
   /**
    * Logique de soumission de l'inscription
@@ -31,7 +31,7 @@ export class NewsletterPageComponent {
     this.newsletterService.subscribe({ email: this.emailNewsletter }).subscribe({
       next: (response) => {
         this.toastService.show(response.message, TypeErreurToast.SUCCESS);
-        this.emailNewsletter = ''; 
+        this.emailNewsletter = ""; 
       },
       error: (err) => {
         const msg = err.error?.errors?.email?.[0] || "Erreur lors de l'inscription.";
