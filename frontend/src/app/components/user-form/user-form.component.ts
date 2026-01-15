@@ -6,11 +6,10 @@ import { StatutCompte } from '../../enums/StatutCompte/statut-compte';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 
 @Component({
-    selector: '[app-user-form]',
+    selector: 'app-user-form',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule],
-    templateUrl: './user-form.component.html',
-    styleUrls: ['./user-form.component.css']
+    templateUrl: './user-form.component.html'
 })
 export class UserFormComponent implements OnInit {
     @Input() user?: Utilisateur;
