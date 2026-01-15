@@ -4,11 +4,9 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { adminGuard } from './guards/admin.guard';
 import { guestGuard } from './guards/guest.guard';
-// import { EvenementPageComponent } from './pages/evenement-page/evenement-page.component';
-import { adminGuard } from './guards/admin.guard';
+
 
 export const routes: Routes = [
-    { path: '', component: AccueilComponent },
     {
         path: 'login',
         component: LoginComponent,
@@ -30,5 +28,9 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/evenement-edit/evenement-edit.component').then(m => m.EvenementEditComponent),
         canActivate: [adminGuard]
     },
-    { path: 'admin/utilisateurs', loadComponent: () => import('./pages/admin-utilisateurs/admin-utilisateurs.component').then(m => m.AdminGestionUtilisateursComponent), canActivate: [adminGuard] },
+    { 
+        path: 'admin/utilisateurs', 
+        loadComponent: () => import('./pages/admin-utilisateurs/admin-utilisateurs.component').then(m => m.AdminGestionUtilisateursComponent), 
+        canActivate: [adminGuard] 
+    },
 ];
