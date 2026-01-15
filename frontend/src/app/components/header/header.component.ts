@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/Auth/auth.service';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
+import { RoleUtilisateur } from '../../enums/RoleUtilisateur/role-utilisateur';
 
 @Component({
   selector: 'app-header',
@@ -13,13 +14,12 @@ import { Utilisateur } from '../../models/Utilisateur/utilisateur';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  menuOpen: boolean = false;
+  menuOpen = false;
   private readonly authService = inject(AuthService);
   
   currentUser: Utilisateur | null = null;
-  isAuthenticated: boolean = false;
-
-  constructor() {}
+  isAuthenticated = false;
+  roleUtilisateur = RoleUtilisateur;
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {

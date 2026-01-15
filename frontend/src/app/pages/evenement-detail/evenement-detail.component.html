@@ -4,7 +4,6 @@
     </div>
 
 } @else if (this.errorEvenement) {
-<app-erreur-modale [messageErreur]="'Une erreur est survenue lors de la demande d\'accès à cet événement'"></app-erreur-modale>
 
 
 } @else {
@@ -21,7 +20,7 @@
             
             <div class="h-64 md:h-96 w-full relative overflow-hidden bg-gray-100">
                 @if(evenement.image_url) {
-                    <img [src]="evenement.image_url" [alt]="evenement.titre" class="w-full h-full object-cover">
+                    <img [src]="getImageUrl(evenement.image_url)" [alt]="evenement.titre" class="w-full h-full object-cover">
                 } @else {
                     <div class="flex items-center justify-center h-full text-gray-400">
                         <span class="text-lg italic">Aucune image disponible</span>
@@ -65,7 +64,6 @@
                        <!-- récup l'id organisateur pour avoir l'organisateur -->
                    </div>
                 </div>
-
             </div>
         </article>
     </div>
