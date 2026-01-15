@@ -137,7 +137,20 @@
                     </div>
 
                     @if (showInscriptionForm && formulaire) {
-                        
+                        <app-form-inscription-evenement 
+                            [mesCreneauxActuels]="mesCreneauxActuels"
+                            [formulaire]="formulaire"
+                            [loadingFormulaire]="loadingFormulaire"
+                            [errorFormulaire]="errorFormulaire"
+                            [isSubmitting]="isSubmitting"
+                            [inscriptionSuccess]="inscriptionSuccess"
+                            [inscriptionError]="inscriptionError"
+                            [isCreneauComplet]="isCreneauComplet.bind(this)"
+                            [getPlacesRestantes]="getPlacesRestantes.bind(this)"
+                            (formCancelled)="handleCancel()"
+                            (formSubmitted)="handleSubmit($event)"
+                            (closeForm)="toggleInscriptionForm()">
+                        </app-form-inscription-evenement>
                     }
 
                 } @else {

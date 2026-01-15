@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {  DatePipe, Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { Evenement } from '../../models/Evenement/evenement';
@@ -23,26 +23,23 @@ import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../
   styleUrl: './evenement-detail.component.css'
 })
 export class EvenementDetailComponent implements OnInit {
-  
-  // Données
-  evenement!: Evenement;
-  auteur: Utilisateur | undefined;
-  formulaire?: Formulaire;
-  
-  loadingEvenement = true;
-  loadingFormulaire = false;
-  errorEvenement = false;
-  errorAuteur = false;
-  errorFormulaire = false;
 
-  showInscriptionForm = false;
-  commentaire = '';
+  //Données pour le formulaire d'inscription
+  mesCreneauxActuels: Creneau[] = [];
+  loadingFormulaire = false;
+  errorFormulaire = false;
+  formulaire?: Formulaire;
   isSubmitting = false;
   inscriptionSuccess = false;
   inscriptionError: string | null = null;
+  evenement!: Evenement;
+  auteur: Utilisateur | undefined;
+  loadingEvenement = true;
+  errorEvenement = false;
+  errorAuteur = false;
+  showInscriptionForm = false;
 
-  mesCreneauxActuels: Creneau[] = [];
-
+  //injection de dependances
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly evenementService = inject(EvenementService);
   private readonly formulaireService = inject(FormulaireService);
@@ -63,14 +60,12 @@ export class EvenementDetailComponent implements OnInit {
       next: (data) => {
         this.evenement = data;
         this.loadingEvenement = false;
-        
-        if(this.evenement.id_auteur) {
-            this.utilisateurService.getUtilisateurById(this.evenement.id_auteur).subscribe({
-                next: (u) => this.auteur = u,
-                error: () => this.errorAuteur = true
-            });
+        if (this.evenement.id_auteur) {
+          this.utilisateurService.getUtilisateurById(this.evenement.id_auteur).subscribe({
+            next: (u) => this.auteur = u,
+            error: () => this.errorAuteur = true
+          });
         }
-
         if (this.evenement.id_formulaire) {
           this.loadFormulaire(this.evenement.id_formulaire);
         }
@@ -114,18 +109,12 @@ export class EvenementDetailComponent implements OnInit {
 
   calculerInscriptionsExistantes() {
     const user = this.authService.getCurrentUser();
-    
-    // (Logs supprimés pour la production)
-
     // verif formulaire et tâches existent avant de continuer
     if (!user || !this.formulaire || !this.formulaire.taches) return;
-
     this.mesCreneauxActuels = [];
-
     this.formulaire.taches.forEach(tache => {
       tache.creneaux?.forEach(creneau => {
         const estInscrit = creneau.inscriptions?.some(i => i.id_utilisateur === user.id_utilisateur);
-
         if (estInscrit) {
           creneau.est_inscrit = true;
           creneau.selected = true;
@@ -140,13 +129,12 @@ export class EvenementDetailComponent implements OnInit {
 
   toggleInscriptionForm() {
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login'], { 
+      this.router.navigate(['/login'], {
         queryParams: { returnUrl: `/evenements/${this.evenement.id_evenement}` }
       });
       return;
     }
     this.showInscriptionForm = !this.showInscriptionForm;
-    
     if (!this.showInscriptionForm) {
       this.inscriptionError = null;
       this.inscriptionSuccess = false;
@@ -165,49 +153,70 @@ export class EvenementDetailComponent implements OnInit {
     return creneau.quota - (creneau.inscriptions_count || 0);
   }
 
-  validerModification() {
+  validerModification(payload: InscriptionSubmitPayload) {
     if (!this.formulaire || !this.formulaire.taches) return;
-
+    // Set pour optimiser les recherches
+    const selectedSet = new Set(payload.creneauxSelectionnes);
     const ajouts: number[] = [];
     const suppressions: number[] = [];
-
     this.formulaire.taches.forEach(tache => {
       tache.creneaux?.forEach(creneau => {
-        if (!creneau.est_inscrit && creneau.selected) {
-           ajouts.push(creneau.id_creneau);
+        const isSelected = selectedSet.has(creneau.id_creneau);
+        const estInscrit = !!creneau.est_inscrit;
+        // pas inscrit + sélectionné => ajout
+        if (!estInscrit && isSelected) {
+          ajouts.push(creneau.id_creneau);
         }
-        if (creneau.est_inscrit && !creneau.selected) {
+        // inscrit + non sélectionné => suppression
+        if (estInscrit && !isSelected) {
           suppressions.push(creneau.id_creneau);
         }
       });
     });
-
     if (ajouts.length === 0 && suppressions.length === 0) {
       this.inscriptionError = "Aucune modification détectée.";
       return;
     }
-
     this.isSubmitting = true;
     this.inscriptionError = null;
     const requetes = [
-      ...ajouts.map(id => this.inscriptionService.createInscription({ 
-          id_creneau: id, 
-          commentaire: this.commentaire 
-      })),
-      ...suppressions.map(id => this.inscriptionService.deleteInscription(id))
+      ...ajouts.map(id =>
+        this.inscriptionService.createInscription({
+          id_creneau: id,
+          commentaire: payload.commentaire // commentaire qui vient du formulaire enfant de la page
+        })
+      ),
+      ...suppressions.map(id =>
+        this.inscriptionService.deleteInscription(id)
+      )
     ];
-
     forkJoin(requetes).subscribe({
       next: () => {
+        // update local immédiatement pour une meilleure UX
+        const selectedSet = new Set(payload.creneauxSelectionnes);
+        this.formulaire?.taches?.forEach(t => {
+          t.creneaux?.forEach(c => {
+            const was = !!c.est_inscrit;
+            const now = selectedSet.has(c.id_creneau);
+            if (!was && now) {
+              c.est_inscrit = true;
+              c.selected = true;
+              c.inscriptions_count = (c.inscriptions_count || 0) + 1;
+            }
+            if (was && !now) {
+              c.est_inscrit = false;
+              c.selected = false;
+              c.inscriptions_count = Math.max(0, (c.inscriptions_count || 0) - 1);
+            }
+          });
+        });
+        this.calculerInscriptionsExistantes(); // => met à jour mesCreneauxActuels
         this.inscriptionSuccess = true;
         this.isSubmitting = false;
+        this.showInscriptionForm = false;
+        // refresh de la page pour refléter les changements
         this.loadFormulaire(this.evenement.id_formulaire!);
-        
-        setTimeout(() => {
-          this.showInscriptionForm = false;
-          this.inscriptionSuccess = false;
-          this.commentaire = '';
-        }, 2000);
+        setTimeout(() => this.inscriptionSuccess = false, 2000);
       },
       error: (err) => {
         console.error(err);
@@ -219,5 +228,15 @@ export class EvenementDetailComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+  
+  handleCancel(): void {
+    this.toggleInscriptionForm();
+  }
+  
+  async handleSubmit(payload: InscriptionSubmitPayload): Promise<void> {
+    // payload.creneauxSelectionnes + payload.commentaire
+    // => appelez votre service puis mettez à jour success/error
+    this.validerModification(payload);
   }
 }

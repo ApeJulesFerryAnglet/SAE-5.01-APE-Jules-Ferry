@@ -5,7 +5,7 @@ import { SpinnerComponent } from "../../spinner/spinner.component";
 import { FormsModule } from '@angular/forms';
 
 export interface InscriptionSubmitPayload {
-  creneauxSelectionees: number[];
+  creneauxSelectionnes: number[];
   commentaire: string;
 }
 @Component({
@@ -16,7 +16,7 @@ export interface InscriptionSubmitPayload {
   styleUrl: './form-inscription-evenement.component.css'
 })
 export class FormInscriptionEvenementComponent {
-  @Input({ required: true }) mesCreneauxActuels: unknown[] = [];
+  @Input({ required: true }) mesCreneauxActuels: Creneau[] = [];
   @Input({ required: true }) formulaire!: Formulaire;
   @Input() loadingFormulaire = false;
   @Input() errorFormulaire = false;
@@ -28,26 +28,26 @@ export class FormInscriptionEvenementComponent {
   @Input() isCreneauComplet!: (c: Creneau) => boolean;
   @Input() getPlacesRestantes!: (c: Creneau) => number;
 
-  @Output() submitted = new EventEmitter<InscriptionSubmitPayload>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() formSubmitted = new EventEmitter<InscriptionSubmitPayload>();
+  @Output() formCancelled = new EventEmitter<void>();
 
   commentaire = '';
 
   onCancel() {
-    this.cancel.emit();
+    this.formCancelled.emit();
   }
 
   onSubmit() {
-    const creneauxSelectionees: number[] = [];
+    const creneauxSelectionnes: number[] = [];
     for (const tache of this.formulaire?.taches ?? []) {
       for (const c of tache.creneaux ?? []) {
         {
-          if (c.selected) creneauxSelectionees.push(c.id_creneau);
+          if (c.selected) creneauxSelectionnes.push(c.id_creneau);
         }
       }
     }
-    this.submitted.emit({
-      creneauxSelectionees,
+    this.formSubmitted.emit({
+      creneauxSelectionnes,
       commentaire: this.commentaire
     });
   }
