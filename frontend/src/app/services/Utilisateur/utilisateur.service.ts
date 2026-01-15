@@ -11,8 +11,6 @@ export class UtilisateurService {
   private utilisateurCourantSubject = new BehaviorSubject<Utilisateur | null>(null);
   utilisateurCourant = this.utilisateurCourantSubject.asObservable();
 
-  constructor() { }
-
   setUtilisateurCourant(utilisateur: Utilisateur | null) {
     this.utilisateurCourantSubject.next(utilisateur);
   }
@@ -32,7 +30,7 @@ export class UtilisateurService {
   updateUtilisateur(utilisateur: Utilisateur, id: number): Observable<Utilisateur> {
     return this.http.put<Utilisateur>(`${environment.apiUrl}/utilisateurs/${id}`, utilisateur);
   }
-  deleteUtilisateur(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/utilisateurs/${id}`);
+  deleteUtilisateur(id: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${environment.apiUrl}/utilisateurs/${id}`);
   }
 }
