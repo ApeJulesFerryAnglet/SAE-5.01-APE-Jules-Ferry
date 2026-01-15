@@ -13,11 +13,12 @@ import { UtilisateurService } from '../../services/Utilisateur/utilisateur.servi
 import { AuthService } from '../../services/Auth/auth.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { FormsModule } from '@angular/forms';
+import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../../components/forms/form-inscription-evenement/form-inscription-evenement.component';
 
 @Component({
   selector: 'app-evenement-detail',
   standalone: true,
-  imports: [SpinnerComponent, DatePipe, FormsModule],
+  imports: [SpinnerComponent, DatePipe, FormsModule, FormInscriptionEvenementComponent],
   templateUrl: './evenement-detail.component.html',
   styleUrl: './evenement-detail.component.css'
 })
