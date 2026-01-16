@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EvenementCardComponent } from './evenement-card.component';
-import { Router, ActivatedRoute, UrlTree } from '@angular/router'; // Ajout des imports
+import { Router, ActivatedRoute, UrlTree } from '@angular/router';
 import { EvenementService } from '../../../services/Evenement/evenement.service';
 import { AuthService } from '../../../services/Auth/auth.service';
 import { StatutEvenement } from '../../../enums/StatutEvenement/statut-evenement';
 import { RoleUtilisateur } from '../../../enums/RoleUtilisateur/role-utilisateur';
+import { Utilisateur } from '../../../models/Utilisateur/utilisateur';
 import { of, throwError } from 'rxjs';
 import { DatePipe } from '@angular/common';
 
@@ -95,7 +96,7 @@ describe('EvenementCardComponent', () => {
     it('should return true if user is membre_bureau AND is creator', () => {
       component.id_createur = 10;
       authService.hasRole.and.callFake(role => role === RoleUtilisateur.membre_bureau);
-      authService.getCurrentUser.and.returnValue({ id_utilisateur: 10 } as any);
+      authService.getCurrentUser.and.returnValue({ id_utilisateur: 10 } as unknown as Utilisateur);
 
       expect(component.canManage).toBe(true);
     });
@@ -103,7 +104,7 @@ describe('EvenementCardComponent', () => {
     it('should return false if user is membre_bureau BUT NOT creator', () => {
       component.id_createur = 10;
       authService.hasRole.and.callFake(role => role === RoleUtilisateur.membre_bureau);
-      authService.getCurrentUser.and.returnValue({ id_utilisateur: 99 } as any);
+      authService.getCurrentUser.and.returnValue({ id_utilisateur: 99 } as unknown as Utilisateur);
 
       expect(component.canManage).toBe(false);
     });
