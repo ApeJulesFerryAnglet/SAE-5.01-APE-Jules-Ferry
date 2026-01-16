@@ -3,24 +3,25 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.dev';
 import { Evenement } from '../../models/Evenement/evenement';
+
 @Injectable({
   providedIn: 'root'
 })
-export class EvenementService {
+export class EvennementService {
   private readonly http = inject(HttpClient);
-  getAllEvenements(): Observable<Evenement[]> {
+  getAllEvennements(): Observable<Evenement[]> {
     return this.http.get<Evenement[]>(`${environment.apiUrl}/evenements`);
   }
-  getEvenementById(id: number): Observable<Evenement> {
+  getEvennementById(id: number): Observable<Evenement> {
     return this.http.get<Evenement>(`${environment.apiUrl}/evenements/${id}`);
   }
-  createEvenement(evenement: Evenement | FormData): Observable<Evenement> {
-    return this.http.post<Evenement>(`${environment.apiUrl}/evenements`, evenement);
+  createEvennement(evennement: Evenement): Observable<Evenement> {
+    return this.http.post<Evenement>(`${environment.apiUrl}/evenements`, evennement);
   }
-  updateEvenement(evenement: Evenement | FormData, id: number): Observable<Evenement> {
-    return this.http.post<Evenement>(`${environment.apiUrl}/evenements/${id}?_method=PUT`, evenement);
+  updateEvennement(evennement: Evenement, id: number): Observable<Evenement> {
+    return this.http.put<Evenement>(`${environment.apiUrl}/evenements/${id}`, evennement);
   }
-  deleteEvenement(id: number): Observable<void> {
+  deleteEvennement(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/evenements/${id}`);
   }
 }
