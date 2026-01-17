@@ -10,7 +10,8 @@ class FormulaireController extends Controller
 {
     public function index()
     {
-        $formulaires = Formulaire::all();
+        $formulaires = Formulaire::with('taches.creneaux')->get();
+        
         if ($formulaires) {
             return response()->json($formulaires);
         } else {
