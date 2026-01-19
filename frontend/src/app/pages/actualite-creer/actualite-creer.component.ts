@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
+import { AuthService } from '../../services/Auth/auth.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 
 @Component({
@@ -15,42 +16,44 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
 export class ActualiteCreerComponent implements OnInit {
   imageError: string | null = null;
   selectedImageFile: File | null = null;
-
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly actualiteService = inject(ActualiteService);
+  private readonly authService = inject(AuthService);
 
   actualiteForm!: FormGroup;
   loading = false;
   saving = false;
 
   ngOnInit(): void {
-    const today = new Date().toISOString().split('T')[0];
+    const TODAY = new Date().toISOString().split('T')[0];
+    const CURRENT_USER = this.authService.getCurrentUser();
     
     this.actualiteForm = this.fb.group({
       titre: ['', [Validators.required, Validators.maxLength(255)]],
       contenu: ['', [Validators.required]],
-      date_publication: [today, [Validators.required]],
-      statut: ['PUBLIE', [Validators.required]],
+      date_publication: [TODAY, [Validators.required]],
+      statut: ['publie', [Validators.required]],
       image_url: [''],
+      id_auteur: [CURRENT_USER?.id_utilisateur || null, [Validators.required]],
     });
   }
 
   onImageFileChange(event: Event): void {
     this.imageError = null;
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
+    const INPUT = event.target as HTMLInputElement;
+    if (!INPUT.files || INPUT.files.length === 0) {
       this.selectedImageFile = null;
       return;
     }
-    const file = input.files[0];
-    if (!file.type.startsWith('image/')) {
+    const FILE = INPUT.files[0];
+    if (!FILE.type.startsWith('image/')) {
       this.imageError = 'Seuls les fichiers images sont autorisés.';
       this.selectedImageFile = null;
       return;
     }
-    this.selectedImageFile = file;
+    this.selectedImageFile = FILE;
   }
 
   onSubmit(): void {
@@ -63,24 +66,23 @@ export class ActualiteCreerComponent implements OnInit {
     }
 
     this.saving = true;
-    const formData = new FormData();
+    const FORM_DATA = new FormData();
     
     // Ajouter tous les champs du formulaire au FormData
     Object.entries(this.actualiteForm.value).forEach(([key, value]) => {
       if (value !== null && value !== '') {
-        formData.append(key, value as string);
+        FORM_DATA.append(key, value as string);
       }
     });
 
     // Ajouter l'image si elle est sélectionnée
     if (this.selectedImageFile) {
-      formData.append('image', this.selectedImageFile);
+      FORM_DATA.append('image', this.selectedImageFile);
     }
 
-    this.actualiteService.createActualite(formData).subscribe({
+    this.actualiteService.createActualite(FORM_DATA).subscribe({
       next: (actualite) => {
-        alert('Actualité créée avec succès !');
-        this.router.navigate(['/actualites', actualite.id_actualite]);
+        this.router.navigate(['/actualites']);
       },
       error: (error) => {
         console.error('Erreur lors de la création de l\'actualité:', error);
