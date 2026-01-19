@@ -26,11 +26,13 @@ export class ActualiteCreerComponent implements OnInit {
   saving = false;
 
   ngOnInit(): void {
+    const today = new Date().toISOString().split('T')[0];
+    
     this.actualiteForm = this.fb.group({
       titre: ['', [Validators.required, Validators.maxLength(255)]],
       contenu: ['', [Validators.required]],
-      date_publication: ['', [Validators.required]],
-      statut: ['', [Validators.required]],
+      date_publication: [today, [Validators.required]],
+      statut: ['PUBLIE', [Validators.required]],
       image_url: [''],
     });
   }
