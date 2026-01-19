@@ -72,4 +72,8 @@ export class AccueilComponent implements OnInit {
         return new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime();
     });
   }
+
+  getAsDate(date: string | Date): Date {
+    return new Date(date);
+  }
 }
