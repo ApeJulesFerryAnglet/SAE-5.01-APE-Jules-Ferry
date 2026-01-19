@@ -20,7 +20,7 @@ export class ActualiteCardComponent {
   @Input() datePublication!: Date;
   @Input() statut!: StatutActualite;
   @Input() id_auteur?: number;
-  @Input() disableEdit: boolean = false;
+  @Input() disableEdit = false;
 
   @Output() actualiteDeleted = new EventEmitter<number>();
 
