@@ -35,9 +35,7 @@
                         {{ actualite.date_publication | date : 'dd/MM/yyyy'}}
                     </div>
 
-                    <!-- @if(actualite.statut === 'brouillon') {
-                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Brouillon</span>
-                    } -->
+                    
                 </div>
 
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
@@ -54,10 +52,12 @@
                     </div>
                 <div>
                         <p class="text-sm text-gray-500">Publié par</p>
-                            @if(!this.errorAuteur) {
+                            @if(auteur && !this.errorAuteur) {
                                 <p class="text-lg font-medium">{{ auteur.nom }} {{ auteur.prenom }}</p>
-                            } @else {
+                            } @else if(this.errorAuteur) {
                                 <p class="text-[var(--error-color)]">Erreur de chargement</p>
+                            } @else {
+                                <p class="text-gray-400">Chargement...</p>
                             }
                     </div>
                 </div>
