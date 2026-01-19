@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; 
+import { RouterModule, Router } from '@angular/router'; 
 import { inject } from '@angular/core';
 import { AuthService } from '../../services/Auth/auth.service';
 import { LoginCredentials } from '../../models/Auth/login-credentials';
@@ -16,6 +16,7 @@ import { LoginCredentials } from '../../models/Auth/login-credentials';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   loginForm: FormGroup;
   errorMessage!: string;
@@ -41,14 +42,25 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         console.log('Connexion réussie', response);
+
+        // Stockage local
+        if (response?.token) {
+          localStorage.setItem('token', response.token);
+        }
+
+        if (response?.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          // Stockage de l'idConnecte
+          localStorage.setItem('idConnecte', String(response.user.id_utilisateur));
+        }
+        
+        this.isLoading = false;
+        this.router.navigate(['/']);
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = error.error?.message || 'Email ou mot de passe incorrect';
         console.error('Erreur de connexion', error);
-      },
-      complete: () => {
-        this.isLoading = false;
       }
     });
   }
