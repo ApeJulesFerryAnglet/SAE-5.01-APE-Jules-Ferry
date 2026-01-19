@@ -5,12 +5,41 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class EvenementSeeder extends Seeder
 {
+    private function copierImage($nomFichier)
+    {
+        if (!$nomFichier) return null;
+    
+        // On construit le chemin absolu vers la source
+        $sourcePath = database_path('seeders/images/evenements/' . $nomFichier);
+        
+        // On construit le chemin absolu vers la destination (storage/app/public/evenements)
+        $destinationDir = storage_path('app/public/evenements');
+        $destinationPath = $destinationDir . '/' . uniqid() . '_' . $nomFichier;
+    
+        // On vérifie si le fichier source existe vraiment
+        if (File::exists($sourcePath)) {
+            // On s'assure que le dossier de destination existe
+            if (!File::isDirectory($destinationDir)) {
+                File::makeDirectory($destinationDir, 0755, true);
+            }
+    
+            if (File::copy($sourcePath, $destinationPath)) {
+                return '/storage/evenements/' . basename($destinationPath);
+            }
+        }
+        return null; 
+    }
+
     public function run(): void
     {
-
+        if (!Storage::disk('public')->exists('evenements')) {
+            Storage::disk('public')->makeDirectory('evenements');
+        }
         DB::table('evenements')->insert([
             [
                 'titre' => 'Kermesse de l\'école ' . now()->year,
@@ -19,7 +48,7 @@ class EvenementSeeder extends Seeder
                 'heure_debut' => '14:00:00',
                 'heure_fin' => '18:00:00',
                 'lieu' => 'Cour de l\'école Jules Ferry',
-                'image_url' => '/images/kermesse.jpg',
+                'image_url' =>$this->copierImage('kermesse.jpg'),
                 'statut' => 'publie',
                 'id_auteur' => 1,
                 'id_formulaire' => 1, 
@@ -33,7 +62,7 @@ class EvenementSeeder extends Seeder
                 'heure_debut' => '16:30:00',
                 'heure_fin' => '18:00:00',
                 'lieu' => 'Hall de l\'école',
-                'image_url' => null,
+                'image_url' => $this->copierImage('gateau-classique-chocolat.jpg'),
                 'statut' => 'publie',
                 'id_auteur' => 2,
                 'id_formulaire' => 2,
@@ -47,7 +76,7 @@ class EvenementSeeder extends Seeder
                 'heure_debut' => '18:30:00',
                 'heure_fin' => '20:00:00',
                 'lieu' => 'Salle polyvalente',
-                'image_url' => null,
+                'image_url' => $this->copierImage('Assemble_generale.jpg'),
                 'statut' => 'publie',
                 'id_auteur' => 1,
                 'id_formulaire' => null,
@@ -84,22 +113,22 @@ class EvenementSeeder extends Seeder
                 'updated_at' => now()->subMonths(7),
             ],
 
-            //enregistrement de test pour commande auto (publié/terminé)
-            [
-                'titre' => 'Test Automatisation',
-                'description' => 'Cet événement est hier, mais encore noté publie. La commande doit le passer en termine.',
-                // Date : HIER
-                'date_evenement' => now()->subDay()->toDateString(),
-                'heure_debut' => '10:00:00',
-                'heure_fin' => '12:00:00',
-                'lieu' => 'Test Zone',
-                'image_url' => null,
-                'statut' => 'publie', 
-                'id_auteur' => 1,
-                'id_formulaire' => null,
-                'created_at' => now()->subDays(2),
-                'updated_at' => now()->subDays(2),
-            ],
+            // //enregistrement de test pour commande auto (publié/terminé)
+            // [
+            //     'titre' => 'Test Automatisation',
+            //     'description' => 'Cet événement est hier, mais encore noté publie. La commande doit le passer en termine.',
+            //     // Date : HIER
+            //     'date_evenement' => now()->subDay()->toDateString(),
+            //     'heure_debut' => '10:00:00',
+            //     'heure_fin' => '12:00:00',
+            //     'lieu' => 'Test Zone',
+            //     'image_url' => null,
+            //     'statut' => 'publie', 
+            //     'id_auteur' => 1,
+            //     'id_formulaire' => null,
+            //     'created_at' => now()->subDays(2),
+            //     'updated_at' => now()->subDays(2),
+            // ],
 
             [
                 'titre' => 'Brouillon - Carnaval',
