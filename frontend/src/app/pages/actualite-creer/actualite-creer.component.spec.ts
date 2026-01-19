@@ -24,7 +24,7 @@ describe('ActualiteCreerComponent', () => {
     contenu: 'Contenu de test',
     image_url: 'test.jpg',
     date_publication: new Date('2026-01-20'),
-    statut: StatutActualite.PUBLIE,
+    statut: StatutActualite.publie,
     id_auteur: 1
   };
 
