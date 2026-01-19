@@ -42,4 +42,8 @@ public sortActualiteByDate(): void {
     });
     this.listeActualites = sortedList;
   }
+
+  onActualiteDeleted(id: number): void {
+    this.listeActualites = this.listeActualites.filter(a => a.id_actualite !== id);
+  }
 }

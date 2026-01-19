@@ -51,7 +51,9 @@
             [contenu]="actualite.contenu"
             [image_url]="actualite.image_url"
             [datePublication]="actualite.date_publication" 
-            [statut]="actualite.statut">
+            [statut]="actualite.statut"
+            [id_auteur]="actualite.id_auteur"
+            (actualiteDeleted)="onActualiteDeleted($event)">
         </app-actualite-card>
 
     } 
