@@ -4,11 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Actualite;
+use App\Services\Image\ImageConverterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ActualiteController extends Controller
 {
+    protected $imageConverter;
+
+    public function __construct(ImageConverterService $imageConverter)
+    {
+        $this->imageConverter = $imageConverter;
+    }
+
     public function index()
     {
         try {
@@ -48,8 +57,7 @@ class ActualiteController extends Controller
 
             $imagePath = null;
             if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('actualites', 'public');
-                $imagePath = '/storage/' . $path;
+                $imagePath = $this->processAndStoreImage($request->file('image'));
             }
 
             $actualite = Actualite::create([
@@ -84,13 +92,10 @@ class ActualiteController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                if ($actualite->image_url) {
-                    $oldPath = str_replace('/storage/', '', $actualite->image_url);
-                    Storage::disk('public')->delete($oldPath);
-                }
-
-                $path = $request->file('image')->store('actualites', 'public');
-                $actualite->image_url = '/storage/' . $path;
+                // Supprimer l'ancienne image si elle existe
+                $this->deleteOldImage($actualite->image_url);
+                // Traiter la nouvelle
+                $actualite->image_url = $this->processAndStoreImage($request->file('image'));
             }
 
             $actualite->update([
@@ -98,11 +103,8 @@ class ActualiteController extends Controller
                 'contenu' => $validatedData['contenu'],
                 'date_publication' => $validatedData['date_publication'],
                 'statut' => $validatedData['statut'],
+                'image_url' => $actualite->image_url
             ]);
-
-            if ($request->hasFile('image')) {
-                $actualite->save();
-            }
 
             return response()->json($actualite);
         } catch (\Exception $e) {
@@ -114,18 +116,46 @@ class ActualiteController extends Controller
     {
         try {
             $actualite = Actualite::find($id);
-            if ($actualite) {
-                if ($actualite->image_url) {
-                    $oldPath = str_replace('/storage/', '', $actualite->image_url);
-                    Storage::disk('public')->delete($oldPath);
-                }
-                
-                $actualite->delete();
-                return response()->json(['message' => 'Actualité supprimée avec succès']);
+            if (!$actualite) {
+                return response()->json(['message' => 'Actualité non trouvée'], 404);
             }
-            return response()->json(['message' => 'Actualité non trouvée'], 404);
+
+            $this->deleteOldImage($actualite->image_url);
+            $actualite->delete();
+
+            return response()->json(['message' => 'Actualité supprimée avec succès']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Gère la conversion et le stockage de l'image
+     */
+    private function processAndStoreImage($file): string
+    {
+        $fileName = Str::random(20) . '.webp';
+        $destinationPath = storage_path('app/public/actualites/' . $fileName);
+
+        // Assurer que le dossier existe
+        if (!Storage::disk('public')->exists('actualites')) {
+            Storage::disk('public')->makeDirectory('actualites');
+        }
+
+        // Conversion en WebP via le service
+        $this->imageConverter->convertImageToWebp($file->getRealPath(), $destinationPath, 80);
+
+        return '/storage/actualites/' . $fileName;
+    }
+
+    /**
+     * Supprime proprement un fichier du storage
+     */
+    private function deleteOldImage(?string $url): void
+    {
+        if ($url) {
+            $path = str_replace('/storage/', '', $url);
+            Storage::disk('public')->delete($path);
         }
     }
 }

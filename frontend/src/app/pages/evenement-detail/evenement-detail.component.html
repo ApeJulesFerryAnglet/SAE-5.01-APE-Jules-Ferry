@@ -12,7 +12,7 @@
     <div class="max-w-4xl mx-auto px-4 py-8">
         
         <button (click)="goBack()" class="mb-6 flex items-center text-gray-600 hover:text-[var(--primary-blue)] transition-colors">
-            <i class="fa-solid fa-arrow-left w-4 h-4 mr-2 text-gray-500" aria-hidden="true"></i>
+            <i class="fa-solid fa-arrow-left w-4 h-4 mr-2" aria-hidden="true"></i>
             Retour aux événements
         </button>
 
@@ -54,37 +54,48 @@
                     {{ evenement.description }}
                 </div>
 
-                <div class="flex justify-between items-center mt-10">
-                    <div class="mt-12 pt-6 border-t border-gray-100 flex items-center">
+                <div class="mt-12 pt-6 border-t border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center">
                         <div class="bg-blue-100 rounded-full p-3 mr-4">
                             <i class="fa-regular fa-user w-6 h-6 text-blue-600" aria-hidden="true"></i>
                         </div>
-
-                        @if (currentUser$ | async; as user) {
-                            @if (canManage(user)) {
-                                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                                    <a [routerLink]="['/evenements', evenement.id_evenement, 'edit']" 
-                                       class="bg-[var(--primary-blue)] text-white px-4 py-2 rounded hover:shadow transition-shadow text-center">
-                                        Modifier l'événement
-                                    </a>
-
-                                    <button (click)="onDeleteEvent()" 
-                                            class="bg-red-600 text-white px-4 py-2 rounded hover:shadow transition-shadow">
-                                        Supprimer l'événement
-                                    </button>
-                                </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Publié par</p>
+                            @if (!errorAuteur) {
+                                @if ((currentUser$ | async)?.id_utilisateur === evenement.id_auteur) {
+                                    <p class="text-lg font-medium">Vous</p>
+                                } @else {
+                                    <p class="text-lg font-medium">{{ auteur?.nom }} {{ auteur?.prenom }}</p>
+                                }
+                            } @else {
+                                <p class="text-lg font-medium text-red-500">Utilisateur inconnu</p>
                             }
-                        }
+                        </div>
                     </div>
+
+                    @if (currentUser$ | async; as user) {
+                        @if (canManage(user)) {
+                            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                                <a [routerLink]="['/evenements', evenement.id_evenement, 'edit']" 
+                                   class="bg-[var(--primary-blue)] text-white px-4 py-2 rounded hover:shadow transition-shadow text-center flex items-center justify-center gap-2">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    Modifier
+                                </a>
+
+                                <button (click)="onDeleteEvent()" 
+                                        class="bg-red-600 text-white px-4 py-2 rounded hover:shadow transition-shadow flex items-center justify-center gap-2">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                    Supprimer
+                                </button>
+                            </div>
+                        }
+                    }
                 </div>
 
                 @if (evenement.id_formulaire) {
                     <div class="mt-8 pt-6 border-t border-gray-100">
-                        
                         @if (!isEvenementTermine() && isInscriptionOuverte()) {
-                            
                             <div class="flex flex-col gap-4">
-                                
                                 @if (mesCreneauxActuels.length > 0) {
                                     <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r">
                                         <h3 class="text-green-800 font-bold text-sm flex items-center">
@@ -102,24 +113,19 @@
                                 <button 
                                     (click)="toggleInscriptionForm()" 
                                     class="bg-[var(--primary-blue)] text-white px-6 py-3 rounded-full hover:shadow-xl transition-all hover:bg-[var(--primary-dark-blue)] flex items-center w-fit gap-2">
-                                    
                                     @if (showInscriptionForm) {
                                         <i class="fa-regular fa-xmark w-5 h-5" aria-hidden="true"></i>
                                         Fermer
                                     } @else {
                                         <i class="fa-regular fa-pen-to-square w-5 h-5" aria-hidden="true"></i>
-                                        @if (mesCreneauxActuels.length > 0) {
-                                            Modifier mon inscription
-                                        } @else {
-                                            Je m'inscris !
-                                        }
+                                        {{ mesCreneauxActuels.length > 0 ? 'Modifier mon inscription' : "Je m'inscris !" }}
                                     }
                                 </button>
                             </div>
 
                         } @else {
                             <div class="bg-gray-100 border-l-4 border-gray-400 p-4 rounded-r flex items-start">
-                                <i class="fa-regular fa-lock w-6 h-6 text-gray-500 mr-3 flex-shrink-0" aria-hidden="true"></i>
+                                <i class="fa-solid fa-lock w-6 h-6 text-gray-500 mr-3 flex-shrink-0" aria-hidden="true"></i>
                                 <div>
                                     <h3 class="text-gray-800 font-bold text-sm">Inscriptions closes</h3>
                                     <p class="text-gray-600 text-sm mt-1">Cet événement est terminé ou les inscriptions sont fermées.</p>
