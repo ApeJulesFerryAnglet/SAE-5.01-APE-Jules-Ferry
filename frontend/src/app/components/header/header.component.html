@@ -7,9 +7,7 @@
       <button type="button"
         class="lg:hidden p-2 text-[var(--black-text-color)] hover:bg-white/50 rounded transition-colors"
         (click)="toggleMenu()" aria-label="Ouvrir le menu">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <i class="fa-solid fa-bars w-8 h-8" aria-hidden="true" style="font-size: 32px;"></i>
       </button>
 
       <a routerLink="/" class="flex-shrink-0">
@@ -23,8 +21,6 @@
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">Événements</a>
         <a routerLink="/newsletter" class="text-[var(--black-text-color)]"
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">Newsletter</a>
-        <a routerLink="/contact" class="text-[var(--black-text-color)]"
-          routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">Contact</a>
         @if(isAuthenticated && currentUser?.role === roleUtilisateur.administrateur) {
         <a routerLink="/admin/utilisateurs" class="text-[var(--black-text-color)]"
           routerLinkActive="font-bold underline underline-offset-4 text-[var(--black-text-color)]">
@@ -42,8 +38,19 @@
       </button>
       }
       @if(isAuthenticated && currentUser) {
-        <button class="bg-white text-[var(--primary-blue)] border border-[var(--primary-blue)] font-bold py-1.5 px-4 rounded-full text-sm hover:bg-blue-50 transition-colors" title="Compte" [routerLink]="'/compte'">
+        <span class="hidden md:inline text-sm font-medium mr-2 text-gray-700">
+          {{ currentUser.prenom }}
+        </span>
+
+        <button class="bg-white text-[var(--primary-blue)] border border-[var(--primary-blue)] font-bold py-1.5 px-4 rounded-full text-sm hover:bg-blue-50 transition-colors mr-2" 
+                title="Mon Compte" 
+                [routerLink]="'/compte'">
             Compte
+        </button>
+
+        <button (click)="logout()"
+          class="p-2 text-white bg-red-500 hover:bg-red-600 rounded-full shadow-sm transition-colors" title="Déconnexion">
+          <i class="fa-solid fa-right-from-bracket w-5 h-5" aria-hidden="true" style="font-size: 20px;"></i>
         </button>
       }
     </div>
@@ -60,9 +67,7 @@
 
       <button type="button" class="p-2 text-gray-600 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors"
         (click)="closeMenu()" aria-label="Fermer">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <i class="fa-solid fa-xmark w-6 h-6" aria-hidden="true" style="font-size: 24px;"></i>
       </button>
     </div>
 
@@ -76,9 +81,6 @@
       <a routerLink="/newsletter" (click)="closeMenu()"
         routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
         class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Newsletter</a>
-      <a routerLink="/contact" (click)="closeMenu()"
-        routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
-        class="block px-4 py-3 rounded-r-lg hover:bg-gray-50 transition-all">Contact</a>
       @if(isAuthenticated && currentUser?.role === roleUtilisateur.administrateur) {
       <a routerLink="/admin/utilisateurs" (click)="closeMenu()"
         routerLinkActive="bg-blue-50 text-[var(--black-text-color)] font-bold border-l-4 border-[var(--primary-blue)]"
