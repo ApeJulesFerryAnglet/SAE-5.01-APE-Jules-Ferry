@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\InscriptionController;
 use App\Http\Controllers\Api\FormulaireController;
 use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\CreneauController; 
+use App\Http\Controllers\TacheController;
 use Illuminate\Http\Request;
 
 /*
