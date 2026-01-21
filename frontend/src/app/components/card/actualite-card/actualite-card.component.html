@@ -1,12 +1,11 @@
 <div class="h-full flex flex-col rounded-2xl border border-green-600 overflow-hidden bg-[var(--secondary-light-green)] shadow-sm hover:shadow-md transition-shadow">
 
     <div class="p-4 flex items-center gap-4">
-        
         <div class="w-12 h-12 flex-shrink-0 rounded-full bg-green-600 flex items-center justify-center text-white text-xl font-bold">
             {{ titre.charAt(0).toUpperCase() }}
         </div>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col flex-grow">
             <h3 class="font-bold text-gray-900 text-lg leading-tight line-clamp-1" [title]="titre">
                 {{ titre }}
             </h3>
@@ -14,16 +13,25 @@
                 {{ datePublication | date:'dd/MM/yyyy' }} 
             </p>
         </div>
+
+        @if(canManage) {
+            <div class="flex gap-2">
+                <button (click)="onEdit($event)" class="text-blue-600 hover:text-blue-800 transition-colors" title="Modifier">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button (click)="onDelete($event)" class="text-red-600 hover:text-red-800 transition-colors" title="Supprimer">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </div>
+        }
     </div>
 
     <div class="h-48 w-full bg-gray-200 relative">
         @if(image_url) {
-            <img [src]="image_url" [alt]="titre" class="w-full h-full object-cover">
+            <img [src]="getImageUrl(image_url)" [alt]="titre" class="w-full h-full object-cover" loading="lazy">
         } @else {
             <div class="w-full h-full flex items-center justify-center bg-gray-100 opacity-50">
-                <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                   <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z"/>
-                </svg>
+                <i class="fa-regular fa-image text-gray-400" aria-hidden="true" style="font-size: 48px;"></i>
             </div>
         }
     </div>
