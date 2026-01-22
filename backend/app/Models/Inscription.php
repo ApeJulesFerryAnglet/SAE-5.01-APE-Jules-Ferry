@@ -57,6 +57,7 @@ class Inscription extends Model
             return $this->original[$keyName];
         }
 
+        
         return $this->getAttribute($keyName);
     }
 }
