@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit,ViewChild } from '@angular/core';
 import { DatePipe, Location, CommonModule, AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
@@ -24,6 +24,7 @@ import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../
 })
 export class EvenementDetailComponent implements OnInit {
 
+  @ViewChild('inscriptionFormContainer') inscriptionFormContainer!: ElementRef;
   //Données pour le formulaire d'inscription
   mesCreneauxActuels: Creneau[] = [];
   loadingFormulaire = false;
@@ -165,6 +166,13 @@ export class EvenementDetailComponent implements OnInit {
       return;
     }
     this.showInscriptionForm = !this.showInscriptionForm;
+    
+    if (this.showInscriptionForm) {
+      setTimeout(() => {
+        this.inscriptionFormContainer?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+        
     if (!this.showInscriptionForm) {
       this.inscriptionError = null;
       this.inscriptionSuccess = false;
