@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -15,67 +15,88 @@ import { environment } from '../../environments/environment.dev';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-    private currentUserSubject = new BehaviorSubject<Utilisateur | null>(null);
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly router: Router = inject(Router);
+  private readonly tokenService: TokenService = inject(TokenService);
+
+  private getUserFromStorage(): Utilisateur | null {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  private currentUserSubject = new BehaviorSubject<Utilisateur | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService,
-    private router: Router
-  ) {
+  init(): void {
     if (this.tokenService.hasToken()) {
       this.loadCurrentUser();
+    } else {
+      this.logoutLocal();
     }
   }
 
-  /**
-   * Inscription
-   */
   register(data: RegisterData): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data).pipe(
-      tap(response => {
-        this.tokenService.saveToken(response.token);
-        this.currentUserSubject.next(response.user);
-      })
+      tap(response => this.handleAuthResponse(response))
     );
   }
 
-  /**
-   * Connexion
-   */
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        this.tokenService.saveToken(response.token);
-        this.currentUserSubject.next(response.user);
+        this.handleAuthResponse(response);
+        if (String(response.user.role).toLowerCase() === 'administrateur') {
+           this.router.navigate(['/evenements']);
+        } else {
+           this.router.navigate(['/']);
+        }
       })
     );
   }
 
-  /**
-   * Déconnexion
-   */
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
-        this.tokenService.removeToken();
-        this.currentUserSubject.next(null);
-        this.router.navigate(['/login']);
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+      tap({
+        next: () => {
+          this.clearAuthState();
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          // même si le backend refuse, on déconnecte côté front
+          this.clearAuthState();
+          this.router.navigate(['/login']);
+        }
       })
     );
   }
 
-  /**
-   * CHARGER CHARGER CHARGER CHARGER (les infos du user connecté)
-   */
+  // helper nettoyage local
+  private logoutLocal() {
+    this.tokenService.removeToken();
+    localStorage.removeItem('user');
+    localStorage.removeItem('idConnecte');
+    this.currentUserSubject.next(null);
+  }
+
+  // helper save reponse
+  private handleAuthResponse(response: AuthResponse) {
+    this.tokenService.saveToken(response.token);
+    console.log('User reçu du backend :', response.user);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    if (response.user.id_utilisateur) {
+        localStorage.setItem('idConnecte', String(response.user.id_utilisateur));
+    }
+    this.currentUserSubject.next(response.user);
+  }
+
   loadCurrentUser(): void {
     this.http.get<{ user: Utilisateur }>(`${this.apiUrl}/user`).subscribe({
       next: (response) => {
+        localStorage.setItem('user', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
       },
       error: () => {
-        this.tokenService.removeToken();
-        this.currentUserSubject.next(null);
+        this.logoutLocal();
       }
     });
   }
@@ -84,18 +105,17 @@ export class AuthService {
     return this.tokenService.hasToken();
   }
 
-  /**
-   * Récupérer utilisateur actuel
-   */
   getCurrentUser(): Utilisateur | null {
     return this.currentUserSubject.value;
   }
 
-  /**
-   * verif rôle spécifique utilisateur
-   */
   hasRole(role: string): boolean {
     const user = this.getCurrentUser();
-    return user ? user.role === role : false;
+    return user ? String(user.role).toLowerCase() === role.toLowerCase() : false;
+  }
+
+  private clearAuthState(): void {
+    this.tokenService.removeToken();
+    this.currentUserSubject.next(null);
   }
 }

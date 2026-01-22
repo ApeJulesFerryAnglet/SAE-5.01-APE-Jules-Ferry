@@ -1,9 +1,17 @@
 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <div class="mb-6">
-        <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2 mb-4" [routerLink]="['/']">
+    <div class="mb-6 flex justify-between items-center">
+        <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" [routerLink]="['/']">
             ← Retour à l'accueil
         </button>
+
+        @if (authService.hasRole('administrateur')) {
+            <button class="bg-green-600 text-white rounded hover:bg-green-700 hover:shadow p-2 px-4 transition-colors" 
+                    [routerLink]="['/actualites/creer']">
+                + Créer une actualité
+            </button>
+        }
+    </div>
 
     @if(this.loadingActualites){
         <div class="flex justify-center items-center h-64">
@@ -15,9 +23,7 @@
         <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-sm" role="alert">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                    </svg>
+                    <i class="fa-regular fa-circle-xmark h-5 w-5 text-red-400" aria-hidden="true" style="font-size: 20px;"></i>
                 </div>
                 <div class="ml-3">
                     <p class="text-sm text-red-700">Erreur lors du chargement des actualités. Veuillez réessayer plus tard.</p>
@@ -43,11 +49,12 @@
             [contenu]="actualite.contenu"
             [image_url]="actualite.image_url"
             [datePublication]="actualite.date_publication" 
-            [statut]="actualite.statut">
+            [statut]="actualite.statut"
+            [id_auteur]="actualite.id_auteur"
+            (actualiteDeleted)="onActualiteDeleted($event)">
         </app-actualite-card>
 
     } 
 </div>
     }
-</div>
 </div>

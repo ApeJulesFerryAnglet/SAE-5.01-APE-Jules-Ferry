@@ -9,17 +9,16 @@ import { environment }  from '../../environments/environment.dev';
 })
 export class ActualiteService {
   private readonly http = inject(HttpClient);
-  constructor() { }
   getAllActualites(): Observable<Actualite[]> {
     return this.http.get<Actualite[]>(`${environment.apiUrl}/actualites`);
   }
   getActualiteById(id: number): Observable<Actualite> {
     return this.http.get<Actualite>(`${environment.apiUrl}/actualites/${id}`);
   }
-  createActualite(actualite: Actualite): Observable<Actualite> {
+  createActualite(actualite: FormData | Actualite): Observable<Actualite> {
     return this.http.post<Actualite>(`${environment.apiUrl}/actualites`, actualite);
   }
-  updateActualite(actualite: Actualite, id: number): Observable<Actualite> {
+  updateActualite(actualite: FormData | Actualite, id: number): Observable<Actualite> {
     return this.http.put<Actualite>(`${environment.apiUrl}/actualites/${id}`, actualite);
   }
   deleteActualite(id: number): Observable<void> {

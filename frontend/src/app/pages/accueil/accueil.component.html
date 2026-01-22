@@ -1,3 +1,5 @@
+<app-calendrier></app-calendrier>
+
 <div class="flex justify-between items-center my-6 mx-3">
     <h2>Les actualités</h2>
     <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" [routerLink]="['/actualites']">Voir toutes les actualités</button>
@@ -7,7 +9,6 @@
     <app-spinner></app-spinner>
 }
 @else if (this.errorActualites) {
-    <app-erreur-modale [messageErreur]="'Erreur lors du chargement des actualités'" [routeRedirection]="'/'"></app-erreur-modale>
 }
 @else {
     <div class="mx-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 ">
@@ -19,7 +20,8 @@
                 [image_url]="actualite.image_url"
                 [contenu]="actualite.contenu"
                 [datePublication]="actualite.date_publication"
-                [statut]="actualite.statut"> </app-actualite-card>
+                [statut]="actualite.statut"
+                [disableEdit]="true"> </app-actualite-card>
         } 
         
     </div>
@@ -34,7 +36,6 @@
     <app-spinner></app-spinner>
 }
 @else if (this.errorEvents) {
-    <app-erreur-modale [messageErreur]="'Erreur lors du chargement des événements'" [routeRedirection]="'/'"></app-erreur-modale>
 }
 @else {
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 mx-3">
@@ -45,10 +46,11 @@
                 [titre]="evenement.titre"
                 [image_url]="evenement.image_url"
                 [description]="evenement.description"
-                [date_evenement]="evenement.date_evenement"
+                [date_evenement]="getAsDate(evenement.date_evenement)"
                 [heure_debut]="evenement.heure_debut"
                 [heure_fin]="evenement.heure_fin"
-                [lieu]="evenement.lieu">
+                [lieu]="evenement.lieu"
+                (eventDeleted)="handleEventDeleted($event)">
                 </app-evenement-card>
         }
         

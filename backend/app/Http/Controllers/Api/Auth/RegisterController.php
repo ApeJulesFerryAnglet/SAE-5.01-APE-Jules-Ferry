@@ -33,7 +33,7 @@ class RegisterController extends Controller
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
-            'mot_de_passe' => Hash::make($validated['mot_de_passe']),
+            'mot_de_passe' => $validated['mot_de_passe'],
             'role' => 'parent', // Rôle par défaut
             'statut_compte' => 'actif',
         ]);
@@ -45,7 +45,7 @@ class RegisterController extends Controller
         return response()->json([
             'message' => 'Inscription réussie',
             'user' => [
-                'id' => $utilisateur->id_utilisateur,
+                'id_utilisateur' => $utilisateur->id_utilisateur,
                 'nom' => $utilisateur->nom,
                 'prenom' => $utilisateur->prenom,
                 'email' => $utilisateur->email,
