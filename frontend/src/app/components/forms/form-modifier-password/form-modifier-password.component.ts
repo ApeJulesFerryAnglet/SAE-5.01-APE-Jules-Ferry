@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 @Component({
   selector: 'app-form-modifier-password',
@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
   templateUrl: './form-modifier-password.component.html',
   styleUrl: './form-modifier-password.component.css'
 })
-export class FormModifierPasswordComponent implements OnInit, OnChanges {
+export class FormModifierPasswordComponent implements OnInit {
 
   @Input() resetKey = 0;
   @Output() submitted = new EventEmitter<{ motDePasse: string }>();
