@@ -404,4 +404,54 @@ describe('CalendrierComponent', () => {
       }, 0);
     });
   });
+
+  describe('Redirection vers formulaire d\'inscription', () => {
+    it('devrait afficher un bouton M\'inscrire pour les événements sélectionnés', (done) => {
+      evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
+      component.loadEvenements();
+
+      setTimeout(() => {
+        component.openCalendar();
+        const mockEventClickArg: Partial<EventClickArg> = {
+          event: { id: '1' } as EventClickArg['event'],
+        };
+        component.handleEventClick(mockEventClickArg as EventClickArg);
+
+        setTimeout(() => {
+          expect(component.selectedEvent).toBeTruthy();
+          fixture.detectChanges();
+          
+          const compiled = fixture.nativeElement as HTMLElement;
+          const inscriptionButton = Array.from(compiled.querySelectorAll('a')).find(
+            link => link.textContent?.includes('M\'inscrire')
+          );
+          
+          expect(inscriptionButton).toBeTruthy();
+          done();
+        }, 100);
+      }, 0);
+    });
+
+    it('devrait avoir deux liens de navigation dans les détails d\'événement', (done) => {
+      evenementService.getAllEvenements.and.returnValue(of(mockEvenements));
+      component.loadEvenements();
+
+      setTimeout(() => {
+        component.openCalendar();
+        const mockEventClickArg: Partial<EventClickArg> = {
+          event: { id: '1' } as EventClickArg['event'],
+        };
+        component.handleEventClick(mockEventClickArg as EventClickArg);
+
+        setTimeout(() => {
+          fixture.detectChanges();
+          const compiled = fixture.nativeElement as HTMLElement;
+          const navigationLinks = compiled.querySelectorAll('a[class*="bg-"]');
+          
+          expect(navigationLinks.length).toBeGreaterThanOrEqual(2);
+          done();
+        }, 100);
+      }, 0);
+    });
+  });
 });
