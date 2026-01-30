@@ -27,7 +27,7 @@ class EvenementControllerTest extends TestCase
         );
     }
 
-    public function test_index_returns_all_events()
+    public function test_index_retourne_tous_les_evenements()
     {
         Evenement::factory()->count(3)->create();
 
@@ -37,7 +37,7 @@ class EvenementControllerTest extends TestCase
                  ->assertJsonCount(3);
     }
 
-    public function test_index_filters_by_statut()
+    public function test_index_filtre_par_statut()
     {
         Evenement::factory()->create(['statut' => 'publie']);
         Evenement::factory()->create(['statut' => 'brouillon']);
@@ -49,7 +49,7 @@ class EvenementControllerTest extends TestCase
                  ->assertJsonFragment(['statut' => 'publie']);
     }
 
-    public function test_show_returns_event()
+    public function test_show_retourne_un_evenement()
     {
         $evenement = Evenement::factory()->create();
 
@@ -59,14 +59,14 @@ class EvenementControllerTest extends TestCase
                  ->assertJson(['id_evenement' => $evenement->id_evenement]);
     }
 
-    public function test_show_returns_404_if_event_not_found()
+    public function test_show_retourne_404_si_evenement_non_trouve()
     {
         $response = $this->getJson('/api/evenements/999');
 
         $response->assertStatus(404);
     }
 
-    public function test_store_creates_event()
+    public function test_store_cree_un_evenement()
     {
         Storage::fake('public');
         $user = Utilisateur::factory()->create();
@@ -89,7 +89,7 @@ class EvenementControllerTest extends TestCase
         $this->assertDatabaseHas('evenements', ['titre' => 'Nouvel événement']);
     }
 
-    public function test_update_updates_event()
+    public function test_update_modifie_un_evenement()
     {
         $user = Utilisateur::factory()->create();
         $this->actingAs($user, 'sanctum');
@@ -111,7 +111,7 @@ class EvenementControllerTest extends TestCase
         $this->assertDatabaseHas('evenements', ['titre' => 'Titre modifié']);
     }
 
-    public function test_destroy_deletes_event()
+    public function test_destroy_supprime_un_evenement()
     {
         $user = Utilisateur::factory()->create();
         $this->actingAs($user, 'sanctum');
