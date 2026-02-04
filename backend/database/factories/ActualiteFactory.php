@@ -25,7 +25,6 @@ class ActualiteFactory extends Factory
             'titre' => $this->faker->sentence,
             'contenu' => $this->faker->paragraph,
             'date_publication' => $this->faker->date(),
-            'date_creation' => now(),
             'statut' => 'publie',
             'image_url' => null,
             'id_auteur' => Utilisateur::factory(),

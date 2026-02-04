@@ -46,7 +46,7 @@ class ActualiteControllerTest extends TestCase
     {
         $actualite = Actualite::factory()->create(['titre' => 'Test Actualité']);
 
-        $response = $this->getJson("/api/actualites/{$actualite->id}");
+        $response = $this->getJson("/api/actualites/{$actualite->id_actualite}");
 
         $response->assertStatus(200)
             ->assertJsonPath('titre', 'Test Actualité');
@@ -62,12 +62,14 @@ class ActualiteControllerTest extends TestCase
 
     public function test_store_cree_une_actualite_sans_image()
     {
+        $auteur = \App\Models\Utilisateur::factory()->create();
+        
         $data = [
             'titre' => 'Nouvelle Actualité',
             'contenu' => 'Contenu de test',
             'date_publication' => '2024-01-01',
             'statut' => 'publie',
-            'id_auteur' => 1
+            'id_auteur' => $auteur->id_utilisateur
         ];
 
         $response = $this->postJson('/api/actualites', $data);
@@ -83,6 +85,7 @@ class ActualiteControllerTest extends TestCase
             $mock->shouldReceive('convertImageToWebp')->once();
         });
 
+        $auteur = \App\Models\Utilisateur::factory()->create();
         $file = UploadedFile::fake()->image('test.jpg');
 
         $data = [
@@ -90,6 +93,7 @@ class ActualiteControllerTest extends TestCase
             'contenu' => 'Contenu de test',
             'date_publication' => '2024-01-01',
             'statut' => 'publie',
+            'id_auteur' => $auteur->id_utilisateur,
             'image' => $file
         ];
 
@@ -108,7 +112,8 @@ class ActualiteControllerTest extends TestCase
 
         $response = $this->postJson('/api/actualites', $data);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['titre', 'contenu', 'date_publication', 'statut']);
     }
 
     public function test_update_modifie_une_actualite_existante()
@@ -122,7 +127,7 @@ class ActualiteControllerTest extends TestCase
             'statut' => 'publie'
         ];
 
-        $response = $this->putJson("/api/actualites/{$actualite->id}", $data);
+        $response = $this->putJson("/api/actualites/{$actualite->id_actualite}", $data);
 
         $response->assertStatus(200)
             ->assertJsonPath('titre', 'Nouveau Titre');
@@ -149,7 +154,7 @@ class ActualiteControllerTest extends TestCase
             'image' => $file
         ];
 
-        $response = $this->putJson("/api/actualites/{$actualite->id}", $data);
+        $response = $this->putJson("/api/actualites/{$actualite->id_actualite}", $data);
 
         $response->assertStatus(200);
         Storage::disk('public')->assertMissing('actualites/old.webp');
@@ -176,11 +181,11 @@ class ActualiteControllerTest extends TestCase
         ]);
         Storage::disk('public')->put('actualites/test.webp', 'content');
 
-        $response = $this->deleteJson("/api/actualites/{$actualite->id}");
+        $response = $this->deleteJson("/api/actualites/{$actualite->id_actualite}");
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Actualité supprimée avec succès']);
-        $this->assertDatabaseMissing('actualites', ['id' => $actualite->id]);
+        $this->assertDatabaseMissing('actualites', ['id_actualite' => $actualite->id_actualite]);
         Storage::disk('public')->assertMissing('actualites/test.webp');
     }
 
