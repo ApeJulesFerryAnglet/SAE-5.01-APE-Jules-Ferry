@@ -1,4 +1,6 @@
 import { Component, Input, inject, Output, EventEmitter } from '@angular/core';
+import { ToastService } from '../../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 import { StatutActualite } from '../../../enums/StatutActualite/statut-actualite';
 import { RouterLink, Router } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
@@ -29,6 +31,7 @@ export class ActualiteCardComponent {
   private readonly authService = inject(AuthService);
   private readonly actualiteService = inject(ActualiteService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   get canManage(): boolean {
     return this.authService.hasRole('administrateur') && !this.disableEdit;
@@ -43,6 +46,7 @@ export class ActualiteCardComponent {
     this.actualiteService.deleteActualite(this.id_actualite).subscribe({
       next: () => {
         this.actualiteDeleted.emit(this.id_actualite);
+        this.toastService.show('Actualité supprimée avec succès.', TypeErreurToast.SUCCESS);
       },
       error: (err) => {
         console.error('Erreur lors de la suppression de l\'actualité', err);

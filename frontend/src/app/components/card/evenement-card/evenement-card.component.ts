@@ -1,4 +1,6 @@
 import { Component, Input, inject, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { ToastService } from '../../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 import { StatutEvenement } from '../../../enums/StatutEvenement/statut-evenement';
 import { RouterLink, Router } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
@@ -33,6 +35,7 @@ export class EvenementCardComponent implements OnChanges {
   private readonly evenementService = inject(EvenementService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly toastService = inject(ToastService);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentUser']) {
@@ -71,6 +74,7 @@ export class EvenementCardComponent implements OnChanges {
     this.evenementService.deleteEvenement(this.id_evenement).subscribe({
       next: () => {
         this.eventDeleted.emit(this.id_evenement);
+        this.toastService.show('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
       },
       error: (err) => {
         console.error('Erreur lors de la suppression de l\'événement', err);

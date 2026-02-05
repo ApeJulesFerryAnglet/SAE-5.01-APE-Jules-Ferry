@@ -1,4 +1,6 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { AlertComponent } from '../../components/alert/alert.component';
 import { DatePipe, Location, CommonModule, AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -26,6 +28,7 @@ import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../
 })
 
 export class EvenementDetailComponent implements OnInit {
+  private readonly toastService = inject(ToastService);
   showDeleteAlert = false;
 
   @ViewChild('inscriptionFormContainer') inscriptionFormContainer!: ElementRef;
@@ -151,6 +154,7 @@ export class EvenementDetailComponent implements OnInit {
     if (!this.evenement) return;
     this.evenementService.deleteEvenement(this.evenement.id_evenement).subscribe({
       next: () => {
+        this.toastService.show('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
         this.router.navigate(['/evenements']);
       },
       error: (err) => console.error(err)

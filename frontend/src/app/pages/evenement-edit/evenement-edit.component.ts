@@ -1,4 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -26,6 +28,7 @@ export class EvenementEditComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly evenementService = inject(EvenementService);
   private readonly formulaireService = inject(FormulaireService);
+  private readonly toastService = inject(ToastService);
 
   evenementForm!: FormGroup;
   loading = true;
@@ -183,6 +186,10 @@ export class EvenementEditComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.saving = false;
+        this.toastService.show(
+          this.isEditMode ? 'Événement modifié avec succès.' : 'Événement créé avec succès.',
+          TypeErreurToast.SUCCESS
+        );
         this.goBack();
       },
       error: (err) => {

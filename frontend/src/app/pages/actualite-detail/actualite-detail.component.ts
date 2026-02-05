@@ -1,4 +1,6 @@
 import { Component, inject,  OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { AlertComponent } from '../../components/alert/alert.component';
 import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
@@ -28,6 +30,7 @@ export class ActualiteDetailComponent implements OnInit {
   private readonly utilisateurService : UtilisateurService = inject(UtilisateurService);
   private readonly actualiteService : ActualiteService = inject(ActualiteService);
   protected readonly authService : AuthService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);
@@ -79,6 +82,7 @@ export class ActualiteDetailComponent implements OnInit {
   confirmerSuppression(): void {
     this.actualiteService.deleteActualite(this.actualite.id_actualite).subscribe({
       next: () => {
+        this.toastService.show('Actualité supprimée avec succès.', TypeErreurToast.SUCCESS);
         this.router.navigate(['/actualites']);
       },
       error: (error) => {
