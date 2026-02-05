@@ -1,4 +1,5 @@
-import { Component, ElementRef, inject, OnInit,ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { AlertComponent } from '../../components/alert/alert.component';
 import { DatePipe, Location, CommonModule, AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
@@ -19,11 +20,13 @@ import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../
 @Component({
   selector: 'app-evenement-detail',
   standalone: true,
-  imports: [SpinnerComponent, DatePipe, FormsModule, FormInscriptionEvenementComponent, AsyncPipe, RouterLink, CommonModule],
+  imports: [SpinnerComponent, DatePipe, FormsModule, FormInscriptionEvenementComponent, AsyncPipe, RouterLink, CommonModule, AlertComponent],
   templateUrl: './evenement-detail.component.html',
   styleUrl: './evenement-detail.component.css'
 })
+
 export class EvenementDetailComponent implements OnInit {
+  showDeleteAlert = false;
 
   @ViewChild('inscriptionFormContainer') inscriptionFormContainer!: ElementRef;
   //Données pour le formulaire d'inscription
@@ -141,15 +144,22 @@ export class EvenementDetailComponent implements OnInit {
   }
 
   onDeleteEvent() {
+    this.showDeleteAlert = true;
+  }
+
+  confirmerSuppression() {
     if (!this.evenement) return;
-    if (confirm('Voulez-vous vraiment supprimer cet événement ? Cette action est irréversible.')) {
-      this.evenementService.deleteEvenement(this.evenement.id_evenement).subscribe({
-        next: () => {
-          this.router.navigate(['/evenements']);
-        },
-        error: (err) => console.error(err)
-      });
-    }
+    this.evenementService.deleteEvenement(this.evenement.id_evenement).subscribe({
+      next: () => {
+        this.router.navigate(['/evenements']);
+      },
+      error: (err) => console.error(err)
+    });
+    this.showDeleteAlert = false;
+  }
+
+  annulerSuppression() {
+    this.showDeleteAlert = false;
   }
 
   isEvenementTermine(): boolean {
