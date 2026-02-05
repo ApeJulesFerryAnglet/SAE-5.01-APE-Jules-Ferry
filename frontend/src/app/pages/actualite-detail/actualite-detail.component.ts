@@ -1,4 +1,5 @@
 import { Component, inject,  OnInit } from '@angular/core';
+import { AlertComponent } from '../../components/alert/alert.component';
 import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
 import { AuthService } from '../../services/Auth/auth.service';
@@ -12,11 +13,12 @@ import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 @Component({
   selector: 'app-actualite-detail',
   standalone: true,
-  imports: [SpinnerComponent, DatePipe, ],
+  imports: [SpinnerComponent, DatePipe, AlertComponent],
   templateUrl: './actualite-detail.component.html',
   styleUrl: './actualite-detail.component.css'
 })
 export class ActualiteDetailComponent implements OnInit {
+  showDeleteAlert = false;
   actualite !: Actualite;
   loadingActualite = true;
   errorActualite = false;
@@ -71,16 +73,23 @@ export class ActualiteDetailComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
-      this.actualiteService.deleteActualite(this.actualite.id_actualite).subscribe({
-        next: () => {
-          this.router.navigate(['/actualites']);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          alert('Erreur lors de la suppression de l\'actualité.');
-        }
-      });
-    }
+    this.showDeleteAlert = true;
+  }
+
+  confirmerSuppression(): void {
+    this.actualiteService.deleteActualite(this.actualite.id_actualite).subscribe({
+      next: () => {
+        this.router.navigate(['/actualites']);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        alert('Erreur lors de la suppression de l\'actualité.');
+      }
+    });
+    this.showDeleteAlert = false;
+  }
+
+  annulerSuppression(): void {
+    this.showDeleteAlert = false;
   }
 }
