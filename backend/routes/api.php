@@ -35,6 +35,9 @@ Route::get('/evenements/{id}', [EvenementController::class, 'show']);
 // Actualités
 Route::get('/actualites', [ActualiteController::class, 'index']);
 Route::get('/actualites/{id}', [ActualiteController::class, 'show']);
+Route::post('/actualites', [ActualiteController::class, 'store']);
+Route::put('/actualites/{id}', [ActualiteController::class, 'update']);
+Route::delete('/actualites/{id}', [ActualiteController::class, 'destroy']);
 
 // Formulaires
 Route::get('/formulaires/{id}', [FormulaireController::class, 'show']);
@@ -69,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy']);
 
     Route::apiResource('creneaux', CreneauController::class);
+    Route::get('/creneaux/tache/{tacheId}', [CreneauController::class, 'getCreneauxByTacheId']);
     Route::apiResource('formulaires', FormulaireController::class);
     Route::apiResource('taches', TacheController::class);
     Route::apiResource('utilisateurs', UtilisateurController::class);
