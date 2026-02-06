@@ -192,4 +192,17 @@ describe('EvenementCardComponent', () => {
       expect(console.error).toHaveBeenCalled();
     });
   });
+
+  describe('onDeletes', () => {
+    it('doit stopper la propagation et afficher l’alerte de suppression', () => {
+      const event = new Event('click');
+      spyOn(event, 'stopPropagation');
+      component.showDeleteAlert = false;
+
+      component.onDeletes(event);
+
+      expect(event.stopPropagation).toHaveBeenCalled();
+      expect(component.showDeleteAlert).toBeTrue();
+    });
+  });
 });
