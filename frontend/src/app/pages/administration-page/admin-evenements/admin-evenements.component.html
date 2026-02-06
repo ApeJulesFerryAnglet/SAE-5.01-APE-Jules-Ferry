@@ -1,19 +1,110 @@
-<div class="text-center py-10 bg-white shadow rounded-lg">
-    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-        aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-    <h3 class="mt-2 text-sm font-semibold text-gray-900">Administration des Évènements</h3>
-    <p class="mt-1 text-sm text-gray-500">Fonctionnalité bientôt disponible.</p>
-    <div class="mt-6">
-        <button type="button"
-            class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-            </svg>
-            Créer un évènement
-        </button>
+<div class="space-y-6">
+    <!-- Search Bar -->
+    <div class="md:flex md:items-center md:justify-between mb-6 gap-4">
+        <div class="min-w-0 flex-1">
+        </div>
+
+        <div class="relative max-w-sm w-full">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-search text-gray-400"></i>
+            </span>
+            <input type="text" [(ngModel)]="searchText" placeholder="Evènement, participant..."
+                class="block w-full rounded-md border-gray-300 pl-10 pr-3 py-2 shadow-sm focus:border-[var(--primary-blue)] focus:ring-[var(--primary-blue)] sm:text-sm border">
+        </div>
     </div>
+
+    @if (loading) {
+    <div class="flex justify-center py-20">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary-blue)]"></div>
+    </div>
+    } @else {
+    <div class="space-y-4">
+        @for (event of filteredEvents; track event.id_evenement) {
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition"
+                (click)="event['isExpanded'] = !event['isExpanded']"
+                (keyup.enter)="event['isExpanded'] = !event['isExpanded']" tabindex="0" role="button"
+                [attr.aria-expanded]="event['isExpanded']">
+                <div>
+                    <h3 class="text-lg leading-6 font-medium" style="color: var(--primary-dark-blue);">
+                        {{ event.titre }}
+                    </h3>
+                    <p class="mt-1 max-w-2xl text-sm" style="color: var(--gray-text-color);">
+                        {{ event.date_evenement | date:'dd/MM/yyyy' }} - <span class="font-semibold"
+                            style="color: var(--primary-blue);">{{ event.totalInscrits }} inscrits</span>
+                    </p>
+                </div>
+                <div>
+                    <i class="fa-solid" [class.fa-chevron-down]="!event['isExpanded']"
+                        [class.fa-chevron-up]="event['isExpanded']"></i>
+                </div>
+            </div>
+
+            @if (event['isExpanded']) {
+            <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+
+                @if (!event.extendedTaches || event.extendedTaches.length === 0) {
+                <p class="italic" style="color: var(--gray-text-color);">Aucune tâche ou créneau associé.</p>
+                }
+
+                @for (tache of event.extendedTaches; track tache.id_tache) {
+                <div class="mb-6 last:mb-0">
+                    <h4 class="font-semibold mb-2 border-l-4 pl-2"
+                        style="border-color: var(--primary-blue); color: var(--black-text-color);">
+                        {{ tache.nom_tache }}
+                    </h4>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        @for (creneau of tache.extendedCreneaux; track creneau.id_creneau) {
+                        <div
+                            class="relative rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm hover:border-[var(--primary-blue)] focus-within:ring-2 focus-within:ring-[var(--primary-blue)] focus-within:ring-offset-2">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium" style="color: var(--black-text-color);">
+                                    {{ creneau.heure_debut }} - {{ creneau.heure_fin }}
+                                </span>
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                    style="background-color: var(--primary-light-blue); color: var(--primary-dark-blue);">
+                                    {{ creneau.filledInscriptions?.length }} / {{ creneau.quota }}
+                                </span>
+                            </div>
+
+                            <ul class="space-y-2 mt-2">
+                                @for (insc of creneau.filledInscriptions; track insc.id_inscription) {
+                                <li class="flex justify-between items-start text-sm">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium" style="color: var(--black-text-color);">{{
+                                            insc.userNomComplet }}</span>
+                                        <span class="text-xs" style="color: var(--gray-text-color);">{{ insc.userEmail
+                                            }}</span>
+                                        @if (insc.commentaire) {
+                                        <span class="text-xs italic" style="color: var(--gray-text-color);">"{{
+                                            insc.commentaire }}"</span>
+                                        }
+                                    </div>
+                                    <button (click)="desinscrire(insc); $event.stopPropagation()"
+                                        class="text-red-400 hover:text-red-600 ml-2" title="Désinscrire">
+                                        <i class="fa-solid fa-user-minus" style="color: var(--error-color);"></i>
+                                    </button>
+                                </li>
+                                }
+                                @if (!creneau.filledInscriptions?.length) {
+                                <li class="text-xs text-gray-400 italic">Aucun inscrit</li>
+                                }
+                            </ul>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+        @if (filteredEvents.length === 0) {
+        <div class="text-center py-10 text-gray-500">
+            Aucun évènement trouvé (ou aucune tâche liée).
+        </div>
+        }
+    </div>
+    }
 </div>

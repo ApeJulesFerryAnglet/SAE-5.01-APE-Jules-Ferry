@@ -14,7 +14,7 @@ import { AdminEvenementsComponent } from './admin-evenements/admin-evenements.co
 export class AdministrationPageComponent {
   activeTab: 'comptes' | 'evenements' = 'comptes';
 
-  switchTab(tab: string) {
-    this.activeTab = tab as 'comptes' | 'evenements';
+  switchTab(tab: 'comptes' | 'evenements') {
+    this.activeTab = tab;
   }
 }
