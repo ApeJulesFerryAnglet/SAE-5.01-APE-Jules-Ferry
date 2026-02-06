@@ -94,7 +94,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
         this.chargementEnCours = false;
       },
       error: () => {
-        this.toastService.show('Erreur chargement utilisateurs', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur chargement utilisateurs', TypeErreurToast.ERROR);
         this.chargementEnCours = false;
       }
     });
@@ -111,12 +111,12 @@ export class AdminGestionUtilisateursComponent implements OnInit {
   validerEdition(user: Utilisateur): void {
     this.utilisateurService.updateUtilisateur(user, user.id_utilisateur).subscribe({
       next: () => {
-        this.toastService.show('Utilisateur modifié', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Utilisateur modifié', TypeErreurToast.SUCCESS);
         this.idEnEdition = null;
         this.utilisateurOriginal = null;
       },
       error: () => {
-        this.toastService.show('Erreur lors de la modification', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur lors de la modification', TypeErreurToast.ERROR);
       }
     });
   }
@@ -147,12 +147,12 @@ export class AdminGestionUtilisateursComponent implements OnInit {
 
     this.utilisateurService.createUtilisateur(nouvelUtilisateur).subscribe({
       next: (userCree) => {
-        this.toastService.show('Utilisateur créé !', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Utilisateur créé !', TypeErreurToast.SUCCESS);
         this.utilisateurs.push(userCree);
         this.modeCreation = false;
       },
       error: () => {
-        this.toastService.show('Erreur création (Email pris ?)', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur création (Email pris ?)', TypeErreurToast.ERROR);
       }
     });
   }
@@ -173,7 +173,7 @@ export class AdminGestionUtilisateursComponent implements OnInit {
     if (this.idUtilisateurASupprimer === null) return;
 
     if (this.idConnecte !== null && this.idUtilisateurASupprimer === this.idConnecte) {
-      this.toastService.show('Tu peux pas supprimer ton propre compte', TypeErreurToast.WARNING);
+      this.toastService.showWithTimeout('Tu peux pas supprimer ton propre compte', TypeErreurToast.WARNING);
       this.idUtilisateurASupprimer = null;
       return;
     }
@@ -183,11 +183,11 @@ export class AdminGestionUtilisateursComponent implements OnInit {
     this.utilisateurService.deleteUtilisateur(id).subscribe({
       next: (data) => {
         this.utilisateurs = this.utilisateurs.filter(u => u.id_utilisateur !== id);
-        this.toastService.show(data.message, TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout(data.message, TypeErreurToast.SUCCESS);
         this.idUtilisateurASupprimer = null;
       },
       error: () => {
-        this.toastService.show('Erreur suppression', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur suppression', TypeErreurToast.ERROR);
         this.idUtilisateurASupprimer = null;
       }
     });

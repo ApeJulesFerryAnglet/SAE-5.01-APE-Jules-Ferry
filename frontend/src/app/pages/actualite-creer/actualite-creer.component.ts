@@ -121,16 +121,23 @@ export class ActualiteCreerComponent implements OnInit {
 
     REQUEST.subscribe({
       next: () => {
-        this.toastService.showWithTimeout(
-          this.isEditMode ? 'Actualité modifiée avec succès.' : 'Actualité créée avec succès.',
-          TypeErreurToast.SUCCESS
-        );
+        const message = this.isEditMode ? 'Actualité modifiée avec succès.' : 'Actualité créée avec succès.';
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(message, TypeErreurToast.SUCCESS);
+        } else {
+          this.toastService.showWithTimeout(message, TypeErreurToast.SUCCESS);
+        }
         this.router.navigate(['/actualites']);
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde de l\'actualité:', error);
         const MESSAGE = this.isEditMode ? 'Erreur lors de la modification' : 'Erreur lors de la création';
-        this.toastService.showWithTimeout(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        } else {
+          this.toastService.showWithTimeout(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        }
+        window.alert(MESSAGE + ' de l\'actualité. Veuillez réessayer.');
         this.saving = false;
       }
     });

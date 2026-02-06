@@ -38,7 +38,7 @@ export class InscriptionEvenementComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.toastService.show('Erreur lors du chargement de l\'événement', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur lors du chargement de l\'événement', TypeErreurToast.ERROR);
       }
     });
   }

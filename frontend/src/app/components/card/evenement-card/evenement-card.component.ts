@@ -65,11 +65,24 @@ export class EvenementCardComponent implements OnChanges {
     return 'http://localhost:8000' + image_url;
   }
 
-  onDelete(event: Event): void {
+onDeletes(event: Event): void {
     event.stopPropagation();
     this.showDeleteAlert = true;
   }
-
+onDelete(event: Event): void {
+  event.stopPropagation();
+  if (window.confirm('Voulez-vous vraiment supprimer cet événement ?')) {
+    this.evenementService.deleteEvenement(this.id_evenement).subscribe({
+      next: () => {
+        this.eventDeleted.emit(this.id_evenement);
+        this.toastService.showWithTimeout('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression de l\'événement', err);
+      }
+    });
+  }
+}
   confirmerSuppression(): void {
     this.evenementService.deleteEvenement(this.id_evenement).subscribe({
       next: () => {
