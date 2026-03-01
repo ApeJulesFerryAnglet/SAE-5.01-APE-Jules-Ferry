@@ -19,11 +19,11 @@ import { CalendrierComponent } from '../../components/calendrier/calendrier.comp
 export class AccueilComponent implements OnInit {
   public listeActualites: Actualite[] = [];
   public listeEvenements: Evenement[] = [];
-  
+
   loadingEvents = true;
   loadingActualites = true;
   errorEvents = false;
-  errorActualites= false;
+  errorActualites = false;
 
   private readonly actualiteService = inject(ActualiteService);
   private readonly evenementService = inject(EvenementService);
@@ -44,8 +44,8 @@ export class AccueilComponent implements OnInit {
     });
 
     this.evenementService.getAllEvenements().subscribe({
-      next: (data) => {
-        this.listeEvenements = data;
+      next: (response) => {
+        this.listeEvenements = response.data;
         this.sortEvenementByDate();
         this.loadingEvents = false;
       },
@@ -63,13 +63,13 @@ export class AccueilComponent implements OnInit {
 
   public sortEvenementByDate(): void {
     this.listeEvenements.sort((a, b) => {
-        return new Date(a.date_evenement).getTime() - new Date(b.date_evenement).getTime();
+      return new Date(a.date_evenement).getTime() - new Date(b.date_evenement).getTime();
     });
   }
 
   public sortActualiteByDate(): void {
     this.listeActualites.sort((a, b) => {
-        return new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime();
+      return new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime();
     });
   }
 

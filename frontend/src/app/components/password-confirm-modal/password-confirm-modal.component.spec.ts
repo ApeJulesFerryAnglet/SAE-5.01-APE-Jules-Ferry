@@ -28,31 +28,31 @@ describe('PasswordConfirmModalComponent', () => {
     });
 
     it('ne devrait pas émettre d\'événement confirm si le mot de passe est vide', () => {
-      spyOn(component.confirm, 'emit');
+      spyOn(component.confirmPassword, 'emit');
       component.password = '';
 
       component.onConfirm();
 
-      expect(component.confirm.emit).not.toHaveBeenCalled();
+      expect(component.confirmPassword.emit).not.toHaveBeenCalled();
     });
 
     it('devrait émettre l\'événement confirm avec le mot de passe s\'il n\'est pas vide, puis le réinitialiser', () => {
-      spyOn(component.confirm, 'emit');
+      spyOn(component.confirmPassword, 'emit');
       component.password = 'monMotDePasseSecret';
 
       component.onConfirm();
 
-      expect(component.confirm.emit).toHaveBeenCalledWith('monMotDePasseSecret');
+      expect(component.confirmPassword.emit).toHaveBeenCalledWith('monMotDePasseSecret');
       expect(component.password).toBe('');
     });
 
     it('devrait émettre l\'événement cancel et réinitialiser le mot de passe lors de l\'annulation', () => {
-      spyOn(component.cancel, 'emit');
+      spyOn(component.cancelModal, 'emit');
       component.password = 'test';
 
       component.onCancel();
 
-      expect(component.cancel.emit).toHaveBeenCalled();
+      expect(component.cancelModal.emit).toHaveBeenCalled();
       expect(component.password).toBe('');
     });
   });
