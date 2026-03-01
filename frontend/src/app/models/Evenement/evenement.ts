@@ -1,5 +1,7 @@
 import { StatutEvenement } from "../../enums/StatutEvenement/statut-evenement";
 
+import { Formulaire } from "../Formulaire/formulaire";
+
 export interface Evenement {
     id_evenement: number;
     titre: string;
@@ -12,7 +14,7 @@ export interface Evenement {
     statut: StatutEvenement | string;
     id_auteur: number;
     id_formulaire: number | null;
-    formulaire?: any;
+    formulaire?: Formulaire;
     created_at?: string;
     updated_at?: string;
 }

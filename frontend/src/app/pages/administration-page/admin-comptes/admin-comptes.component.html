@@ -125,7 +125,8 @@
 
 
     @if (showPasswordModal) {
-    <app-password-confirm-modal (confirm)="onPasswordConfirmed($event)" (cancel)="closePasswordModal()">
+    <app-password-confirm-modal (confirmPassword)="onPasswordConfirmed($event)"
+        (cancelModal)="showPasswordModal = false; pendingAction = null; pendingUserFormPayload = null;">
     </app-password-confirm-modal>
     }
 

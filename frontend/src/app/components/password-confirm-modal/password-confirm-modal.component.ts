@@ -10,20 +10,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './password-confirm-modal.component.css'
 })
 export class PasswordConfirmModalComponent {
-  @Output() confirm = new EventEmitter<string>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() confirmPassword = new EventEmitter<string>();
+  @Output() cancelModal = new EventEmitter<void>();
 
   password = '';
 
   onConfirm() {
     if (this.password) {
-      this.confirm.emit(this.password);
+      this.confirmPassword.emit(this.password);
       this.password = '';
     }
   }
 
   onCancel() {
-    this.cancel.emit();
+    this.cancelModal.emit();
     this.password = '';
   }
 }

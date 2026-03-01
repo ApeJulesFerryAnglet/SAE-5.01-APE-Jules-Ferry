@@ -8,6 +8,7 @@ use App\Services\Image\ImageConverterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class EvenementController extends Controller
@@ -141,10 +142,19 @@ class EvenementController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
+            $admin = Auth::user();
+
+            if (!$request->has('admin_password')) {
+                return response()->json(['message' => 'Mot de passe administrateur requis'], 422);
+            }
+
+            if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
+                return response()->json(['message' => 'Mot de passe administrateur incorrect'], 403);
+            }
+
             $evenement = Evenement::find($id);
             if (!$evenement) {
                 return response()->json(['message' => 'Non trouvé'], 404);
