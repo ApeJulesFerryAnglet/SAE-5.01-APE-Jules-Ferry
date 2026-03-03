@@ -44,8 +44,8 @@ export class AccueilComponent implements OnInit {
     });
 
     this.evenementService.getAllEvenements().subscribe({
-      next: (response) => {
-        this.listeEvenements = response.data;
+      next: (response: any) => {
+        this.listeEvenements = response.data || (Array.isArray(response) ? response : []);
         this.sortEvenementByDate();
         this.loadingEvents = false;
       },

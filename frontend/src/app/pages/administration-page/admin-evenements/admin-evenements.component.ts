@@ -15,6 +15,8 @@ import { Tache } from '../../../models/Tache/tache';
 import { Creneau } from '../../../models/Creneau/creneau';
 import { Inscription } from '../../../models/Inscription/inscription';
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
+import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';
+import { ExportExcelService } from '../../../services/ExportExcel/export-excel.service';
 
 interface ExtendedCreneau extends Creneau {
   filledInscriptions?: ExtendedInscription[];
@@ -41,7 +43,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-admin-evenements',
   standalone: true,
-  imports: [CommonModule, FormsModule, PasswordConfirmModalComponent, RouterLink],
+  imports: [CommonModule, FormsModule, PasswordConfirmModalComponent, RouterLink, ExportModalComponent],
   templateUrl: './admin-evenements.component.html',
   styleUrl: './admin-evenements.component.css'
 })
@@ -52,6 +54,7 @@ export class AdminEvenementsComponent implements OnInit {
   private readonly inscriptionService = inject(InscriptionService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastService);
+  private readonly exportExcelService = inject(ExportExcelService);
 
   events: ExtendedEvenement[] = [];
   currentPage = 1;
@@ -76,6 +79,24 @@ export class AdminEvenementsComponent implements OnInit {
   targetCreneauId: number | null = null;
 
   idEvenementASupprimer: number | null = null;
+
+  showExportEventsModal = false;
+  exportColumnsEvents = [
+    { key: 'titre', label: 'Titre', selected: true },
+    { key: 'date', label: 'Date', selected: true },
+    { key: 'inscrits', label: 'Inscrits', selected: true },
+    { key: 'lieu', label: 'Lieu', selected: true }
+  ];
+
+  showExportParticipantsModal = false;
+  exportColumnsParticipants = [
+    { key: 'nom', label: 'Nom du participant', selected: true },
+    { key: 'email', label: 'Email du participant', selected: true },
+    { key: 'tache', label: 'Tâche', selected: true },
+    { key: 'creneau', label: 'Créneau', selected: true },
+    { key: 'commentaire', label: 'Commentaire', selected: true }
+  ];
+  selectedEventForExport: ExtendedEvenement | null = null;
 
   ngOnInit(): void {
     this.loadInitialEvents();
@@ -322,5 +343,51 @@ export class AdminEvenementsComponent implements OnInit {
         this.idEvenementASupprimer = null;
       }
     });
+  }
+
+  exportEvents(selectedKeys: string[]): void {
+    const dataToExport = this.filteredEvents.map(event => {
+      const row: any = {};
+      if (selectedKeys.includes('titre')) row['Titre'] = event.titre;
+      if (selectedKeys.includes('date')) {
+        row['Date'] = event.date_evenement ? new Date(event.date_evenement).toLocaleDateString() : '';
+      }
+      if (selectedKeys.includes('inscrits')) row['Inscrits'] = event.totalInscrits;
+      if (selectedKeys.includes('lieu')) row['Lieu'] = event.lieu;
+      return row;
+    });
+    this.exportExcelService.exportAsExcelFile(dataToExport, 'Evenements');
+    this.showExportEventsModal = false;
+  }
+
+  openExportParticipantsModal(event: ExtendedEvenement): void {
+    this.selectedEventForExport = event;
+    this.showExportParticipantsModal = true;
+  }
+
+  exportParticipants(selectedKeys: string[]): void {
+    if (!this.selectedEventForExport || !this.selectedEventForExport.extendedTaches) return;
+    const dataToExport: any[] = [];
+
+    this.selectedEventForExport.extendedTaches.forEach(tache => {
+      tache.extendedCreneaux?.forEach(creneau => {
+        creneau.filledInscriptions?.forEach(insc => {
+          const row: any = {};
+          if (selectedKeys.includes('nom')) row['Nom'] = insc.userNomComplet;
+          if (selectedKeys.includes('email')) row['Email'] = insc.userEmail;
+          if (selectedKeys.includes('tache')) row['Tâche'] = tache.nom_tache;
+          if (selectedKeys.includes('creneau')) {
+            row['Créneau'] = `${creneau.heure_debut} - ${creneau.heure_fin}`;
+          }
+          if (selectedKeys.includes('commentaire')) row['Commentaire'] = insc.commentaire || '';
+          dataToExport.push(row);
+        });
+      });
+    });
+
+    const fileName = `Participants_${this.selectedEventForExport.titre.replace(/\s+/g, '_')}`;
+    this.exportExcelService.exportAsExcelFile(dataToExport, fileName);
+    this.showExportParticipantsModal = false;
+    this.selectedEventForExport = null;
   }
 }

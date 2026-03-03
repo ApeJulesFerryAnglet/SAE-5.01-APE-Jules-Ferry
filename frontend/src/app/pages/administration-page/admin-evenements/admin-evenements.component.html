@@ -38,6 +38,22 @@
             </a>
         </div>
 
+        <!-- Bannière d'exportation des événements -->
+        <div
+            class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h3 class="text-sm font-medium text-gray-900"><i class="fa-solid fa-download mr-2 text-gray-500"></i>
+                    Exportation des données</h3>
+                <p class="text-sm text-gray-500 mt-1">Téléchargez la liste de tous les événements au format Excel
+                    (.xlsx)</p>
+            </div>
+            <button type="button" (click)="showExportEventsModal = true"
+                class="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <i class="fa-solid fa-file-excel text-green-600 mr-2 text-lg"></i>
+                Exporter les événements
+            </button>
+        </div>
+
         @if (loading) {
         <div class="flex justify-center py-20">
             <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary-blue)]"></div>
@@ -178,6 +194,22 @@
                         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--primary-blue)]"></div>
                     </div>
                     } @else {
+
+                    <div
+                        class="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900"><i
+                                    class="fa-solid fa-download mr-2 text-gray-500"></i> Exportation des participants
+                            </h4>
+                            <p class="text-sm text-gray-500 mt-1">Téléchargez la liste des inscrits à cet événement au
+                                format Excel (.xlsx)</p>
+                        </div>
+                        <button type="button" (click)="openExportParticipantsModal(event)"
+                            class="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                            <i class="fa-solid fa-file-excel text-green-600 mr-2 text-lg"></i>
+                            Exporter les participants
+                        </button>
+                    </div>
 
                     @if (!event.extendedTaches || event.extendedTaches.length === 0) {
                     <p class="italic" style="color: var(--gray-text-color);">Aucune tâche ou créneau associé.</p>
@@ -322,5 +354,17 @@
             </div>
         </div>
     </div>
+    }
+
+    @if (showExportEventsModal) {
+    <app-export-modal title="Exporter les événements" [availableColumns]="exportColumnsEvents"
+        (confirm)="exportEvents($event)" (cancel)="showExportEventsModal = false">
+    </app-export-modal>
+    }
+
+    @if (showExportParticipantsModal) {
+    <app-export-modal title="Exporter les participants" [availableColumns]="exportColumnsParticipants"
+        (confirm)="exportParticipants($event)" (cancel)="showExportParticipantsModal = false">
+    </app-export-modal>
     }
 </div>

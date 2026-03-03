@@ -123,8 +123,8 @@ export class CalendrierComponent implements OnInit {
 
     // Récupération des événements depuis le service
     this.evenementService.getAllEvenements().subscribe({
-      next: (response) => {
-        const evenements = response.data;
+      next: (response: any) => {
+        const evenements: Evenement[] = response.data || (Array.isArray(response) ? response : []);
         this.eventsList = evenements;
         this.calendarOptions.events = evenements.map((event: Evenement) => ({
           id: event.id_evenement.toString(),
