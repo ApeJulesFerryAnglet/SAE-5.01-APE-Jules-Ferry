@@ -24,16 +24,33 @@ class Utilisateur extends Authenticatable
         'statut_compte'
     ];
 
-    // Cacher le mot de passe dans les réponses JSON
     protected $hidden = [
         'mot_de_passe',
     ];
 
-    // Cast automatique
     protected $casts = [
         'email_verified_at' => 'datetime',
         'mot_de_passe' => 'hashed',
     ];
+
+    /**
+     * Génère une paire de tokens sans expiration pour les parents.
+     * Basé sur ton ancienne logique mais simplifié pour ton projet APE.
+     */
+    public function createTokensWithoutExpiration(): array
+    {
+        // On définit les "abilities" (capacités) directement en chaînes de caractères
+        // pour éviter de devoir créer un fichier Enum.
+        $ability = ($this->role === 'admin') ? 'access-admin-api' : 'access-api';
+
+        // Création de l'access_token sans date d'expiration (null)
+        $accessToken = $this->createToken('access_token', [$ability], null)->plainTextToken;
+
+        // Création du refresh_token sans date d'expiration (null)
+        $refreshToken = $this->createToken('refresh_token', ['refresh-tokens'], null)->plainTextToken;
+
+        return [$accessToken, $refreshToken];
+    }
 
     public function getAuthPassword()
     {
