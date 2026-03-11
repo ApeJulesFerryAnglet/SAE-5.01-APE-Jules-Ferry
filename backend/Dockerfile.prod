@@ -1,14 +1,13 @@
 FROM composer:2 AS build
 
 WORKDIR /app
-
-COPY composer.json composer.lock ./
+COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-COPY . .
+
 RUN composer dump-autoload --optimize
 
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
