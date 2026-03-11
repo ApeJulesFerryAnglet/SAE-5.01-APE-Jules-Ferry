@@ -9,6 +9,7 @@ use App\Services\Image\ImageConverterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Formulaire\FormulaireDuplicationService;
 
@@ -28,13 +29,26 @@ class EvenementController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Evenement::orderBy('date_evenement', 'desc');
+            $query = Evenement::select('evenements.*')
+                ->orderBy('date_evenement', 'desc')
+                ->with('auteur')
+                ->addSelect([
+                    'inscriptions_count' => \Illuminate\Support\Facades\DB::table('inscriptions')
+                        ->selectRaw('count(*)')
+                        ->join('creneaux', 'creneaux.id_creneau', '=', 'inscriptions.id_creneau')
+                        ->join('taches', 'taches.id_tache', '=', 'creneaux.id_tache')
+                        ->whereColumn('taches.id_formulaire', 'evenements.id_formulaire')
+                ]);
+
             if ($request->has('statut') && $request->statut !== 'tous') {
                 $query->where('statut', $request->statut);
             }
-            $evenements = $query->with('auteur')->get();
 
-            return response()->json($evenements);
+            if ($request->has('limit')) {
+                return response()->json($query->paginate((int) $request->limit));
+            }
+
+            return response()->json($query->get());
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -51,6 +65,23 @@ class EvenementController extends Controller
             if (!$evenement) {
                 return response()->json(['message' => 'Événement non trouvé'], 404);
             }
+            return response()->json($evenement);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getDetails($id)
+    {
+        try {
+            $evenement = Evenement::with([
+                'formulaire.taches.creneaux.inscriptions.utilisateur'
+            ])->find($id);
+
+            if (!$evenement) {
+                return response()->json(['message' => 'Événement non trouvé'], 404);
+            }
+
             return response()->json($evenement);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -152,10 +183,19 @@ class EvenementController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
+            $admin = Auth::user();
+
+            if (!$request->has('admin_password')) {
+                return response()->json(['message' => 'Mot de passe administrateur requis'], 422);
+            }
+
+            if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
+                return response()->json(['message' => 'Mot de passe administrateur incorrect'], 403);
+            }
+
             $evenement = Evenement::find($id);
             if (!$evenement) return response()->json(['message' => 'Non trouvé'], 404);
 
@@ -168,7 +208,7 @@ class EvenementController extends Controller
 
             $this->deleteOldImage($evenement->image_url);
             $evenement->delete();
-            
+
             return response()->json(['message' => 'Supprimé avec succès']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
