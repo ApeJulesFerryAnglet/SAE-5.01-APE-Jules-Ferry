@@ -18,5 +18,11 @@ done
 echo "Running migrations..."
 php artisan migrate --force
 
+echo "storage link"
+php artisan storage:link
+
+echo "optimizing"
+php artisan optimize
+
 echo "Starting php-fpm..."
 php-fpm

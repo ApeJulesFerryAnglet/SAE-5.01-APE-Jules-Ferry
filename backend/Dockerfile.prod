@@ -16,10 +16,22 @@ RUN apk add --no-cache \
     curl \
     icu-dev \
     oniguruma-dev \
-    libpq-dev \
-    zip \
-    unzip \
-    && docker-php-ext-install pdo pdo_pgsql intl mbstring
+    libzip-dev \
+    zlib-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev \
+    postgresql-dev \
+    $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install \
+        pdo \
+        pdo_pgsql \
+        mbstring \
+        intl \
+        zip \
+        gd
 
 COPY --from=build /app /var/www/html
 
