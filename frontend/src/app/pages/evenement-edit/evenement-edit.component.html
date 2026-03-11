@@ -18,193 +18,165 @@
       <div class="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden">
         <div class="bg-blue-50 p-6 border-b border-blue-100">
             <h2 class="text-lg font-bold text-blue-900 mb-1">1. Organisation des Bénévoles</h2>
-            <p class="text-sm text-blue-700 mb-4">
-                Définissez les tâches et créneaux horaires pour lesquels vous avez besoin d'aide.
-            </p>
-
+            
             @if (!isEditMode) {
+                <p class="text-sm text-blue-700 mb-4">
+                    Définissez les tâches et créneaux horaires pour lesquels vous avez besoin d'aide.
+                </p>
                 <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-blue-200">
                     <div class="flex-1 w-full">
                         <label class="block w-full">
-                            <span class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Importer un modèle (Optionnel)</span>
+                            <span class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Importer un modèle</span>
                             <select formControlName="select_template_id" 
                                     class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                                 <option [ngValue]="null">-- Partir de zéro --</option>
                                 @for (tpl of templates; track tpl.id_formulaire) {
-                                    <option [value]="tpl.id_formulaire">
-                                        📋 {{ tpl.nom_formulaire }}
-                                    </option>
+                                    <option [value]="tpl.id_formulaire"> {{ tpl.nom_formulaire }}</option>
                                 }
                             </select>
                         </label>
                     </div>
                 </div>
+            } @else {
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-2 rounded">
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-lock text-yellow-600 mt-0.5 mr-3"></i>
+                        <div>
+                            <h3 class="font-bold text-yellow-800 text-sm">Structure protégée</h3>
+                            <p class="text-sm text-yellow-700 mt-1">
+                                L'événement est en cours. Pour éviter de corrompre les inscriptions existantes, 
+                                les tâches et créneaux ne sont pas modifiables depuis cette interface.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             }
         </div>
 
-        <div class="p-6 bg-gray-50">
-            <div formArrayName="taches" class="space-y-6">
-                
-                @for (tache of taches.controls; track tache; let i = $index) {
-                    <div [formGroupName]="i" class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 relative group animate-fade-in">
-                        
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 mr-10">
-                                <div>
-                                    <label class="block w-full">
-                                        <span class="block text-xs font-medium text-gray-500 mb-1">Nom de la tâche</span>
-                                        <input type="text" formControlName="nom_tache" placeholder="Ex: Buvette, Sécurité..."
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 outline-none text-sm font-bold">
-                                    </label>
-                                </div>
-                                <div class="flex gap-2">
-                                    <div class="flex-1">
+        @if (!isEditMode) {
+            <div class="p-6 bg-gray-50">
+                <div formArrayName="taches" class="space-y-6">
+                    
+                    @for (tache of taches.controls; track tache; let i = $index) {
+                        <div [formGroupName]="i" class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 relative group animate-fade-in">
+                            
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 mr-10">
+                                    <div>
                                         <label class="block w-full">
-                                            <span class="block text-xs font-medium text-gray-500 mb-1">Début (Global)</span>
-                                            <input type="time" formControlName="heure_debut_globale" class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <span class="block text-xs font-medium text-gray-500 mb-1">Nom de la tâche</span>
+                                            <input type="text" formControlName="nom_tache" placeholder="Ex: Buvette"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 outline-none text-sm font-bold">
                                         </label>
                                     </div>
-                                    <div class="flex-1">
-                                        <label class="block w-full">
-                                            <span class="block text-xs font-medium text-gray-500 mb-1">Fin (Global)</span>
-                                            <input type="time" formControlName="heure_fin_globale" class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm">
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button type="button" (click)="removeTache(i)" aria-label="Supprimer la tâche"
-                                    class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1">
-                                <i class="fa-solid fa-trash-can text-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block w-full">
-                                <span class="sr-only">Description</span>
-                                <input type="text" formControlName="description" placeholder="Description courte (ex: Servir les boissons...)"
-                                    class="w-full px-3 py-2 border-b border-gray-200 focus:border-blue-500 outline-none text-sm bg-transparent">
-                            </label>
-                        </div>
-
-                        <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                            <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase">Créneaux horaires & Quotas</h4>
-                            
-                            <div formArrayName="creneaux" class="space-y-2">
-                                @for (creneau of getCreneaux(i).controls; track creneau; let j = $index) {
-                                    <div [formGroupName]="j" class="flex items-center gap-2">
-                                        
-                                        <label class="flex items-center">
-                                            <span class="sr-only">Heure début</span>
-                                            <input type="time" formControlName="heure_debut" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm">
-                                        </label>
-                                        
-                                        <span class="text-gray-400">-</span>
-                                        
-                                        <label class="flex items-center">
-                                            <span class="sr-only">Heure fin</span>
-                                            <input type="time" formControlName="heure_fin" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm">
-                                        </label>
-                                        
-                                        <div class="flex items-center gap-2 ml-4">
-                                            <span class="text-xs text-gray-500">Places :</span>
-                                            <label class="flex items-center">
-                                                <span class="sr-only">Quota</span>
-                                                <input type="number" formControlName="quota" min="1" class="w-16 px-2 py-1 border border-gray-300 rounded text-sm font-bold text-center">
+                                    <div class="flex gap-2">
+                                        <div class="flex-1">
+                                            <label class="block w-full">
+                                                <span class="block text-xs font-medium text-gray-500 mb-1">Début</span>
+                                                <input type="time" formControlName="heure_debut_globale" (change)="tache.updateValueAndValidity()" class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm">
                                             </label>
                                         </div>
-
-                                        <button type="button" (click)="removeCreneau(i, j)" class="ml-auto text-red-400 hover:text-red-600 px-2">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
+                                        <div class="flex-1">
+                                            <label class="block w-full">
+                                                <span class="block text-xs font-medium text-gray-500 mb-1">Fin</span>
+                                                <input type="time" formControlName="heure_fin_globale" (change)="tache.updateValueAndValidity()" class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm">
+                                            </label>
+                                        </div>
                                     </div>
-                                }
+                                </div>
+                                <button type="button" (click)="removeTache(i)" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-1">
+                                    <i class="fa-solid fa-trash-can text-lg"></i>
+                                </button>
                             </div>
-                            
-                            <button type="button" (click)="addCreneau(i)" class="mt-2 text-xs font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> Ajouter un créneau
-                            </button>
+
+                            @if (tache.errors?.['timeRangeInvalid'] && (tache.touched || tache.dirty)) {
+                                <div class="mb-4 text-xs text-red-600 bg-red-50 p-2 rounded border border-red-100">
+                                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> La fin de la tâche doit être après le début.
+                                </div>
+                            }
+
+                            @if (tache.errors?.['slotOutsideTaskBounds']) {
+                                <div class="mb-4 text-xs text-orange-600 bg-orange-50 p-2 rounded border border-orange-100 font-bold flex items-center">
+                                    <i class="fa-solid fa-clock mr-2"></i> Attention : Un créneau déborde des horaires globaux de la tâche !
+                                </div>
+                            }
+
+                            <div class="mb-4">
+                                <label class="block w-full">
+                                    <span class="sr-only">Description</span>
+                                    <input type="text" formControlName="description" placeholder="Description courte..."
+                                        class="w-full px-3 py-2 border-b border-gray-200 focus:border-blue-500 outline-none text-sm bg-transparent">
+                                </label>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase">Créneaux horaires & Quotas</h4>
+                                
+                                <div formArrayName="creneaux" class="space-y-2">
+                                    @for (creneau of getCreneaux(i).controls; track creneau; let j = $index) {
+                                        <div [formGroupName]="j">
+                                            <div class="flex items-center gap-2">
+                                                <label class="flex items-center"><span class="sr-only">Début</span><input type="time" (change)="tache.updateValueAndValidity()" formControlName="heure_debut" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm"></label>
+                                                <span class="text-gray-400">-</span>
+                                                <label class="flex items-center"><span class="sr-only">Fin</span><input type="time" (change)="tache.updateValueAndValidity()" formControlName="heure_fin" class="w-24 px-2 py-1 border border-gray-300 rounded text-sm"></label>
+                                                <div class="flex items-center gap-2 ml-4">
+                                                    <span class="text-xs text-gray-500">Places :</span>
+                                                    <label class="flex items-center"><span class="sr-only">Quota</span><input type="number" formControlName="quota" min="1" class="w-16 px-2 py-1 border border-gray-300 rounded text-sm font-bold text-center"></label>
+                                                </div>
+                                                <button type="button" (click)="removeCreneau(i, j)" class="ml-auto text-red-400 hover:text-red-600 px-2"><i class="fa-solid fa-xmark"></i></button>
+                                            </div>
+                                            @if (creneau.errors?.['timeRangeInvalid'] && (creneau.touched || creneau.dirty)) {
+                                                <div class="text-xs text-red-500 mt-1 pl-1">ATTENTION : Heure fin < Heure début</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <button type="button" (click)="addCreneau(i)" class="mt-2 text-xs font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Ajouter un créneau
+                                </button>
+                            </div>
                         </div>
-
-                    </div>
-                }
-
-                <button type="button" (click)="addTache()" 
-                        class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all font-medium flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-plus-circle"></i> Ajouter une nouvelle tâche
-                </button>
+                    }
+                    <button type="button" (click)="addTache()" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all font-medium flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> Ajouter une nouvelle tâche
+                    </button>
+                </div>
             </div>
-        </div>
+        }
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
         <h2 class="text-lg font-bold text-gray-800 mb-6 pb-2 border-b">2. Détails de l'événement</h2>
-
+        
         <div class="grid grid-cols-1 gap-6">
             <div>
-                <label class="block w-full">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Titre de l'événement</span>
-                    <input type="text" formControlName="titre" placeholder="Ex: Grande Kermesse 2026"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                </label>
+                <label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Titre</span><input type="text" formControlName="titre" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></label>
             </div>
-
             <div>
-                <label class="block w-full">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Description</span>
-                    <textarea formControlName="description" rows="4" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                </label>
+                <label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Description</span><textarea formControlName="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></textarea></label>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block w-full">
-                        <span class="block text-sm font-medium text-gray-700 mb-1">Date</span>
-                        <input type="date" formControlName="date_evenement" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none">
-                    </label>
-                </div>
-                <div>
-                    <label class="block w-full">
-                        <span class="block text-sm font-medium text-gray-700 mb-1">Début</span>
-                        <input type="time" formControlName="heure_debut" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none">
-                    </label>
-                </div>
-                <div>
-                    <label class="block w-full">
-                        <span class="block text-sm font-medium text-gray-700 mb-1">Fin</span>
-                        <input type="time" formControlName="heure_fin" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none">
-                    </label>
-                </div>
+                <div><label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Date</span><input type="date" formControlName="date_evenement" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></label></div>
+                <div><label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Début</span><input type="time" formControlName="heure_debut" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></label></div>
+                <div><label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Fin</span><input type="time" formControlName="heure_fin" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></label></div>
             </div>
             
             @if (evenementForm.errors?.['timeRangeInvalid'] && (evenementForm.get('heure_fin')?.touched || evenementForm.get('heure_fin')?.dirty)) {
-                <div class="text-red-600 text-sm bg-red-50 p-2 rounded">L'heure de fin doit être après l'heure de début.</div>
+                <div class="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> L'heure de fin de l'événement doit être après l'heure de début.
+                </div>
             }
 
+            <div><label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Lieu</span><input type="text" formControlName="lieu" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none"></label></div>
             <div>
-                <label class="block w-full">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Lieu</span>
-                    <input type="text" formControlName="lieu" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none">
-                </label>
-            </div>
-
-            <div>
-                <label class="block w-full">
-                    <span class="block text-sm font-medium text-gray-700 mb-1">Image</span>
-                    <input type="file" (change)="onImageFileChange($event)" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                </label>
-                
-                @if (previewImage) {
-                    <img [src]="previewImage" alt="Aperçu de l'image sélectionnée" class="mt-4 h-40 w-full object-cover rounded-lg">
-                }
+                <label class="block w-full"><span class="block text-sm font-medium text-gray-700 mb-1">Image</span><input type="file" (change)="onImageFileChange($event)" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"></label>
+                @if (previewImage) { <img [src]="previewImage" alt="Aperçu" class="mt-4 h-40 w-full object-cover rounded-lg"> }
             </div>
         </div>
 
         <div class="pt-8 border-t border-gray-100 mt-6 flex justify-end">
-            <button type="submit" [disabled]="evenementForm.invalid || saving"
-                    class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 disabled:opacity-50 transition-all shadow-lg active:scale-95">
-                {{ saving ? 'Enregistrement...' : 'Valider et Créer l\'événement' }}
+            <button type="submit" [disabled]="evenementForm.invalid || saving" class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-green-700 disabled:opacity-50 transition-all shadow-lg active:scale-95">
+                {{ saving ? 'Enregistrement...' : 'Valider' }}
             </button>
         </div>
       </div>

@@ -43,7 +43,10 @@ class EvenementController extends Controller
     public function show($id)
     {
         try {
-            $evenement = Evenement::find($id);
+            $evenement = Evenement::with([
+                'auteur', 
+                'formulaire.taches.creneaux.inscriptions'
+            ])->find($id);
 
             if (!$evenement) {
                 return response()->json(['message' => 'Événement non trouvé'], 404);
