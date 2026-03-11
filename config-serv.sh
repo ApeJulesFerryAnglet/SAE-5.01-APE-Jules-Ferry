@@ -3,7 +3,9 @@ apt-get update
 apt-get upgrade
 
 set -e
-
+echo "Ajout cronjob"
+apt install cron
+export EDITOR=nano
 echo "Suppression des anciennes versions éventuelles..."
 sudo apt remove -y docker docker-engine docker.io containerd runc || true
 
@@ -35,6 +37,13 @@ sudo systemctl start docker
 echo "Ajout de l'utilisateur au groupe docker..."
 sudo usermod -aG docker $USER
 
+echo "Ajout de cert-bot"
+apt update
+apt install snapd
+snap install core
+snap refresh core
+snap install --classic certbot
+ln -s /snap/bin/certbot /usr/bin/certbot
 echo "Installation terminée. Déconnecte-toi/reconnecte-toi pour utiliser Docker sans sudo."
 
 
