@@ -497,7 +497,7 @@ export class AdminEvenementsComponent implements OnInit {
       });
     });
 
-    const fileName = `Participants_${this.selectedEventForExport.titre.replace(/\s+/g, '_')}`;
+    const fileName = this.selectedEventForExport.titre.replace(/\s+/g, '_');
     this.exportExcelService.exportAsExcelFile(dataToExport, fileName);
     this.showExportParticipantsModal = false;
     this.selectedEventForExport = null;
