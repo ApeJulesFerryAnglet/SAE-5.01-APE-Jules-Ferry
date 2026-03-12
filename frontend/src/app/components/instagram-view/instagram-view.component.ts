@@ -1,9 +1,15 @@
-import { Component, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, AfterViewInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+
+interface InstagramEmbeds {
+  process(): void;
+}
 
 declare global {
   interface Window {
-    instgrm?: any;
+    instgrm?: {
+      Embeds: InstagramEmbeds;
+    };
   }
 }
 
@@ -19,7 +25,7 @@ export class InstagramViewComponent implements AfterViewInit {
   private readonly INSTAGRAM_SCRIPT_URL = 'https://www.instagram.com/embed.js';
   
   //Injections 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  private readonly platformId = inject(PLATFORM_ID);
 
   
   ngAfterViewInit(): void {

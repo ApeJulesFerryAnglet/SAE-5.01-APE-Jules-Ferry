@@ -28,20 +28,20 @@ import { CommonModule } from '@angular/common';
 export class SidebarWidgetComponent implements OnInit, OnDestroy {
 
   //Inputs 
-  @Input() title: string = '';
-  @Input() icon: string = 'fa-solid fa-widget';
+  @Input() title = '';
+  @Input() icon = 'fa-solid fa-widget';
   @Input() position: 'left' | 'right' = 'right';
-  @Input() defaultOpen: boolean = false;
-  @Input() topOffset: number = 100;
-  @Input() smallWidth: number = 320;
-  @Input() largeWidth: number = 600;
+  @Input() defaultOpen = false;
+  @Input() topOffset = 100;
+  @Input() smallWidth = 320;
+  @Input() largeWidth = 600;
   
   //States
-  isOpen: boolean = false;
-  isExpanded: boolean = false;
+  isOpen = false;
+  isExpanded = false;
   
   // Unique ID for widgets
-  private widgetId: string = '';
+  private widgetId = '';
   private widgetOpenListener: ((e: Event) => void) | null = null;
 
   get contentHeight(): string {

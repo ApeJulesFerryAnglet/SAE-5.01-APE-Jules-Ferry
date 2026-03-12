@@ -132,7 +132,6 @@ export class CalendrierComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     
     const widgetContent = this.calendarContainer?.nativeElement?.closest('.widget-content');
-    const widgetBody = this.calendarContainer?.nativeElement?.closest('.widget-body');
     
     if (widgetContent) {
       this.resizeObserver = new ResizeObserver((entries) => {
@@ -157,7 +156,7 @@ export class CalendrierComponent implements OnInit, AfterViewInit, OnDestroy {
       widgetContent.addEventListener('transitionend', this.transitionEndListener);
     }
     
-    this.widgetResizeListener = (e: Event) => {
+    this.widgetResizeListener = () => {
       this.forceCalendarResize();
     };
     
