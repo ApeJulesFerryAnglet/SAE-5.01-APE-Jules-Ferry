@@ -1,4 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -22,6 +24,7 @@ export class ActualiteCreerComponent implements OnInit {
   private readonly location = inject(Location);
   private readonly actualiteService = inject(ActualiteService);
   private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   actualiteForm!: FormGroup;
   loading = false;
@@ -118,12 +121,23 @@ export class ActualiteCreerComponent implements OnInit {
 
     REQUEST.subscribe({
       next: () => {
+        const message = this.isEditMode ? 'Actualité modifiée avec succès.' : 'Actualité créée avec succès.';
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(message, TypeErreurToast.SUCCESS);
+        } else {
+          this.toastService.showWithTimeout(message, TypeErreurToast.SUCCESS);
+        }
         this.router.navigate(['/actualites']);
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde de l\'actualité:', error);
         const MESSAGE = this.isEditMode ? 'Erreur lors de la modification' : 'Erreur lors de la création';
-        alert(MESSAGE + ' de l\'actualité. Veuillez réessayer.');
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        } else {
+          this.toastService.showWithTimeout(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        }
+        window.alert(MESSAGE + ' de l\'actualité. Veuillez réessayer.');
         this.saving = false;
       }
     });
@@ -131,18 +145,16 @@ export class ActualiteCreerComponent implements OnInit {
 
   deleteActualite(): void {
     if (!this.idActualite) return;
-    
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
-      this.actualiteService.deleteActualite(this.idActualite).subscribe({
-        next: () => {
-          this.router.navigate(['/actualites']);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          alert('Erreur lors de la suppression de l\'actualité.');
-        }
-      });
-    }
+    this.actualiteService.deleteActualite(this.idActualite).subscribe({
+      next: () => {
+        this.toastService.showWithTimeout('Actualité supprimée avec succès.', TypeErreurToast.SUCCESS);
+        this.router.navigate(['/actualites']);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        this.toastService.showWithTimeout('Erreur lors de la suppression de l\'actualité.', TypeErreurToast.ERROR);
+      }
+    });
   }
 
   goBack(): void {

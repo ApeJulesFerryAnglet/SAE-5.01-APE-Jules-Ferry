@@ -1,4 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,6 +28,7 @@ export class FormulaireEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private formulaireService = inject(FormulaireService);
+  private toastService = inject(ToastService);
 
   ngOnInit() {
     this.initForm();
@@ -72,7 +75,8 @@ export class FormulaireEditComponent implements OnInit {
 
   removeTache(index: number) {
     if (confirm('Supprimer cette tâche ?')) {
-      this.taches.removeAt(index);
+          this.taches.removeAt(index);
+          this.toastService.showWithTimeout('Tâche supprimée avec succès.', TypeErreurToast.SUCCESS);
     }
   }
 
