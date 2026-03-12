@@ -8,7 +8,6 @@ import { ToastService } from '../../../services/Toast/toast.service';
 import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 import { RoleUtilisateur } from '../../../enums/RoleUtilisateur/role-utilisateur';
 import { StatutCompte } from '../../../enums/StatutCompte/statut-compte';
-import { AlertComponent } from '../../../components/alert/alert.component';
 import { UserFormComponent } from '../../../components/user-form/user-form.component';
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
 import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';

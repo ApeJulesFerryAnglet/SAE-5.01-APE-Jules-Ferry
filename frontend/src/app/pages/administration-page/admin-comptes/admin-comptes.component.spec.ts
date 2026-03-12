@@ -12,27 +12,29 @@ import { RoleUtilisateur } from '../../../enums/RoleUtilisateur/role-utilisateur
 import { StatutCompte } from '../../../enums/StatutCompte/statut-compte';
 import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 
+const createMockUtilisateurs = (): Utilisateur[] => [
+  { id_utilisateur: 1, nom: 'Dupont', prenom: 'Jean', email: 'jean@test.com', role: RoleUtilisateur.parent, statut_compte: StatutCompte.actif },
+  { id_utilisateur: 2, nom: 'Martin', prenom: 'Alice', email: 'alice@test.com', role: RoleUtilisateur.administrateur, statut_compte: StatutCompte.actif },
+  { id_utilisateur: 3, nom: 'Leblanc', prenom: 'Bob', email: 'bob@test.com', role: RoleUtilisateur.parent, statut_compte: StatutCompte.desactive },
+];
+
 describe('AdminComptesComponent', () => {
   let component: AdminComptesComponent;
   let fixture: ComponentFixture<AdminComptesComponent>;
   let utilisateurServiceSpy: jasmine.SpyObj<UtilisateurService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
   let exportExcelServiceSpy: jasmine.SpyObj<ExportExcelService>;
-
-  const mockUtilisateurs: Utilisateur[] = [
-    { id_utilisateur: 1, nom: 'Dupont', prenom: 'Jean', email: 'jean@test.com', role: RoleUtilisateur.parent, statut_compte: StatutCompte.actif },
-    { id_utilisateur: 2, nom: 'Martin', prenom: 'Alice', email: 'alice@test.com', role: RoleUtilisateur.administrateur, statut_compte: StatutCompte.actif },
-    { id_utilisateur: 3, nom: 'Leblanc', prenom: 'Bob', email: 'bob@test.com', role: RoleUtilisateur.parent, statut_compte: StatutCompte.desactive },
-  ];
+  let mockUtilisateurs: Utilisateur[];
 
   beforeEach(async () => {
+    mockUtilisateurs = createMockUtilisateurs();
     utilisateurServiceSpy = jasmine.createSpyObj('UtilisateurService', [
       'getAllUtilisateurs', 'createUtilisateur', 'updateUtilisateur', 'deleteUtilisateur'
     ]);
-  toastServiceSpy = jasmine.createSpyObj('ToastService', ['show', 'showWithTimeout']);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show', 'showWithTimeout']);
     exportExcelServiceSpy = jasmine.createSpyObj('ExportExcelService', ['exportAsExcelFile']);
 
-    utilisateurServiceSpy.getAllUtilisateurs.and.returnValue(of(mockUtilisateurs));
+    utilisateurServiceSpy.getAllUtilisateurs.and.returnValue(of(mockUtilisateurs.map(user => ({ ...user }))));
 
     await TestBed.configureTestingModule({
       imports: [AdminComptesComponent],
