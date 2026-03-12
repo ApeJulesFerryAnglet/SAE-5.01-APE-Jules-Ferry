@@ -48,7 +48,7 @@ describe('InscriptionEvenementComponent', () => {
   beforeEach(async () => {
     tacheServiceSpy = jasmine.createSpyObj('TacheService', ['getAlltachesByIdEvennement']);
     evenementServiceSpy = jasmine.createSpyObj('EvenementService', ['getEvenementById']);
-    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['showWithTimeout']);
 
     tacheServiceSpy.getAlltachesByIdEvennement.and.returnValue(of(mockTaches));
     evenementServiceSpy.getEvenementById.and.returnValue(of(mockEvenement));
@@ -95,12 +95,12 @@ describe('InscriptionEvenementComponent', () => {
   it('devrait afficher une erreur si le chargement des tâches échoue', () => {
     tacheServiceSpy.getAlltachesByIdEvennement.and.returnValue(throwError(() => new Error('Erreur')));
     component.ngOnInit();
-    expect(toastServiceSpy.show).toHaveBeenCalledWith('Erreur lors du chargement des tâches de l\'événement', TypeErreurToast.ERROR);
+    expect(toastServiceSpy.showWithTimeout).toHaveBeenCalledWith('Erreur lors du chargement des tâches de l\'événement', TypeErreurToast.ERROR);
   });
 
   it('devrait afficher une erreur si le chargement de l\'événement échoue', () => {
     evenementServiceSpy.getEvenementById.and.returnValue(throwError(() => new Error('Erreur')));
     component.ngOnInit();
-    expect(toastServiceSpy.show).toHaveBeenCalledWith('Erreur lors du chargement de l\'événement', TypeErreurToast.ERROR);
+    expect(toastServiceSpy.showWithTimeout).toHaveBeenCalledWith('Erreur lors du chargement de l\'événement', TypeErreurToast.ERROR);
   });
 });

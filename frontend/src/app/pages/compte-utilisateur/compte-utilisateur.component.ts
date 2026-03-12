@@ -55,7 +55,7 @@ export class CompteUtilisateurComponent implements OnInit {
   public logout(): void {
     this.authService.logout().subscribe({
       next: () => {
-        this.toastService.show('Deconnexion réussie', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Deconnexion réussie', TypeErreurToast.SUCCESS);
         this.router.navigate(['/']); //redirect apres logout
       },
       error: (error) => console.error('Erreur logout', error)
@@ -69,18 +69,18 @@ export class CompteUtilisateurComponent implements OnInit {
 
   onMdpSubmitted(payload: { motDePasse: string }): void {
     if (!this.currentUser?.id_utilisateur) {
-      this.toastService.show('Erreur: Utilisateur non identifié', TypeErreurToast.ERROR);
+      this.toastService.showWithTimeout('Erreur: Utilisateur non identifié', TypeErreurToast.ERROR);
       return;
     }
     
     this.utilisateurService.updatePassword(this.currentUser.id_utilisateur, payload.motDePasse).subscribe({
       next: () => {
-        this.toastService.show('Mot de passe mis à jour', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Mot de passe mis à jour', TypeErreurToast.SUCCESS);
         this.modifierMdp = false;
         this.resetKey++;
       },
       error: (error) => {
-        this.toastService.show('Erreur mise à jour mot de passe', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur mise à jour mot de passe', TypeErreurToast.ERROR);
         console.error(error);
       }
     });
@@ -100,14 +100,14 @@ export class CompteUtilisateurComponent implements OnInit {
     //le back se charge de supprimer les inscriptions associees
     this.utilisateurService.deleteUtilisateur(this.currentUser.id_utilisateur).subscribe({
       next: () => {
-        this.toastService.show('Compte supprimé avec succès', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Compte supprimé avec succès', TypeErreurToast.SUCCESS);
         this.authService.logout().subscribe(() => {
             this.router.navigate(['/']);
         });
       },
       error: (err) => {
         console.error(err);
-        this.toastService.show('Erreur lors de la suppression', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur lors de la suppression', TypeErreurToast.ERROR);
       }
     });
   }
@@ -127,7 +127,7 @@ export class CompteUtilisateurComponent implements OnInit {
   confirmDeleteAccount(): void {
     if (!this.currentUser?.id_utilisateur) return;
     if (!this.deletePassword) {
-        this.toastService.show('Veuillez entrer votre mot de passe', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Veuillez entrer votre mot de passe', TypeErreurToast.ERROR);
         return;
     }
 
@@ -138,7 +138,7 @@ export class CompteUtilisateurComponent implements OnInit {
       next: () => {
         this.deleteLoading = false;
         this.showDeleteModal = false;
-        this.toastService.show('Compte supprimé avec succès', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Compte supprimé avec succès', TypeErreurToast.SUCCESS);
         
         // Déconnexion propre
         this.authService.logout().subscribe(() => {
@@ -150,9 +150,9 @@ export class CompteUtilisateurComponent implements OnInit {
         console.error(err);
         // Gestion du message d'erreur spécifique (Mot de passe faux)
         if (err.status === 403) {
-            this.toastService.show('Mot de passe incorrect', TypeErreurToast.ERROR);
+            this.toastService.showWithTimeout('Mot de passe incorrect', TypeErreurToast.ERROR);
         } else {
-            this.toastService.show('Erreur lors de la suppression du compte', TypeErreurToast.ERROR);
+            this.toastService.showWithTimeout('Erreur lors de la suppression du compte', TypeErreurToast.ERROR);
         }
       }
     });

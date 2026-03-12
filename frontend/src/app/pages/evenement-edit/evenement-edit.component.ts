@@ -1,4 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -15,8 +17,6 @@ import { EvenementService } from '../../services/Evenement/evenement.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { FormulaireService } from '../../services/Formulaire/formulaire.service';
 import { Formulaire } from '../../models/Formulaire/formulaire';
-import { ToastService } from '../../services/Toast/toast.service';
-import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 
 // On définit des types partiels pour éviter le 'any' lors de la copie
 interface TacheData {
@@ -320,8 +320,10 @@ export class EvenementEditComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.saving = false;
-        const msg = this.isEditMode ? "L'événement a été mis à jour." : "L'événement a été créé avec succès.";
-        this.toastService.show(msg, TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout(
+          this.isEditMode ? 'Événement modifié avec succès.' : 'Événement créé avec succès.',
+          TypeErreurToast.SUCCESS
+        );
         this.goBack();
       },
       error: (err) => {

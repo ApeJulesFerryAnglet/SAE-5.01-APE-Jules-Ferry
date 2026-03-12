@@ -8,7 +8,6 @@ import { ToastService } from '../../../services/Toast/toast.service';
 import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 import { RoleUtilisateur } from '../../../enums/RoleUtilisateur/role-utilisateur';
 import { StatutCompte } from '../../../enums/StatutCompte/statut-compte';
-import { AlertComponent } from '../../../components/alert/alert.component';
 import { UserFormComponent } from '../../../components/user-form/user-form.component';
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
 import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';
@@ -17,7 +16,7 @@ import { ExportExcelService } from '../../../services/ExportExcel/export-excel.s
 @Component({
   selector: 'app-admin-comptes',
   standalone: true,
-  imports: [CommonModule, SpinnerComponent, FormsModule, AlertComponent, UserFormComponent, PasswordConfirmModalComponent, ExportModalComponent],
+  imports: [CommonModule, SpinnerComponent, FormsModule, UserFormComponent, PasswordConfirmModalComponent, ExportModalComponent],
   templateUrl: './admin-comptes.component.html',
   styleUrls: ['./admin-comptes.component.css']
 })
@@ -96,7 +95,7 @@ export class AdminComptesComponent implements OnInit {
         this.chargementEnCours = false;
       },
       error: () => {
-        this.toastService.show('Erreur chargement utilisateurs', TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout('Erreur chargement utilisateurs', TypeErreurToast.ERROR);
         this.chargementEnCours = false;
       }
     });
@@ -120,16 +119,16 @@ export class AdminComptesComponent implements OnInit {
     if (!this.pendingUserFormPayload) return;
     this.utilisateurService.updateUtilisateur(this.pendingUserFormPayload, this.pendingUserFormPayload.id_utilisateur!, password).subscribe({
       next: () => {
-        this.toastService.show('Utilisateur modifié', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Utilisateur modifié', TypeErreurToast.SUCCESS);
         this.idEnEdition = null;
         this.utilisateurOriginal = null;
         this.closePasswordModal();
       },
       error: (err) => {
         if (err.status === 403) {
-          this.toastService.show('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
         } else {
-          this.toastService.show('Erreur lors de la modification', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Erreur lors de la modification', TypeErreurToast.ERROR);
         }
       }
     });
@@ -165,16 +164,16 @@ export class AdminComptesComponent implements OnInit {
     if (!this.pendingUserFormPayload) return;
     this.utilisateurService.createUtilisateur(this.pendingUserFormPayload, password).subscribe({
       next: (userCree) => {
-        this.toastService.show('Utilisateur créé !', TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout('Utilisateur créé !', TypeErreurToast.SUCCESS);
         this.utilisateurs.push(userCree);
         this.modeCreation = false;
         this.closePasswordModal();
       },
       error: (err) => {
         if (err.status === 403) {
-          this.toastService.show('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
         } else {
-          this.toastService.show('Erreur création (Email pris ?)', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Erreur création (Email pris ?)', TypeErreurToast.ERROR);
         }
       }
     });
@@ -196,20 +195,27 @@ export class AdminComptesComponent implements OnInit {
 
   private executeSuppression(password: string): void {
     if (this.idUtilisateurASupprimer === null) return;
+
+    if (this.idConnecte !== null && this.idUtilisateurASupprimer === this.idConnecte) {
+      this.toastService.showWithTimeout('Tu peux pas supprimer ton propre compte', TypeErreurToast.WARNING);
+      this.idUtilisateurASupprimer = null;
+      return;
+    }
+
     const id = this.idUtilisateurASupprimer;
 
     this.utilisateurService.deleteUtilisateur(id, password).subscribe({
       next: (data) => {
         this.utilisateurs = this.utilisateurs.filter(u => u.id_utilisateur !== id);
-        this.toastService.show(data.message, TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout(data.message, TypeErreurToast.SUCCESS);
         this.idUtilisateurASupprimer = null;
         this.closePasswordModal();
       },
       error: (err) => {
         if (err.status === 403) {
-          this.toastService.show('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Mot de passe administrateur incorrect', TypeErreurToast.ERROR);
         } else {
-          this.toastService.show('Erreur suppression', TypeErreurToast.ERROR);
+          this.toastService.showWithTimeout('Erreur suppression', TypeErreurToast.ERROR);
           this.idUtilisateurASupprimer = null;
         }
       }

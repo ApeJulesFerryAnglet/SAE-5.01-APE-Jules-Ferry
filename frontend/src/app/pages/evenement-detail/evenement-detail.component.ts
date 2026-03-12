@@ -42,6 +42,7 @@ import {
   templateUrl: './evenement-detail.component.html',
   styleUrl: './evenement-detail.component.css',
 })
+
 export class EvenementDetailComponent implements OnInit {
   @ViewChild('inscriptionFormContainer') inscriptionFormContainer!: ElementRef;
   //Données pour le formulaire d'inscription
@@ -197,21 +198,26 @@ export class EvenementDetailComponent implements OnInit {
   }
 
   onDeleteEvent() {
+    this.showDeleteModal = true;
+  }
+
+  confirmerSuppression() {
     if (!this.evenement) return;
-    if (
-      confirm(
-        'Voulez-vous vraiment supprimer cet événement ? Cette action est irréversible.',
-      )
-    ) {
-      this.evenementService
-        .deleteEvenement(this.evenement.id_evenement)
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/evenements']);
-          },
-          error: (err) => console.error(err),
-        });
-    }
+    this.evenementService.deleteEvenement(this.evenement.id_evenement).subscribe({
+      next: () => {
+        this.toastService.showWithTimeout('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
+        this.router.navigate(['/evenements']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastService.showWithTimeout('Erreur lors de la suppression de l\'événement.', TypeErreurToast.ERROR);
+      }
+    });
+    this.showDeleteModal = false;
+  }
+
+  annulerSuppression() {
+    this.showDeleteModal = false;
   }
 
   isEvenementTermine(): boolean {

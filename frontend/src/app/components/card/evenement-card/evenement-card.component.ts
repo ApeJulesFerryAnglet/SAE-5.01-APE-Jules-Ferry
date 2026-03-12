@@ -1,18 +1,22 @@
 import { Component, Input, inject, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { ToastService } from '../../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 import { StatutEvenement } from '../../../enums/StatutEvenement/statut-evenement';
 import { RouterLink, Router } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
 import { EvenementService } from '../../../services/Evenement/evenement.service';
 import { Utilisateur } from '../../../models/Utilisateur/utilisateur';
 
+import { AlertComponent } from '../../../components/alert/alert.component';
 @Component({
   selector: 'app-evenement-card',
   standalone: true,
-  imports: [RouterLink, DatePipe, CommonModule],
+  imports: [RouterLink, DatePipe, CommonModule, AlertComponent],
   templateUrl: './evenement-card.component.html',
   styleUrl: './evenement-card.component.css'
 })
 export class EvenementCardComponent implements OnChanges {
+  showDeleteAlert = false;
   
   @Input() id_evenement!: number;
   @Input() titre = '';
@@ -31,6 +35,7 @@ export class EvenementCardComponent implements OnChanges {
   private readonly evenementService = inject(EvenementService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly toastService = inject(ToastService);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentUser']) {
@@ -60,18 +65,39 @@ export class EvenementCardComponent implements OnChanges {
     return 'http://localhost:8000' + image_url;
   }
 
-  onDelete(event: Event): void {
+onDeletes(event: Event): void {
     event.stopPropagation();
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-      this.evenementService.deleteEvenement(this.id_evenement).subscribe({
-        next: () => {
-          this.eventDeleted.emit(this.id_evenement);
-        },
-        error: (err) => {
-          console.error('Erreur lors de la suppression de l\'événement', err);
-        }
-      });
-    }
+    this.showDeleteAlert = true;
+  }
+onDelete(event: Event): void {
+  event.stopPropagation();
+  if (window.confirm('Voulez-vous vraiment supprimer cet événement ?')) {
+    this.evenementService.deleteEvenement(this.id_evenement).subscribe({
+      next: () => {
+        this.eventDeleted.emit(this.id_evenement);
+        this.toastService.showWithTimeout('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression de l\'événement', err);
+      }
+    });
+  }
+}
+  confirmerSuppression(): void {
+    this.evenementService.deleteEvenement(this.id_evenement).subscribe({
+      next: () => {
+        this.eventDeleted.emit(this.id_evenement);
+        this.toastService.showWithTimeout('Événement supprimé avec succès.', TypeErreurToast.SUCCESS);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression de l\'événement', err);
+      }
+    });
+    this.showDeleteAlert = false;
+  }
+
+  annulerSuppression(): void {
+    this.showDeleteAlert = false;
   }
 
   onEdit(event: Event): void {
