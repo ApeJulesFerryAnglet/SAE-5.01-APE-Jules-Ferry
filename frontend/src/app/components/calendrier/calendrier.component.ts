@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation, OnInit, inject, ElementRef } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, OnInit, AfterViewInit, OnDestroy, inject, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FullCalendarModule, FullCalendarComponent } from "@fullcalendar/angular";
@@ -20,7 +20,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
   styleUrl: './calendrier.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class CalendrierComponent implements OnInit {
+export class CalendrierComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly evenementService = inject(EvenementService);
 
@@ -33,23 +33,16 @@ export class CalendrierComponent implements OnInit {
   eventsList: Evenement[] = [];
   isLoading = true;
   errorMessage: string | null = null;
-
-  calendarState: 'compact' | 'expanded' | 'closed' = 'closed';
-
+  
+  calendarState: 'compact' | 'expanded' | 'closed' = 'expanded'; // Ouvert par défaut
+  
   // Détection du mode mobile selon la largeur de la fenêtre
   private isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-  //Fonction privée 
-  private scrollToCalendar() {
-    setTimeout(() => {
-      this.calendarContainer?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
-  private scrollToEvent() {
-    setTimeout(() => {
-      this.eventDetails?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
+  
+  // ResizeObserver pour détecter les changements de taille du conteneur
+  private resizeObserver: ResizeObserver | null = null;
+  private transitionEndListener: ((e: Event) => void) | null = null;
+  private widgetResizeListener: ((e: Event) => void) | null = null;
 
 
   // Options du calendrier
@@ -107,7 +100,6 @@ export class CalendrierComponent implements OnInit {
 
     datesSet: () => {
       this.selectedEvent = null;
-      this.scrollToCalendar();
     },
 
     events: []
@@ -116,7 +108,85 @@ export class CalendrierComponent implements OnInit {
   ngOnInit(): void {
     this.loadEvenements();
   }
-
+  
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.setupResizeObserver();
+      this.forceCalendarResize();
+    }, 200);
+  }
+  
+  public forceCalendarResize(): void {
+    if (this.calendarComponent) {
+      const calendarApi = this.calendarComponent.getApi();
+      setTimeout(() => {
+        calendarApi.updateSize();
+        setTimeout(() => calendarApi.updateSize(), 100);
+      }, 50);
+    }
+  }
+  
+  private setupResizeObserver(): void {
+    if (typeof ResizeObserver === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+    
+    const widgetContent = this.calendarContainer?.nativeElement?.closest('.widget-content');
+    const widgetBody = this.calendarContainer?.nativeElement?.closest('.widget-body');
+    
+    if (widgetContent) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentBoxSize) {
+            this.forceCalendarResize();
+          }
+        }
+      });
+      
+      this.resizeObserver.observe(widgetContent);
+    }
+    
+    if (widgetContent) {
+      this.transitionEndListener = (e: Event) => {
+        const transitionEvent = e as TransitionEvent;
+        if (transitionEvent.propertyName === 'width') {
+          this.forceCalendarResize();
+        }
+      };
+      
+      widgetContent.addEventListener('transitionend', this.transitionEndListener);
+    }
+    
+    this.widgetResizeListener = (e: Event) => {
+      this.forceCalendarResize();
+    };
+    
+    document.addEventListener('widgetResized', this.widgetResizeListener);
+  }
+  
+  ngOnDestroy(): void {
+    // Nettoyer le ResizeObserver
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+    
+    // Nettoyer le listener transitionend
+    if (this.transitionEndListener && typeof document !== 'undefined') {
+      const widgetContent = this.calendarContainer?.nativeElement?.closest('.widget-content');
+      if (widgetContent) {
+        widgetContent.removeEventListener('transitionend', this.transitionEndListener);
+      }
+      this.transitionEndListener = null;
+    }
+    
+    // Nettoyer le listener événement personnalisé
+    if (this.widgetResizeListener && typeof document !== 'undefined') {
+      document.removeEventListener('widgetResized', this.widgetResizeListener);
+      this.widgetResizeListener = null;
+    }
+  }
+  
   loadEvenements(): void {
     this.isLoading = true;
     this.errorMessage = null;
@@ -136,6 +206,8 @@ export class CalendrierComponent implements OnInit {
           }
         }));
         this.isLoading = false;
+        // Forcer une mise à jour du calendrier après le chargement des événements
+        setTimeout(() => this.forceCalendarResize(), 300);
       },
       error: (err) => {
         console.error('Erreur', err);
@@ -157,15 +229,20 @@ export class CalendrierComponent implements OnInit {
     const clickedEvent = this.eventsList.find(e => e.id_evenement.toString() === arg.event.id);
     if (clickedEvent) {
       this.selectedEvent = clickedEvent;
-      this.scrollToEvent();
+      // Scroll simple après affichage
+      setTimeout(() => {
+        if (this.eventDetails?.nativeElement) {
+          this.eventDetails.nativeElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'nearest' 
+          });
+        }
+      }, 100);
     }
   }
 
   closeEventDetails(): void {
     this.selectedEvent = null;
-    setTimeout(() => {
-      this.calendarContainer?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
   }
 
   expandCalendar(): void {
