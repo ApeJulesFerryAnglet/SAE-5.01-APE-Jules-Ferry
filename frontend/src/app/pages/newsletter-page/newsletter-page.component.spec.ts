@@ -23,19 +23,19 @@ export class NewsletterPageComponent {
    */
   onSubscribe(): void {
     if (!this.emailNewsletter || !this.emailNewsletter.includes('@')) {
-      this.toastService.show("Veuillez saisir un email valide.", TypeErreurToast.ERROR);
+      this.toastService.showWithTimeout("Veuillez saisir un email valide.", TypeErreurToast.ERROR);
       return;
     }
     
   // Appel au service et gestion de l'observable
     this.newsletterService.subscribe({ email: this.emailNewsletter }).subscribe({
       next: (response) => {
-        this.toastService.show(response.message, TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout(response.message, TypeErreurToast.SUCCESS);
         this.emailNewsletter = ""; 
       },
       error: (err) => {
         const msg = err.error?.errors?.email?.[0] || "Erreur lors de l'inscription.";
-        this.toastService.show(msg, TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout(msg, TypeErreurToast.ERROR);
       }
     });
   }

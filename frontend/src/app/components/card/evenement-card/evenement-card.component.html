@@ -20,10 +20,15 @@
                 <button (click)="onEdit($event)" class="text-blue-600 hover:text-blue-800 transition-colors" title="Modifier">
                     <i class="fa-regular fa-pen-to-square"></i>
                 </button>
-                <button (click)="onDelete($event)" class="text-red-600 hover:text-red-800 transition-colors" title="Supprimer">
+                <button (click)="onDeletes($event)" class="text-red-600 hover:text-red-800 transition-colors" title="Supprimer">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </div>
+            @if (showDeleteAlert) {
+              <app-alert message="Voulez vous vraiment supprimer cet événement ?" texteBoutonValider="Supprimer"
+                texteBoutonAnnuler="Annuler" (valider)="confirmerSuppression()" (annuler)="annulerSuppression()">
+              </app-alert>
+            }
         }
     </div>
 
@@ -31,9 +36,7 @@
         @if(image_url) {
             <img [src]="getImageUrl(image_url)" [alt]="titre" class="w-full h-full object-cover" loading="lazy">
         } @else {
-            <div class="w-full h-full flex items-center justify-center bg-gray-100 opacity-50">
-                <i class="fa-solid fa-image text-gray-400" aria-hidden="true" style="font-size: 48px;"></i>
-            </div>
+            <img src="/imageDefaut/imageDefaut.png" [alt]="titre" class="w-full h-full object-cover" loading="lazy">
         }
     </div>
 
