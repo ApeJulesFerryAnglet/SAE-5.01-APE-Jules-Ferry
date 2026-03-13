@@ -4,6 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/Auth/auth.service';
 import { ActualiteService } from '../../../services/Actualite/actualite.service';
+import { environment } from '../../../environments/environment.dev';
 
 @Component({
   selector: 'app-actualite-card',
@@ -51,9 +52,9 @@ export class ActualiteCardComponent {
     event.stopPropagation();
     this.router.navigate(['/actualites', this.id_actualite, 'edit']);
   }
-  getImageUrl(url: string | null): string {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    return 'http://localhost:8000' + url;
+  getImageUrl(image_url: string | null): string {
+    if (!image_url) return '';
+    if (image_url.startsWith('http')) return image_url;
+    return `${environment.apiUrl}/${image_url}`;
   }
 }

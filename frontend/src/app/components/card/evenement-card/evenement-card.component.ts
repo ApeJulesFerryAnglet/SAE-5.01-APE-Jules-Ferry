@@ -4,6 +4,7 @@ import { RouterLink, Router } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
 import { EvenementService } from '../../../services/Evenement/evenement.service';
 import { Utilisateur } from '../../../models/Utilisateur/utilisateur';
+import { environment } from '../../../environments/environment.dev';
 
 @Component({
   selector: 'app-evenement-card',
@@ -57,7 +58,7 @@ export class EvenementCardComponent implements OnChanges {
   getImageUrl(image_url: string): string {
     if (!image_url) return '';
     if (image_url.startsWith('http')) return image_url;
-    return 'http://localhost:8000' + image_url;
+    return `${environment.apiUrl}/${image_url}`;
   }
 
   onDelete(event: Event): void {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit,ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { DatePipe, Location, CommonModule, AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
@@ -15,6 +15,7 @@ import { AuthService } from '../../services/Auth/auth.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { FormsModule } from '@angular/forms';
 import { FormInscriptionEvenementComponent, InscriptionSubmitPayload } from '../../components/forms/form-inscription-evenement/form-inscription-evenement.component';
+import { environment } from '../../environments/environment.dev';
 
 @Component({
   selector: 'app-evenement-detail',
@@ -57,14 +58,14 @@ export class EvenementDetailComponent implements OnInit {
   ngOnInit() {
     this.currentUser$ = this.authService.currentUser$;
     const ID = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     // Vérifier si on doit ouvrir le formulaire d'inscription
     this.route.queryParams.subscribe(params => {
       if (params['openForm'] === 'true') {
         this.shouldOpenForm = true;
       }
     });
-    
+
     this.loadEvenement(ID);
   }
 
@@ -110,11 +111,11 @@ export class EvenementDetailComponent implements OnInit {
   }
 
   private tryOpenFormIfRequested() {
-    if (this.shouldOpenForm && 
-        this.authService.isAuthenticated() && 
-        this.evenement?.id_formulaire &&
-        !this.isEvenementTermine() && 
-        this.isInscriptionOuverte()) {
+    if (this.shouldOpenForm &&
+      this.authService.isAuthenticated() &&
+      this.evenement?.id_formulaire &&
+      !this.isEvenementTermine() &&
+      this.isInscriptionOuverte()) {
       setTimeout(() => {
         this.showInscriptionForm = true;
         setTimeout(() => {
@@ -127,7 +128,7 @@ export class EvenementDetailComponent implements OnInit {
 
   canManage(user: Utilisateur | null): boolean {
     if (!user || !this.evenement) return false;
-    
+
     const role = String(user.role).toLowerCase();
 
     if (role === 'administrateur') return true;
@@ -193,13 +194,13 @@ export class EvenementDetailComponent implements OnInit {
       return;
     }
     this.showInscriptionForm = !this.showInscriptionForm;
-    
+
     if (this.showInscriptionForm) {
       setTimeout(() => {
         this.inscriptionFormContainer?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     }
-        
+
     if (!this.showInscriptionForm) {
       this.inscriptionError = null;
       this.inscriptionSuccess = false;
@@ -304,9 +305,9 @@ export class EvenementDetailComponent implements OnInit {
     this.location.back();
   }
 
-  getImageUrl(image_url: string): string {
+  getImageUrl(image_url: string | null): string {
     if (!image_url) return '';
     if (image_url.startsWith('http')) return image_url;
-    return 'http://localhost:8000' + image_url;
+    return `${environment.apiUrl}/${image_url}`;
   }
 }
