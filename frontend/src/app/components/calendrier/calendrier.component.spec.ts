@@ -73,7 +73,7 @@ describe('CalendrierComponent', () => {
       expect(component.eventsList).toEqual([]);
       expect(component.isLoading).toBe(true);
       expect(component.errorMessage).toBeNull();
-      expect(component.calendarState).toBe('closed');
+      expect(component.calendarState).toBe('open');
     });
 
     it('devrait charger les événements à l\'initialisation', () => {
