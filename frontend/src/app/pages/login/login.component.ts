@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router'; 
+import { RouterModule, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../../services/Auth/auth.service';
 import { LoginCredentials } from '../../models/Auth/login-credentials';
@@ -13,24 +13,23 @@ import { LoginCredentials } from '../../models/Auth/login-credentials';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  loginForm: FormGroup;
+  loginForm!: FormGroup;
   errorMessage!: string;
   successMessage!: string;
   isLoading = false;
-  
-  // Variable pour gérer les étapes : 1 = Email seul, 2 = Mot de passe
-  etape: 1 | 2 = 1;
 
-  constructor() {
+  // Indique si on doit afficher le champ mot de passe (true = admin et false = saisie email)
+  loginMdp: boolean = false;
+
+  ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      // On initialise le mdp sans validateurs pour l'étape 1
-      mot_de_passe: [''] 
+      mot_de_passe: ['']
     });
   }
 
@@ -48,7 +47,7 @@ export class LoginComponent {
       next: (response) => {
         if (response.action === 'require_password') {
           // C'est un admin : on affiche le champ mdp et on ajoute les validateurs
-          this.etape = 2;
+          this.loginMdp = true;
           this.mot_de_passe?.setValidators([Validators.required, Validators.minLength(8)]);
           this.mot_de_passe?.updateValueAndValidity();
           this.isLoading = false;
@@ -100,7 +99,7 @@ export class LoginComponent {
 
   // Permet à l'admin de revenir en arrière pour corriger son mail
   retourEtape1(): void {
-    this.etape = 1;
+    this.loginMdp = false;
     this.mot_de_passe?.clearValidators();
     this.mot_de_passe?.updateValueAndValidity();
     this.mot_de_passe?.setValue('');

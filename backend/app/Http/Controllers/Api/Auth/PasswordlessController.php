@@ -26,20 +26,20 @@ class PasswordlessController extends Controller
             ]
         );
 
-        // Crée une URL signée valable 2 heures
+        // Crée une URL signée valable 2 heures (pour l'API)
         $urlApi = URL::temporarySignedRoute(
             'auth.magic.verify', 
             now()->addHours(2), 
             ['id_utilisateur' => $user->id_utilisateur]
         );
 
-        // On utilise urlencode() pour éviter que les caractères spéciaux de l'URL API ne cassent le lien
-        $urlPourEmail = "http://localhost:4200/verification-lien?cible=" . urlencode($urlApi);
+        // On récupère la racine de l'url du front
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:4200');
 
-        // On envoie le mail HTML avec le lien vers Angular
+        // On construit le lien complet
+        $urlPourEmail = $frontendUrl . "/verification-lien?cible=" . urlencode($urlApi);
+
         Mail::to($user->email)->send(new MagicLinkEmail($urlPourEmail));
-
-        Log::info("Mail magique généré pour {$user->email}. Lien Front-end : " . $urlPourEmail);
 
         return response()->json([
             'message' => 'Lien de connexion généré (voir les logs ou la boîte mail)'
