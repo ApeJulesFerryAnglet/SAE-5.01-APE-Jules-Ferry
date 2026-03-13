@@ -100,15 +100,18 @@ describe('SidebarWidgetComponent', () => {
   it('Devrait basculer le widget et notifier uniquement lorsqu\'il est ouvert', () => {
     createComponent({ title: 'Notifications' });
 
-    const notifyWidgetOpenedSpy = spyOn<any>(component, 'notifyWidgetOpened').and.callThrough();
+    const dispatchEventSpy = spyOn(document, 'dispatchEvent').and.callThrough();
 
     component.toggleWidget();
     expect(component.isOpen).toBeTrue();
-    expect(notifyWidgetOpenedSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
+
+    const openedEvent = dispatchEventSpy.calls.mostRecent().args[0] as CustomEvent;
+    expect(openedEvent.type).toBe('widgetOpened');
 
     component.toggleWidget();
     expect(component.isOpen).toBeFalse();
-    expect(notifyWidgetOpenedSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
   });
 
   it('Devrait mettre à jour l\'étiquette aria-label du template lorsque le widget est basculé', () => {
