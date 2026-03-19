@@ -4,6 +4,7 @@ import { EvenementService } from '../../services/Evenement/evenement.service';
 import { Evenement } from '../../models/Evenement/evenement';
 import { of, throwError } from 'rxjs';
 import { CalendarApi } from '@fullcalendar/core';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 import { StatutEvenement } from '../../enums/StatutEvenement/statut-evenement';
 import { EventClickArg } from '@fullcalendar/core';
 import { provideRouter } from '@angular/router';
@@ -55,7 +56,7 @@ describe('CalendrierComponent', () => {
       expect(component.selectedEvent).toBeNull();
       expect(component.eventsList).toEqual([]);
       expect(component.isLoading).toBe(true);
-      expect(component.calendarState).toBe('expanded');
+      expect(component.calendarState).toBe('compact');
     });
 
     it('devrait charger les événements à l\'initialisation', fakeAsync(() => {
@@ -121,35 +122,16 @@ describe('CalendrierComponent', () => {
     });
   });
 
-  describe('Intégration complète', () => {
-    it('devrait gérer le flux utilisateur complet', fakeAsync(() => {
-      evenementService.getAllEvenements.and.returnValue(of({ data: mockEvenements, current_page: 1, last_page: 1, total: mockEvenements.length }));
-      component.loadEvenements();
-      tick(300);
-
-      // Ouvrir/Fermer
-      component.openCalendar();
+  describe('Navigation et État', () => {
+    it('devrait changer l\'état du calendrier', () => {
+      component.expandCalendar();
       expect(component.calendarState).toBe('expanded');
       component.collapseCalendar();
       expect(component.calendarState).toBe('compact');
-
-      // Click event
-      const mockEventClickArg: Partial<EventClickArg> = {
-        event: { id: '1' } as unknown as EventClickArg['event'],
-      };
-      component.handleEventClick(mockEventClickArg as EventClickArg);
-      tick(150);
-
-      expect(component.selectedEvent).toBeTruthy();
-      
-      component.closeEventDetails();
-      expect(component.selectedEvent).toBeNull();
-      
-      flush();
-    }));
+    });
   });
-  
- describe('Gestion du redimensionnement', () => {
+
+  describe('Gestion du redimensionnement', () => {
     it('devrait gérer le redimensionnement de la fenêtre', () => {
         // Mock simple window resize logic
         const mockCalendarApi = {
@@ -157,6 +139,11 @@ describe('CalendrierComponent', () => {
             view: { type: 'dayGridMonth' },
             changeView: jasmine.createSpy('changeView'),
         } as unknown as CalendarApi;
+
+        // Simuler le composant de calendrier pour que updateToolbar puisse fonctionner
+        component.calendarComponent = {
+          getApi: () => mockCalendarApi
+        } as unknown as FullCalendarComponent;
 
         // Force 'isMobile' state to be mismatched with current window width to ensure update logic triggers
         const currentWindowIsMobile = window.innerWidth < 768;
@@ -168,16 +155,15 @@ describe('CalendrierComponent', () => {
  });
 
 
-  //Tests d'intégration complète
   describe('Intégration complète', () => {
     it('devrait charger les événements et afficher correctement le calendrier', (done) => {
       evenementService.getAllEvenements.and.returnValue(of({ data: mockEvenements, current_page: 1, last_page: 1, total: mockEvenements.length }));
       fixture.detectChanges();
 
       setTimeout(() => {
-        expect(component.eventsList.length).toBe(1); // MATCH MOCK DATA
+        expect(component.eventsList.length).toBe(1);
         expect(component.isLoading).toBe(false);
-        expect((component.calendarOptions.events as unknown[]).length).toBe(1); // MATCH MOCK DATA
+        expect((component.calendarOptions.events as unknown[]).length).toBe(1);
         done();
       }, 0);
     });
@@ -187,8 +173,8 @@ describe('CalendrierComponent', () => {
       component.loadEvenements();
 
       setTimeout(() => {
-        // Ouvrir le calendrier
-        component.openCalendar();
+        // Agrandir le calendrier
+        component.expandCalendar();
         expect(component.calendarState).toBe('expanded');
 
         // Réduire le calendrier
@@ -214,13 +200,11 @@ describe('CalendrierComponent', () => {
     });
   });
 
-  describe('Redirection vers formulaire d\'inscription', () => {
-    it('devrait sélectionner un événement au clic', fakeAsync(() => {
+  describe('Détails des événements', () => {
+    it('devrait sélectionner un événement au clic et afficher les détails', fakeAsync(() => {
       evenementService.getAllEvenements.and.returnValue(of({ data: mockEvenements, current_page: 1, last_page: 1, total: mockEvenements.length }));
       component.loadEvenements();
       tick();
-
-      expect(component.eventsList.length).toBe(1); // MATCH MOCK DATA
 
       const mockEventClickArg: Partial<EventClickArg> = {
         event: { id: '1' } as EventClickArg['event'],

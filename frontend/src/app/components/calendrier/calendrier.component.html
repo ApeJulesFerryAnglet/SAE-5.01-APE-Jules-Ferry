@@ -14,60 +14,18 @@
   }
   
   @if (!isLoading && !errorMessage) {
-    @if (calendarState === 'closed') {
-      <button 
-        (click)="openCalendar()" 
-        class="w-full flex items-center justify-center gap-3 p-4 bg-white rounded-lg shadow-md border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
-        <i class="fa-regular fa-calendar-days text-gray-600" aria-hidden="true" style="font-size: 24px;"></i>
-        <span class="font-medium text-gray-700">Ouvrir le calendrier</span>
-      </button>
-    }
-
-    @if (calendarState !== 'closed') {
-      <div #calendarContainer class="main-calendar bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden"> 
-        <div class="flex items-center justify-between p-3 bg-gray-50 border-b border-gray-100">
-          <span class="font-medium text-gray-700">
-            {{ calendarState === 'compact' ? 'Aperçu du calendrier' : 'Calendrier complet' }}
-          </span>
-          <div class="flex items-center gap-2">
-            <button 
-              (click)="calendarState === 'compact' ? expandCalendar() : collapseCalendar()" 
-              class="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-              [attr.title]="calendarState === 'compact' ? 'Agrandir' : 'Réduire'">
-              @if (calendarState === 'compact') {
-                <i class="fa-solid fa-expand" aria-hidden="true" style="font-size: 20px;"></i>
-              } @else {
-                <i class="fa-solid fa-compress" aria-hidden="true" style="font-size: 20px;"></i>
-              }
-            </button>
-            <button 
-              (click)="closeCalendar()" 
-              class="p-2 bg-white rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer border border-gray-200"
-              title="Fermer le calendrier">
-              <i class="fa-solid fa-xmark" aria-hidden="true" style="font-size: 20px;"></i>
-            </button>
-          </div>
-        </div>
-        
-        <!-- Calendrier -->
-        <div 
-          class="p-4 sm:p-2.5 transition-all duration-300 overflow-hidden"
-          [class.max-h-[300px]]="calendarState === 'compact'"
-          [class.max-h-none]="calendarState === 'expanded'">
-          <full-calendar #calendar [options]="calendarOptions"></full-calendar>
-        </div>
-        
-        @if (calendarState === 'compact') {
-          <div class="text-center py-2 bg-gradient-to-t from-white via-white to-transparent -mt-8 relative z-10">
-            <button 
-              (click)="expandCalendar()" 
-              class="text-indigo-600 hover:text-indigo-800 font-medium text-sm cursor-pointer bg-transparent border-none">
-              Voir le calendrier complet 
-            </button>
-          </div>
-        }
+    <div #calendarContainer class="main-calendar bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden"> 
+      <div class="flex items-center justify-between p-3 bg-gray-50 border-b border-gray-100">
+        <span class="font-medium text-gray-700">
+          {{ calendarState === 'compact' ? 'Aperçu du calendrier' : 'Calendrier complet' }}
+        </span>
       </div>
-    }
+      
+      <!-- Calendrier -->
+      <div class="p-4 sm:p-2.5">
+        <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+      </div>
+    </div>
   }
   
   @if (selectedEvent) {
