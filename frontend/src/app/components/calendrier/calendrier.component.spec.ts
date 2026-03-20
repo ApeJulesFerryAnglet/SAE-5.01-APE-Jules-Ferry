@@ -123,11 +123,64 @@ describe('CalendrierComponent', () => {
   });
 
   describe('Navigation et État', () => {
-    it('devrait changer l\'état du calendrier', () => {
+    it('devrait changer l\'état du calendrier et mettre à jour le toolbar', () => {
+      const mockCalendarApi = {
+        setOption: jasmine.createSpy('setOption'),
+      } as unknown as CalendarApi;
+      component.calendarComponent = {
+        getApi: () => mockCalendarApi
+      } as unknown as FullCalendarComponent;
+
       component.expandCalendar();
       expect(component.calendarState).toBe('expanded');
+      expect(mockCalendarApi.setOption).toHaveBeenCalledWith('headerToolbar', jasmine.any(Object));
+      
+      const headerToolbarCall = (mockCalendarApi.setOption as jasmine.Spy).calls.allArgs().find(arg => arg[0] === 'headerToolbar');
+      expect(headerToolbarCall).toBeDefined();
+      const headerToolbar = headerToolbarCall![1];
+      expect(headerToolbar.right).toContain('dayGridMonth');
+      expect(headerToolbar.right).toContain('timeGridWeek');
+      expect(headerToolbar.right).toContain('timeGridDay');
+      expect(headerToolbar.right).toContain('listMonth');
+
+    });
+
+    it('devrait changer l\'état du calendrier et mettre à jour le toolbar en mode mobile', () => {
+      const mockCalendarApi = {
+        setOption: jasmine.createSpy('setOption'),
+      } as unknown as CalendarApi;
+      component.calendarComponent = {
+        getApi: () => mockCalendarApi
+      } as unknown as FullCalendarComponent;
+
+      // Forcer le mode mobile
+      (component as unknown as { isMobile: boolean }).isMobile = true;
+      component.expandCalendar();
+
+      expect(component.calendarState).toBe('expanded');
+      const footerToolbarCall = (mockCalendarApi.setOption as jasmine.Spy).calls.allArgs().find(arg => arg[0] === 'footerToolbar');
+      expect(footerToolbarCall).toBeDefined();
+      const footerToolbar = footerToolbarCall![1];
+      expect(footerToolbar.center).toContain('dayGridMonth');
+      expect(footerToolbar.center).toContain('dayGridWeek');
+      expect(footerToolbar.center).toContain('timeGridDay');
+      expect(footerToolbar.center).toContain('listWeek');
+      expect(footerToolbar.center).toContain('today');
+    });
+
+    it('devrait avoir une configuration compacte par défaut', () => {
+      const mockCalendarApi = {
+        setOption: jasmine.createSpy('setOption'),
+      } as unknown as CalendarApi;
+      component.calendarComponent = {
+        getApi: () => mockCalendarApi
+      } as unknown as FullCalendarComponent;
+
       component.collapseCalendar();
-      expect(component.calendarState).toBe('compact');
+      const headerToolbarCall = (mockCalendarApi.setOption as jasmine.Spy).calls.allArgs().find(arg => arg[0] === 'headerToolbar');
+      expect(headerToolbarCall).toBeDefined();
+      const headerToolbar = headerToolbarCall![1];
+      expect(headerToolbar.right).toBe('');
     });
   });
 

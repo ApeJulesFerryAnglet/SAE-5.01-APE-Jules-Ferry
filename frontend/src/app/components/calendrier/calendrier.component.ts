@@ -53,11 +53,15 @@ export class CalendrierComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.isMobile) {
         return {
           header: { left: '', center: 'title', right: '' },
-          footer: { left: 'prev,next', center: 'listWeek,dayGridMonth,timeGridDay today', right: '' }
+          footer: { left: 'prev,next', center: 'dayGridMonth,dayGridWeek,timeGridDay,listWeek today', right: '' }
         };
       } else {
         return {
-          header: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
+          header: { 
+            left: 'prev,next today', 
+            center: 'title', 
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth' 
+          },
           footer: { left: 'prevYear,nextYear', center: '', right: '' }
         };
       }
