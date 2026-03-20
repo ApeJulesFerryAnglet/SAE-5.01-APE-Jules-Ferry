@@ -1,5 +1,7 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SidebarWidgetService } from '../../services/sidebar-widget.service';
+import { Subscription } from 'rxjs';
 
 /**
  * Widget component to display content in a collapsible sidebar on the right or left of the screen.
@@ -26,6 +28,9 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./sidebar-widget.component.css']
 })
 export class SidebarWidgetComponent implements OnInit, OnDestroy {
+  // Injections
+  private sidebarWidgetService = inject(SidebarWidgetService);
+  private cdr = inject(ChangeDetectorRef);
 
   //Inputs 
   @Input() title = '';
@@ -39,10 +44,11 @@ export class SidebarWidgetComponent implements OnInit, OnDestroy {
   //States
   isOpen = false;
   isExpanded = false;
+  isOtherWidgetOpen = false;
   
   // Unique ID for widgets
   private widgetId = '';
-  private widgetOpenListener: ((e: Event) => void) | null = null;
+  private subscription: Subscription = new Subscription();
 
   get contentHeight(): string {
     return `calc(100vh - ${this.topOffset}px)`;
@@ -64,36 +70,43 @@ export class SidebarWidgetComponent implements OnInit, OnDestroy {
     //Id generated based on title and timestamp
     this.widgetId = `widget-${this.title.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
     
-    this.isOpen = this.defaultOpen;
+    // Subscribe to service to manage mutual exclusivity
+    this.subscription.add(
+      this.sidebarWidgetService.activeWidgetId$.subscribe(activeId => {
+        this.isOtherWidgetOpen = activeId !== null && activeId !== this.widgetId;
+        
+        if (activeId !== this.widgetId && this.isOpen) {
+          this.isOpen = false;
+        }
+        
+        // Force change detection since we're in a subscription
+        this.cdr.markForCheck();
+      })
+    );
     
-    this.widgetOpenListener = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail.widgetId !== this.widgetId && this.isOpen) {
-        this.isOpen = false;
-      }
-    };
-    
-    if (typeof document !== 'undefined') {
-      document.addEventListener('widgetOpened', this.widgetOpenListener);
-    }
-    
-    if (this.isOpen) {
-      this.notifyWidgetOpened();
+    if (this.defaultOpen) {
+      // Small delay to ensure all widgets are initialized before setting active
+      setTimeout(() => {
+        this.toggleWidget();
+      }, 0);
     }
   }
   
   ngOnDestroy() {
-    //clean
-    if (this.widgetOpenListener && typeof document !== 'undefined') {
-      document.removeEventListener('widgetOpened', this.widgetOpenListener);
-      this.widgetOpenListener = null;
+    this.subscription.unsubscribe();
+    if (this.isOpen) {
+      this.sidebarWidgetService.setActiveWidget(null);
     }
   }
 
   toggleWidget() {
     this.isOpen = !this.isOpen;
-      if (this.isOpen) {
+    
+    if (this.isOpen) {
+      this.sidebarWidgetService.setActiveWidget(this.widgetId);
       this.notifyWidgetOpened();
+    } else if (this.sidebarWidgetService.getActiveWidgetId() === this.widgetId) {
+      this.sidebarWidgetService.setActiveWidget(null);
     }
   }
   

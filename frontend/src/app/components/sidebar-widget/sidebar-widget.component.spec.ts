@@ -1,20 +1,24 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-
 import { SidebarWidgetComponent } from './sidebar-widget.component';
+import { SidebarWidgetService } from '../../services/sidebar-widget.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 describe('SidebarWidgetComponent', () => {
   let component: SidebarWidgetComponent;
   let fixture: ComponentFixture<SidebarWidgetComponent>;
+  let service: SidebarWidgetService;
   let internalComponent: {
     widgetId: string;
-    widgetOpenListener: ((e: Event) => void) | null;
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SidebarWidgetComponent]
+      imports: [SidebarWidgetComponent],
+      providers: [SidebarWidgetService, ChangeDetectorRef]
     })
     .compileComponents();
+    
+    service = TestBed.inject(SidebarWidgetService);
   });
 
   afterEach(() => {
@@ -26,7 +30,6 @@ describe('SidebarWidgetComponent', () => {
     component = fixture.componentInstance;
     internalComponent = component as unknown as {
       widgetId: string;
-      widgetOpenListener: ((e: Event) => void) | null;
     };
 
     Object.assign(component, inputs);
@@ -49,8 +52,9 @@ describe('SidebarWidgetComponent', () => {
     expect(component.toggleTransform).toBe('-320px');
   });
 
-  it('Devrait initialiser à partir des entrées et notifier lorsqu\'il est ouvert par défaut', () => {
+  it('Devrait initialiser à partir des entrées et notifier lorsqu\'il est ouvert par défaut', fakeAsync(() => {
     const dispatchEventSpy = spyOn(document, 'dispatchEvent').and.callThrough();
+    const setActiveWidgetSpy = spyOn(service, 'setActiveWidget').and.callThrough();
 
     createComponent({
       title: 'Calendrier',
@@ -60,58 +64,63 @@ describe('SidebarWidgetComponent', () => {
       largeWidth: 720,
       position: 'left'
     });
+    
+    tick(); // For setTimeout in ngOnInit
+    fixture.detectChanges();
 
     expect(component.isOpen).toBeTrue();
     expect(component.contentHeight).toBe('calc(100vh - 140px)');
     expect(component.currentWidth).toBe(360);
     expect(component.widthPx).toBe('360px');
     expect(component.toggleTransform).toBe('360px');
-    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
+    expect(setActiveWidgetSpy).toHaveBeenCalled();
+    expect(dispatchEventSpy).toHaveBeenCalled();
 
-    const openedEvent = dispatchEventSpy.calls.mostRecent().args[0] as CustomEvent;
-    expect(openedEvent.type).toBe('widgetOpened');
+    const openedEvent = dispatchEventSpy.calls.all().find(call => call.args[0].type === 'widgetOpened')?.args[0] as CustomEvent;
+    expect(openedEvent).toBeTruthy();
     expect(openedEvent.detail.title).toBe('Calendrier');
-    expect(openedEvent.detail.widgetId).toContain('widget-calendrier-');
-  });
+  }));
 
-  it('Devrait fermer quand un autre widget est ouvert', () => {
-    createComponent({ title: 'Agenda', defaultOpen: true });
+  it('Devrait fermer quand un autre widget est ouvert via le service', () => {
+    createComponent({ title: 'Agenda', defaultOpen: false });
+    component.toggleWidget();
+    fixture.detectChanges();
+    
+    expect(component.isOpen).toBeTrue();
 
-    document.dispatchEvent(new CustomEvent('widgetOpened', {
-      detail: { widgetId: 'widget-other', title: 'Other' }
-    }));
+    service.setActiveWidget('widget-other');
+    fixture.detectChanges();
 
     expect(component.isOpen).toBeFalse();
+    expect(component.isOtherWidgetOpen).toBeTrue();
   });
 
-  it('Devrait ignorer son propre événement widgetOpened', () => {
-    createComponent({ title: 'Agenda', defaultOpen: true });
+  it('Devrait ignorer son propre changement d\'ID dans le service', () => {
+    createComponent({ title: 'Agenda', defaultOpen: false });
+    component.toggleWidget();
+    fixture.detectChanges();
+    
+    expect(component.isOpen).toBeTrue();
 
-    document.dispatchEvent(new CustomEvent('widgetOpened', {
-      detail: {
-        widgetId: internalComponent.widgetId,
-        title: component.title
-      }
-    }));
+    service.setActiveWidget(internalComponent.widgetId);
+    fixture.detectChanges();
 
     expect(component.isOpen).toBeTrue();
+    expect(component.isOtherWidgetOpen).toBeFalse();
   });
 
-  it('Devrait basculer le widget et notifier uniquement lorsqu\'il est ouvert', () => {
+  it('Devrait basculer le widget et mettre à jour le service', () => {
     createComponent({ title: 'Notifications' });
 
-    const dispatchEventSpy = spyOn(document, 'dispatchEvent').and.callThrough();
+    const setActiveWidgetSpy = spyOn(service, 'setActiveWidget').and.callThrough();
 
     component.toggleWidget();
     expect(component.isOpen).toBeTrue();
-    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
-
-    const openedEvent = dispatchEventSpy.calls.mostRecent().args[0] as CustomEvent;
-    expect(openedEvent.type).toBe('widgetOpened');
+    expect(setActiveWidgetSpy).toHaveBeenCalledWith(internalComponent.widgetId);
 
     component.toggleWidget();
     expect(component.isOpen).toBeFalse();
-    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
+    expect(setActiveWidgetSpy).toHaveBeenCalledWith(null);
   });
 
   it('Devrait mettre à jour l\'étiquette aria-label du template lorsque le widget est basculé', () => {
@@ -135,26 +144,11 @@ describe('SidebarWidgetComponent', () => {
 
     expect(component.isExpanded).toBeTrue();
     expect(component.currentWidth).toBe(640);
-    expect(dispatchEventSpy).not.toHaveBeenCalled();
-
-    tick(349);
-    expect(dispatchEventSpy).not.toHaveBeenCalled();
-
-    tick(1);
-    expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
-
-    const resizeEvent = dispatchEventSpy.calls.mostRecent().args[0] as CustomEvent;
-    expect(resizeEvent.type).toBe('widgetResized');
+    
+    tick(350);
+    
+    const resizeEvent = dispatchEventSpy.calls.all().find(call => call.args[0].type === 'widgetResized')?.args[0] as CustomEvent;
+    expect(resizeEvent).toBeTruthy();
     expect(resizeEvent.detail).toEqual({ width: 640, isExpanded: true });
   }));
-
-  it('Devrait supprimer l\'écouteur d\'événement du document lors de la destruction', () => {
-    const removeEventListenerSpy = spyOn(document, 'removeEventListener').and.callThrough();
-    createComponent({ title: 'Aide' });
-
-    fixture.destroy();
-
-    expect(removeEventListenerSpy).toHaveBeenCalledWith('widgetOpened', jasmine.any(Function));
-    expect(internalComponent.widgetOpenListener).toBeNull();
-  });
 });

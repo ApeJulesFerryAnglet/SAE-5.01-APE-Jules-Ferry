@@ -9,6 +9,7 @@
   <button 
     class="widget-toggle"
     [class.open]="isOpen"
+    [class.hidden-toggle]="isOtherWidgetOpen"
     [style.transform]="isOpen ? 'translateX(' + toggleTransform + ')' : 'translateX(0)'"
     (click)="toggleWidget()"
     [attr.aria-label]="isOpen ? 'Fermer ' + title : 'Ouvrir ' + title">

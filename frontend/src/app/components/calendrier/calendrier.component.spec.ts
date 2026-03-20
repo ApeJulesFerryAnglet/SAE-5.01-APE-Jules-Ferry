@@ -130,7 +130,7 @@ describe('CalendrierComponent', () => {
       component.calendarComponent = {
         getApi: () => mockCalendarApi
       } as unknown as FullCalendarComponent;
-
+  (component as unknown as { isMobile: boolean }).isMobile = false;
       component.expandCalendar();
       expect(component.calendarState).toBe('expanded');
       expect(mockCalendarApi.setOption).toHaveBeenCalledWith('headerToolbar', jasmine.any(Object));
