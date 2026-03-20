@@ -145,7 +145,6 @@ export class CalendrierComponent implements OnInit, AfterViewInit, OnDestroy {
     if (typeof ResizeObserver === 'undefined' || typeof document === 'undefined') return;
     
     const widgetContent = this.calendarContainer?.nativeElement?.closest('.widget-content');
-    const widgetBody = this.calendarContainer?.nativeElement?.closest('.widget-body');
     
     if (widgetContent) {
       this.resizeObserver = new ResizeObserver((entries) => {
