@@ -19,11 +19,11 @@ import { CalendrierComponent } from '../../components/calendrier/calendrier.comp
 export class AccueilComponent implements OnInit {
   public listeActualites: Actualite[] = [];
   public listeEvenements: Evenement[] = [];
-  
+
   loadingEvents = true;
   loadingActualites = true;
   errorEvents = false;
-  errorActualites= false;
+  errorActualites = false;
 
   private readonly actualiteService = inject(ActualiteService);
   private readonly evenementService = inject(EvenementService);
@@ -32,14 +32,11 @@ export class AccueilComponent implements OnInit {
   ngOnInit() {
     this.actualiteService.getAllActualites().subscribe({
       next: (data) => {
+        console.log('ACTUALITES API =', data);
         this.listeActualites = data;
-        this.sortActualiteByDate();
-        this.loadingActualites = false;
       },
       error: (err) => {
         console.error(err);
-        this.loadingActualites = false;
-        this.errorActualites = true;
       }
     });
 
@@ -63,13 +60,13 @@ export class AccueilComponent implements OnInit {
 
   public sortEvenementByDate(): void {
     this.listeEvenements.sort((a, b) => {
-        return new Date(a.date_evenement).getTime() - new Date(b.date_evenement).getTime();
+      return new Date(a.date_evenement).getTime() - new Date(b.date_evenement).getTime();
     });
   }
 
   public sortActualiteByDate(): void {
     this.listeActualites.sort((a, b) => {
-        return new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime();
+      return new Date(b.date_publication).getTime() - new Date(a.date_publication).getTime();
     });
   }
 

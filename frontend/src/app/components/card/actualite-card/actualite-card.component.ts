@@ -52,9 +52,15 @@ export class ActualiteCardComponent {
     event.stopPropagation();
     this.router.navigate(['/actualites', this.id_actualite, 'edit']);
   }
-  getImageUrl(image_url: string | null): string {
+  getImageUrl(image_url: string): string {
+    console.log('image_url brute =', image_url);
+
     if (!image_url) return '';
     if (image_url.startsWith('http')) return image_url;
-    return `${environment.apiUrl}/${image_url}`;
+
+    const finalUrl = `${environment.apiUrl}/${image_url}`;
+    console.log('image_url finale =', finalUrl);
+
+    return finalUrl;
   }
 }
