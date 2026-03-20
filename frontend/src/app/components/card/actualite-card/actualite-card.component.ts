@@ -53,14 +53,16 @@ export class ActualiteCardComponent {
     this.router.navigate(['/actualites', this.id_actualite, 'edit']);
   }
   getImageUrl(image_url: string): string {
-    console.log('image_url brute =', image_url);
+    if (!image_url) return '/imageDefaut/imageDefaut.png';
 
-    if (!image_url) return '';
-    if (image_url.startsWith('http')) return image_url;
+    if (image_url.startsWith('http://') || image_url.startsWith('https://')) {
+      return image_url;
+    }
 
-    const finalUrl = `${environment.apiUrl}/${image_url}`;
-    console.log('image_url finale =', finalUrl);
+    if (image_url.startsWith('/')) {
+      return `${environment.apiUrl}${image_url}`;
+    }
 
-    return finalUrl;
+    return `${environment.apiUrl}/${image_url}`;
   }
 }
