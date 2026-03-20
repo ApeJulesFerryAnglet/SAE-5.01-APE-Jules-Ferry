@@ -1,5 +1,7 @@
 services:
   postgres:
+    networks:
+      - app_network
     image: postgres:16
     container_name: app_postgres_prod
     restart: unless-stopped
@@ -11,6 +13,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   laravel:
+    networks:
+      - app_network
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
@@ -38,11 +42,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: app_angular_build
-    restart: unless-stopped
     volumes:
       - angular_dist:/output/dist
 
   nginx_laravel:
+    networks:
+      - app_network
     image: nginx:alpine
     container_name: app_nginx_laravel
     restart: unless-stopped
@@ -52,6 +57,8 @@ services:
       - ./nginx/laravel.conf:/etc/nginx/conf.d/default.conf:ro
 
   nginx_front:
+    networks:
+      - app_network
     image: nginx:alpine
     container_name: app_nginx_front
     restart: unless-stopped
@@ -69,3 +76,7 @@ volumes:
   laravel_storage:
   laravel_cache:
   angular_dist:
+
+networks:
+  app_network:
+    driver: bridge
