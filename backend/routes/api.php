@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\PasswordlessController;
 use App\Http\Controllers\Api\EvenementController;
 use App\Http\Controllers\Api\ActualiteController;
@@ -25,6 +26,13 @@ use Illuminate\Http\Request;
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login'])
     ->middleware('throttle:10,1'); // Limite à 10 tentatives par minute
+
+Route::post('/forgot-password', [ResetPasswordController::class, 'forgotPassword'])
+    ->middleware('throttle:5,1'); // Limite pour prévenir spamming email
+
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])
+    ->name('password.reset');
+
 
 Route::post('/check-email', [PasswordlessController::class, 'checkEmail']);
 Route::post('/magic-link', [PasswordlessController::class, 'requestLink']);
