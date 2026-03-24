@@ -76,9 +76,9 @@ describe('ActualitePageComponent', () => {
       expect(actualiteServiceSpy.getAllActualites).toHaveBeenCalled();
       expect(component.loadingActualites).toBeFalse();
       expect(component.errorActualites).toBeFalse();
-      expect(component.filteredActualites.length).toBe(2);
-      expect(component.filteredActualites[0].id_actualite).toBe(2);
-      expect(component.filteredActualites[1].id_actualite).toBe(1);
+      expect(component.listeActualites.length).toBe(2);
+      expect(component.listeActualites[0].id_actualite).toBe(2);
+      expect(component.listeActualites[1].id_actualite).toBe(1);
     });
 
     it('devrait gérer une erreur lors du chargement des actualités', () => {

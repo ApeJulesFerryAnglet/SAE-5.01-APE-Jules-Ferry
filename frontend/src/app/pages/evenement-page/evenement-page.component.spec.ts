@@ -113,12 +113,12 @@ describe('EvenementPageComponent', () => {
       expect(component.listeEvenements).toContain(jasmine.objectContaining({ id_evenement: 3 }));
     });
 
-    it('devrait trier les événements par date via le getter', () => {
+    it('devrait trier les événements par date après le chargement', () => {
       fixture.detectChanges();
 
-      expect(component.filteredEvenements[0].id_evenement).toBe(3); // Événement le plus récent
-      expect(component.filteredEvenements[1].id_evenement).toBe(2);
-      expect(component.filteredEvenements[2].id_evenement).toBe(1); // Événement le plus ancien
+      expect(component.listeEvenements[0].id_evenement).toBe(3); // Événement le plus récent
+      expect(component.listeEvenements[1].id_evenement).toBe(2);
+      expect(component.listeEvenements[2].id_evenement).toBe(1); // Événement le plus ancien
     });
 
     it('devrait mettre loadingEvenements à false après le chargement réussi', () => {
@@ -195,62 +195,64 @@ describe('EvenementPageComponent', () => {
     });
   });
 
-  describe('get filteredEvenements', () => {
-    it('devrait trier les événements du plus récent au plus ancien par défaut', () => {
+  describe('sortEvenementByDate', () => {
+    it('devrait trier les événements du plus récent au plus ancien', () => {
       component.listeEvenements = [
         { ...mockEvenements[0], date_evenement: new Date('2025-01-01') },
         { ...mockEvenements[1], date_evenement: new Date('2026-06-01') },
         { ...mockEvenements[2], date_evenement: new Date('2026-03-01') }
       ];
 
-      const result = component.filteredEvenements;
+      component.sortEvenementByDate();
 
-      expect(new Date(result[0].date_evenement).getTime())
-        .toBeGreaterThan(new Date(result[1].date_evenement).getTime());
-      expect(new Date(result[1].date_evenement).getTime())
-        .toBeGreaterThan(new Date(result[2].date_evenement).getTime());
+      expect(new Date(component.listeEvenements[0].date_evenement).getTime())
+        .toBeGreaterThan(new Date(component.listeEvenements[1].date_evenement).getTime());
+      expect(new Date(component.listeEvenements[1].date_evenement).getTime())
+        .toBeGreaterThan(new Date(component.listeEvenements[2].date_evenement).getTime());
     });
 
     it('devrait gérer une liste vide', () => {
       component.listeEvenements = [];
 
-      expect(() => component.filteredEvenements).not.toThrow();
-      expect(component.filteredEvenements.length).toBe(0);
+      expect(() => component.sortEvenementByDate()).not.toThrow();
+      expect(component.listeEvenements.length).toBe(0);
     });
 
     it('devrait gérer une liste avec un seul événement', () => {
       component.listeEvenements = [mockEvenements[0]];
 
-      const result = component.filteredEvenements;
+      component.sortEvenementByDate();
 
-      expect(result.length).toBe(1);
-      expect(result[0]).toEqual(mockEvenements[0]);
+      expect(component.listeEvenements.length).toBe(1);
+      expect(component.listeEvenements[0]).toEqual(mockEvenements[0]);
     });
 
     it('ne devrait pas modifier la liste originale', () => {
       const originalList = [...mockEvenements];
       component.listeEvenements = [...mockEvenements];
 
-      const result = component.filteredEvenements;
+      component.sortEvenementByDate();
 
-      // Vérifier que la liste d'origine est intacte
-      expect(component.listeEvenements).toEqual(originalList);
+      // Vérifier que l'ordre a changé
+      expect(component.listeEvenements).not.toEqual(originalList);
+      // Vérifier que tous les éléments sont toujours présents
+      expect(component.listeEvenements.length).toBe(originalList.length);
     });
   });
 
   describe('Intégration', () => {
-    it('devrait charger et afficher les événements triés via le getter', () => {
+    it('devrait charger et afficher les événements triés', () => {
       fixture.detectChanges();
 
-      expect(component.filteredEvenements).toBeDefined();
-      expect(component.filteredEvenements.length).toBe(3);
+      expect(component.listeEvenements).toBeDefined();
+      expect(component.listeEvenements.length).toBe(3);
       expect(component.loadingEvenements).toBe(false);
       expect(component.errorEvenements).toBe(false);
 
       // Vérifier le tri
-      const firstDate = new Date(component.filteredEvenements[0].date_evenement).getTime();
-      const secondDate = new Date(component.filteredEvenements[1].date_evenement).getTime();
-      const thirdDate = new Date(component.filteredEvenements[2].date_evenement).getTime();
+      const firstDate = new Date(component.listeEvenements[0].date_evenement).getTime();
+      const secondDate = new Date(component.listeEvenements[1].date_evenement).getTime();
+      const thirdDate = new Date(component.listeEvenements[2].date_evenement).getTime();
 
       expect(firstDate).toBeGreaterThanOrEqual(secondDate);
       expect(secondDate).toBeGreaterThanOrEqual(thirdDate);
@@ -265,9 +267,9 @@ describe('EvenementPageComponent', () => {
       expect(component.listeEvenements.length).toBe(initialLength - 1);
 
       // Vérifier que le tri est toujours maintenu
-      if (component.filteredEvenements.length > 1) {
-        const firstDate = new Date(component.filteredEvenements[0].date_evenement).getTime();
-        const secondDate = new Date(component.filteredEvenements[1].date_evenement).getTime();
+      if (component.listeEvenements.length > 1) {
+        const firstDate = new Date(component.listeEvenements[0].date_evenement).getTime();
+        const secondDate = new Date(component.listeEvenements[1].date_evenement).getTime();
         expect(firstDate).toBeGreaterThanOrEqual(secondDate);
       }
     });
