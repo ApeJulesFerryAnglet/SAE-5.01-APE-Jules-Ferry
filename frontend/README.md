@@ -1,11 +1,11 @@
 # APE Jules Ferry App Front
 
 ## 🏗️ Architecture des dossiers et fichiers
+Dans le dossier vous trouverez les assets de l'application
 
 - `public` 🎨 : contient les images et documents statiques qui sont envoyés en même temps que l'interface de l'application aux clients (ordinateurs).
 
 Dans le dossier `src`, vous trouverez l'ensemble de l'application.
-
 
 - `src/app` 📁 : contient les composants, pipes, directives, animations et services utilisés par l'application.
 
@@ -31,7 +31,7 @@ Le dossier `app` contient le code principal de l'application.
 
 ### Interceptors
 
-- `src/app/interceptors` 📡 : contient les intercepteurs de l'application, utilisés pour ne pas afficher de page d'erreur par défaut du moteur web.
+- `src/app/interceptors` 🛡️ : contient les intercepteurs de l'application, utilisés pour ne pas afficher de page d'erreur par défaut du moteur web.
 
 ### Models
 
