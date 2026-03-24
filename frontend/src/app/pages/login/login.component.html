@@ -13,9 +13,9 @@
     }
 
     @if (successMessage) {
-      <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-4 rounded-lg mb-6 text-center">
-        <i class="fa-regular fa-circle-check text-2xl mb-2 block"></i>
-        {{ successMessage }}
+      <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-4 rounded-lg mb-6 flex items-center gap-3">
+        <i class="fa-regular fa-circle-check text-2xl flex-shrink-0"></i>
+        <span>{{ successMessage }}</span>
       </div>
       
       <button (click)="successMessage = ''; email?.setValue('')" class="w-full mt-4 text-[var(--primary-blue)] font-semibold hover:underline text-sm text-center block">
