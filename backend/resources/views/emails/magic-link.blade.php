@@ -15,7 +15,7 @@
         <p>Vous avez demandé à vous connecter à l'espace de l'<strong>APE Jules Ferry</strong>.</p>
         <p>Cliquez sur le bouton ci-dessous pour accéder directement à votre compte (aucun mot de passe n'est requis).</p>
         
-        <a href="{{ $url }}" class="button">Me connecter maintenant</a>
+        <a href="{{ $url }}" class="button" style="color: #ffffff;">Me connecter maintenant</a>
         
         <p><em>Ce lien est valide pendant 2 heures. S'il a expiré, vous pourrez en demander un nouveau sur l'application.</em></p>
         

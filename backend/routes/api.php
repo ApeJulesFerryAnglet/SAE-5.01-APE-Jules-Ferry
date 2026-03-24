@@ -30,6 +30,9 @@ Route::post('/login', [LoginController::class, 'login'])
 Route::post('/forgot-password', [ResetPasswordController::class, 'forgotPassword'])
     ->middleware('throttle:5,1'); // Limite pour prévenir spamming email
 
+Route::get('/verify-reset-token', [ResetPasswordController::class, 'verifyTokenLink'])
+    ->name('password.verify');
+
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])
     ->name('password.reset');
 

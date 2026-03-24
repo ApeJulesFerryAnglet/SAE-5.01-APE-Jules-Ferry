@@ -48,9 +48,11 @@ class ResetPasswordController extends Controller
             ]
         );
 
-        // Construction du lien pour le front-end
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:4200');
-        $resetUrl = rtrim($frontendUrl, '/') . '/reinitialiser-mot-de-passe?token=' . $token . '&email=' . urlencode($request->email);
+        // Construction du lien vers le backend de manière dynamique
+        $resetUrl = route('password.verify', [
+            'token' => $token,
+            'email' => $request->email
+        ]);
 
         // Envoi de l'e-mail
         Mail::to($request->email)->send(new ResetPasswordMail($resetUrl));
@@ -58,6 +60,32 @@ class ResetPasswordController extends Controller
         return response()->json([
             'message' => 'Si cette adresse e-mail existe, un lien de réinitialisation a été envoyé.'
         ], 200);
+    }
+
+    public function verifyTokenLink(Request $request)
+    {
+        $email = $request->query('email');
+        $token = $request->query('token');
+
+        if (!$email || !$token) {
+            return response('<h1 style="text-align:center; font-family:sans-serif; margin-top:50px;">Ce lien est non valide.</h1>', 400)->header('Content-Type', 'text/html');
+        }
+
+        $resetRecord = DB::table('password_reset_tokens')->where('email', $email)->where('token', $token)->first();
+
+        if (!$resetRecord) {
+            return response('<h1 style="text-align:center; font-family:sans-serif; margin-top:50px; color:#d9534f;">Ce lien a déjà été utilisé ou est invalide.</h1>', 400)->header('Content-Type', 'text/html');
+        }
+
+        $createdAt = is_object($resetRecord) ? $resetRecord->created_at : $resetRecord['created_at'];
+        if (Carbon::parse($createdAt)->addMinutes(15)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $email)->delete();
+            return response('<h1 style="text-align:center; font-family:sans-serif; margin-top:50px; color:#f0ad4e;">Ce lien de réinitialisation est expiré (15 min max).</h1>', 400)->header('Content-Type', 'text/html');
+        }
+
+        // Si tout est valide, on redirige vers le site frontend avec les tokens
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:4200');
+        return redirect(rtrim($frontendUrl, '/') . '/reinitialiser-mot-de-passe?token=' . $token . '&email=' . urlencode($email));
     }
 
     public function resetPassword(Request $request)
@@ -77,9 +105,9 @@ class ResetPasswordController extends Controller
             ], 400);
         }
 
-        // Vérifier que le jeton n'a pas expiré (valable 60 minutes)
+        // Vérifier que le jeton n'a pas expiré (valable 15 minutes)
         $createdAt = is_object($resetRecord) ? $resetRecord->created_at : $resetRecord['created_at'];
-        if (Carbon::parse($createdAt)->addMinutes(60)->isPast()) {
+        if (Carbon::parse($createdAt)->addMinutes(15)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $request->email)->delete();
             return response()->json([
                 'message' => 'Le jeton de réinitialisation a expiré.'

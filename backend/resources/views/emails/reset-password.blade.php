@@ -18,9 +18,9 @@
         
         <p>Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :</p>
         
-        <a href="{{ $resetUrl }}" class="button">Réinitialiser mon mot de passe</a>
+        <a href="{{ $resetUrl }}" class="button" style="color: #ffffff;">Réinitialiser mon mot de passe</a>
         
-        <p><em>Ce lien de réinitialisation expirera dans 60 minutes.</em></p>
+        <p><em>Ce lien de réinitialisation expirera dans 15 minutes.</em></p>
 
         <div class="footer">
             <p>Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail.</p>
