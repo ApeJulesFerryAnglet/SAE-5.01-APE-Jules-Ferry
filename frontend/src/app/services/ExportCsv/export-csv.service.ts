@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportCsvService {
+  private readonly document = inject(DOCUMENT);
 
   exportAsCsvFile(json: unknown[], csvFileName: string): void {
     if (!json || !json.length) {
@@ -42,9 +44,11 @@ export class ExportCsvService {
     const dateStr = `${day}-${month}-${year}`;
 
     const finalFileName = `${fileName}_${dateStr}`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = window.URL.createObjectURL(blob);
+    const downloadLink = this.document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    downloadLink.href = url;
     downloadLink.download = `${finalFileName}.csv`;
     downloadLink.click();
+    URL.revokeObjectURL(url);
   }
 }
