@@ -120,7 +120,7 @@ describe('ActualitePageComponent', () => {
 
       const emptyMessage = fixture.debugElement.query(By.css('.text-center.py-12 p'));
       expect(emptyMessage).toBeTruthy();
-      expect(emptyMessage.nativeElement.textContent).toContain('Aucune actualité pour le moment');
+      expect(emptyMessage.nativeElement.textContent).toContain('Aucune actualité ne correspond à votre recherche.');
     });
 
     it('devrait afficher la liste des cartes d\'actualité quand les données sont là', () => {
