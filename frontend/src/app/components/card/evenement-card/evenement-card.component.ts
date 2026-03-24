@@ -28,6 +28,7 @@ export class EvenementCardComponent implements OnChanges {
   @Input() statut!: StatutEvenement;
   @Input() id_auteur!: number; 
   @Input() currentUser: Utilisateur | null = null;
+  @Input() id_formulaire?: number | null;
 
   @Output() eventDeleted = new EventEmitter<number>();
 
@@ -58,6 +59,18 @@ export class EvenementCardComponent implements OnChanges {
     return false;
   }
 
+  get isInscriptionOuverte(): boolean {
+    if (!this.date_evenement) return false;
+    const dateEvent = new Date(this.date_evenement);
+    const aujourdhui = new Date();
+    dateEvent.setHours(0, 0, 0, 0);
+    aujourdhui.setHours(0, 0, 0, 0);
+    
+    return this.statut !== StatutEvenement.termine && 
+           this.statut !== StatutEvenement.annule && 
+           aujourdhui.getTime() <= dateEvent.getTime();
+  }
+  
   getImageUrl(image_url: string): string {
     if (!image_url) return '';
     if (image_url.startsWith('http')) return image_url;

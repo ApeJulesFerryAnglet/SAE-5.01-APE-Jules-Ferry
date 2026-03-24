@@ -1,5 +1,5 @@
-<section class="w-full bg-[var(--primary-green)] pt-24 pb-16 border-b-[5px] border-[var(--accent-orange)] relative">
-    
+<section class="w-full bg-[var(--primary-green)] pt-24 pb-16 border-b-[5px] border-[var(--accent-orange)] relative overflow-hidden">
+        
     <div class="absolute top-[-40%] left-[-10%] w-[800px] h-[800px] rounded-full border-[1px] border-[var(--bg-creme)] opacity-5 pointer-events-none"></div>
     <div class="absolute bottom-[-30%] right-[-5%] w-[600px] h-[600px] rounded-full border-[1px] border-[var(--bg-creme)] opacity-5 pointer-events-none"></div>
 
@@ -85,6 +85,7 @@
                         [heure_debut]="evenement.heure_debut"
                         [heure_fin]="evenement.heure_fin"
                         [lieu]="evenement.lieu"
+                        [id_formulaire]="evenement.id_formulaire"
                         (eventDeleted)="handleEventDeleted($event)">
                     </app-evenement-card>
                 }

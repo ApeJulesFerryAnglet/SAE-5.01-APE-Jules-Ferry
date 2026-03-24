@@ -76,19 +76,12 @@
       }
 
       @if (isAuthenticated && currentUser) {
-        <div
-          class="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-[var(--accent-orange)] text-[var(--bg-creme)] font-abril text-lg shadow-sm"
-          title="{{ currentUser.prenom }}"
-        >
-          {{ currentUser.prenom.charAt(0).toUpperCase() }}
-        </div>
-
         <button
           [routerLink]="'/compte'"
           title="Mon Compte"
           class="font-josefin text-[10px] uppercase font-bold tracking-[0.08em] text-[var(--bg-creme)] border-[1.5px] border-[var(--border-light)] rounded px-4 py-1.5 hover:bg-[var(--bg-creme)] hover:text-[var(--primary-green)] transition-colors"
         >
-          Compte
+          Mon Compte
         </button>
 
         <button
@@ -111,7 +104,7 @@
       role="button"
       aria-label="Fermer le menu"
     ></div>
-    
+
     <aside
       class="fixed top-0 left-0 z-50 h-full w-72 bg-[var(--primary-green)] text-[var(--bg-creme)] shadow-2xl flex flex-col lg:hidden transform transition-transform border-r-4 border-[var(--accent-orange)]"
     >
