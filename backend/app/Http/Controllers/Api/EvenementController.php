@@ -62,7 +62,7 @@ class EvenementController extends Controller
             ])->find($id);
 
             if (!$evenement) {
-                return response()->json(['message' => 'Événement  non trouvé'], 404);
+                return response()->json(['message' => 'Événement non trouvé'], 404);
             }
             return response()->json($evenement);
         } catch (\Exception $e) {
@@ -78,7 +78,7 @@ class EvenementController extends Controller
             ])->find($id);
 
             if (!$evenement) {
-                return response()->json(['message' => 'Événement  non trouvé'], 404);
+                return response()->json(['message' => 'Événement non trouvé'], 404);
             }
 
             return response()->json($evenement);
@@ -197,12 +197,15 @@ class EvenementController extends Controller
             $this->deleteOldImage($evenement->image_url);
             $evenement->delete();
 
-            return response()->json(['message' => 'Supprimé avec succÃ¨s']);
+            return response()->json(['message' => 'Supprimé avec succés']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
+    /**
+     * Centralise la validation
+     */
     private function validateEvenement(Request $request)
     {
         return $request->validate([
@@ -218,6 +221,9 @@ class EvenementController extends Controller
         ]);
     }
 
+    /**
+     * Traite l'image, la convertit en WebP et la stocke
+     */
     private function processAndStoreImage($file): string
     {
         $fileName = Str::random(20) . '.webp';
@@ -232,11 +238,17 @@ class EvenementController extends Controller
         return '/storage/evenements/' . $fileName;
     }
 
+    /**
+     * Gère le cas particulier du null envoyé en string par certains formulaires
+     */
     private function parseFormulaireId($id)
     {
         return ($id === 'null' || $id === '') ? null : $id;
     }
 
+    /**
+     * Supprime physiquement l'ancien fichier
+     */
     private function deleteOldImage(?string $url): void
     {
         if ($url) {

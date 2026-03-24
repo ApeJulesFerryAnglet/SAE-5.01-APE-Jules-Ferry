@@ -42,7 +42,7 @@ class InscriptionController extends Controller
 
             if ($evenement && $evenement->date_evenement < now()->toDateString()) {
                 return response()->json([
-                    'message' => 'Impossible de s\'inscrire Ã  un événement passé.'
+                    'message' => 'Impossible de s\'inscrire à un événement passé.'
                 ], 422);
             }
 
@@ -51,7 +51,7 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'Vous Ãªtes déjÃ  inscrit Ã  ce créneau.'], 409);
+                return response()->json(['message' => 'Vous êtes déjà inscrit à ce créneau.'], 409);
             }
 
             if ($creneau->estComplet()) {
@@ -140,7 +140,7 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'L\'utilisateur est déjÃ  inscrit Ã  ce créneau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
             }
 
             if ($creneau->estComplet()) {
@@ -153,7 +153,7 @@ class InscriptionController extends Controller
                 'commentaire' => $request->commentaire
             ]);
 
-            return response()->json(['message' => 'Inscription ajoutée avec succÃ¨s !'], 201);
+            return response()->json(['message' => 'Inscription ajoutée avec succés !'], 201);
         });
     }
 
@@ -188,13 +188,13 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($exists) {
-                return response()->json(['message' => 'L\'utilisateur est déjÃ  inscrit Ã  ce créneau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
             }
 
             $inscription->id_creneau = $request->new_id_creneau;
             $inscription->save();
 
-            return response()->json(['message' => 'Inscription modifiée avec succÃ¨s.']);
+            return response()->json(['message' => 'Inscription modifiée avec succés.']);
         });
     }
 }
