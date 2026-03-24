@@ -12,7 +12,6 @@ export class PasswordConfirmModalComponent {
   @Output() confirmPassword = new EventEmitter<string>();
   @Output() cancelModal = new EventEmitter<void>();
 
-<<<<<<< HEAD
   password = '';
   showPassword = false;
 
@@ -25,10 +24,6 @@ export class PasswordConfirmModalComponent {
       this.confirmPassword.emit(this.password);
       this.password = '';
     }
-=======
-  onConfirm(): void {
-    this.confirmPassword.emit('');
->>>>>>> 7c41a8e253eb75550380da7871174a5e51f03978
   }
 
   onCancel(): void {
