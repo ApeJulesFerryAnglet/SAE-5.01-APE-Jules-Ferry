@@ -18,12 +18,12 @@ export class ResetPasswordComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   resetPasswordForm!: FormGroup;
-  errorMessage: string = '';
-  successMessage: string = '';
+  errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
-  token: string = '';
-  emailFromUrl: string = '';
+  token = '';
+  emailFromUrl = '';
 
   showPassword1 = false;
   showPassword2 = false;

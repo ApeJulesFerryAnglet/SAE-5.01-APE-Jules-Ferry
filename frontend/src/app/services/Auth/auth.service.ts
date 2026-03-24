@@ -74,7 +74,7 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, { email });
   }
 
-  resetPassword(data: any): Observable<{ message: string }> {
+  resetPassword(data: { email: string, token: string, password: string, password_confirmation: string }): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, data);
   }
 

@@ -17,8 +17,8 @@ export class ForgotPasswordComponent {
   private readonly router = inject(Router);
 
   forgotPasswordForm: FormGroup;
-  errorMessage: string = '';
-  successMessage: string = '';
+  errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
   constructor() {
