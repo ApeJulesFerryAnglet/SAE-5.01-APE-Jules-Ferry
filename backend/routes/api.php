@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\EvenementsImageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
@@ -13,7 +12,7 @@ use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\CreneauController; 
 use App\Http\Controllers\Api\TacheController;
-use App\Http\Controllers\Api\TestImage;
+
 
 use Illuminate\Http\Request;
 
@@ -34,9 +33,7 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'store']);
 // Événements
 Route::get('/evenements', [EvenementController::class, 'index']);
 Route::get('/evenements/{id}', [EvenementController::class, 'show']);
-Route::get('/testimage', [TestImage::class, 'index']);
-Route::get('/evenements/{evenement}/image', [EvenementsImageController::class, 'show']);
-Route::get('/actualites/{actualite}/image', [EvenementsImageController::class, 'show']);
+
 // Actualités
 Route::get('/actualites', [ActualiteController::class, 'index']);
 Route::get('/actualites/{id}', [ActualiteController::class, 'show']);
