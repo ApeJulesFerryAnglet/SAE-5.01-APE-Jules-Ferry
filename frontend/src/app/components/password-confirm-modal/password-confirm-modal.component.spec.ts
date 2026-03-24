@@ -21,12 +21,13 @@ describe('PasswordConfirmModalComponent', () => {
   });
 
   describe('Logique du composant', () => {
-    it('devrait emettre une confirmation vide lors du oui', () => {
+    it('devrait emettre le mot de passe lors de la confirmation', () => {
       spyOn(component.confirmPassword, 'emit');
+      component.password = 'mon-mot-de-passe';
 
       component.onConfirm();
 
-      expect(component.confirmPassword.emit).toHaveBeenCalledWith('');
+      expect(component.confirmPassword.emit).toHaveBeenCalledWith('mon-mot-de-passe');
     });
 
     it('devrait emettre l evenement cancel lors de l annulation', () => {
