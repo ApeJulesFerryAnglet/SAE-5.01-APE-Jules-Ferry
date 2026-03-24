@@ -78,7 +78,8 @@ class ResetPasswordController extends Controller
         }
 
         // Vérifier que le jeton n'a pas expiré (valable 60 minutes)
-        if (Carbon::parse($resetRecord->created_at)->addMinutes(60)->isPast()) {
+        $createdAt = is_object($resetRecord) ? $resetRecord->created_at : $resetRecord['created_at'];
+        if (Carbon::parse($createdAt)->addMinutes(60)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $request->email)->delete();
             return response()->json([
                 'message' => 'Le jeton de réinitialisation a expiré.'
