@@ -22,6 +22,16 @@ export const routes: Routes = [
         loadComponent: () => import('./components/Auth/magic-link-verify/magic-link-verify.component').then(m => m.MagicLinkVerifyComponent),
         canActivate: [guestGuard]
     },
+    { 
+        path: 'mot-de-passe-oublie', 
+        loadComponent: () => import('./pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+        canActivate: [guestGuard]
+    },
+    { 
+        path: 'reinitialiser-mot-de-passe', 
+        loadComponent: () => import('./pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+        canActivate: [guestGuard]
+    },
     
     { path: '', loadComponent: () => import('./pages/accueil/accueil.component').then(m => m.AccueilComponent) },
     { path: 'newsletter', loadComponent: () => import('./pages/newsletter-page/newsletter-page.component').then(m => m.NewsletterPageComponent) },
