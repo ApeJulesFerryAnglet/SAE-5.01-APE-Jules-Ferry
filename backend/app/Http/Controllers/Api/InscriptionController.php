@@ -7,7 +7,6 @@ use App\Models\Inscription;
 use App\Models\Creneau;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class InscriptionController extends Controller
 {
@@ -29,9 +28,6 @@ class InscriptionController extends Controller
         $creneauId = $request->id_creneau;
 
         return DB::transaction(function () use ($user, $creneauId, $request) {
-
-            // Pour éviter l'erreur :
-            // Call to unknown method: stdClass::estComplet()
             /** @var Creneau|null $creneau */
             $creneau = Creneau::with('tache.formulaire.evenements')
                 ->where('id_creneau', $creneauId)
@@ -39,29 +35,27 @@ class InscriptionController extends Controller
                 ->first();
 
             if (!$creneau) {
-                return response()->json(['message' => 'Créneau non trouvé.'], 404);
+                return response()->json(['message' => 'CrÃ©neau non trouvÃ©.'], 404);
             }
 
-            // Verif date evenement pas expirée
             $evenement = $creneau->tache->formulaire->evenements()->first();
 
             if ($evenement && $evenement->date_evenement < now()->toDateString()) {
                 return response()->json([
-                    'message' => 'Impossible de s\'inscrire à un événement passé.'
+                    'message' => 'Impossible de s\'inscrire Ã  un Ã©vÃ©nement passÃ©.'
                 ], 422);
             }
 
-            // Verif quota, doublon et inscription
             $existe = Inscription::where('id_utilisateur', $user->id_utilisateur)
                 ->where('id_creneau', $creneauId)
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'Vous êtes déjà inscrit à ce créneau.'], 409);
+                return response()->json(['message' => 'Vous Ãªtes dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
             }
 
             if ($creneau->estComplet()) {
-                return response()->json(['message' => 'Ce créneau est complet.'], 422);
+                return response()->json(['message' => 'Ce crÃ©neau est complet.'], 422);
             }
 
             Inscription::create([
@@ -70,7 +64,7 @@ class InscriptionController extends Controller
                 'commentaire' => $request->commentaire
             ]);
 
-            return response()->json(['message' => 'Inscription validée !'], 201);
+            return response()->json(['message' => 'Inscription validÃ©e !'], 201);
         });
     }
 
@@ -86,7 +80,6 @@ class InscriptionController extends Controller
         return response()->json($inscriptions);
     }
 
-    //desinscription
     public function destroy(Request $request, $id_creneau)
     {
         $user = $request->user();
@@ -96,7 +89,7 @@ class InscriptionController extends Controller
             ->delete();
 
         if ($deleted) {
-            return response()->json(['message' => 'Inscription annulée.']);
+            return response()->json(['message' => 'Inscription annulÃ©e.']);
         }
 
         return response()->json(['message' => 'Inscription introuvable.'], 404);
@@ -107,48 +100,31 @@ class InscriptionController extends Controller
         $request->validate([
             'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
             'id_creneau' => 'required|exists:creneaux,id_creneau',
-            'password' => 'required|string',
         ]);
-
-        $admin = $request->user();
-        if (!Hash::check($request->password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe incorrect.'], 403);
-        }
 
         $deleted = Inscription::where('id_utilisateur', $request->id_utilisateur)
             ->where('id_creneau', $request->id_creneau)
             ->delete();
 
         if ($deleted) {
-            // TODO: Envoyer un mail a l'utilisateur concerné
-            return response()->json(['message' => 'Inscription supprimée par administrateur.']);
+            return response()->json(['message' => 'Inscription supprimÃ©e par administrateur.']);
         }
 
         return response()->json(['message' => 'Inscription introuvable.'], 404);
     }
 
-    // Créer une inscription par un administrateur
     public function storeAdmin(Request $request)
     {
         $request->validate([
             'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
             'id_creneau' => 'required|exists:creneaux,id_creneau',
-            'password' => 'required|string',
             'commentaire' => 'nullable|string|max:500',
         ]);
-
-        $admin = $request->user();
-        if (!Hash::check($request->password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe incorrect.'], 403);
-        }
 
         $userId = $request->id_utilisateur;
         $creneauId = $request->id_creneau;
 
         return DB::transaction(function () use ($userId, $creneauId, $request) {
-
-            // Pour éviter l'erreur :
-            // Call to unknown method: stdClass::estComplet()
             /** @var Creneau|null $creneau */
             $creneau = Creneau::with('tache.formulaire.evenements')
                 ->where('id_creneau', $creneauId)
@@ -156,20 +132,19 @@ class InscriptionController extends Controller
                 ->first();
 
             if (!$creneau) {
-                return response()->json(['message' => 'Créneau non trouvé.'], 404);
+                return response()->json(['message' => 'CrÃ©neau non trouvÃ©.'], 404);
             }
 
-            // Verif quota, doublon et inscription
             $existe = Inscription::where('id_utilisateur', $userId)
                 ->where('id_creneau', $creneauId)
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
             }
 
             if ($creneau->estComplet()) {
-                return response()->json(['message' => 'Ce créneau est complet.'], 422);
+                return response()->json(['message' => 'Ce crÃ©neau est complet.'], 422);
             }
 
             Inscription::create([
@@ -178,7 +153,7 @@ class InscriptionController extends Controller
                 'commentaire' => $request->commentaire
             ]);
 
-            return response()->json(['message' => 'Inscription ajoutée avec succès !'], 201);
+            return response()->json(['message' => 'Inscription ajoutÃ©e avec succÃ¨s !'], 201);
         });
     }
 
@@ -188,13 +163,7 @@ class InscriptionController extends Controller
             'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
             'old_id_creneau' => 'required|exists:creneaux,id_creneau',
             'new_id_creneau' => 'required|exists:creneaux,id_creneau',
-            'password' => 'required|string',
         ]);
-
-        $admin = $request->user();
-        if (!Hash::check($request->password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe incorrect.'], 403);
-        }
 
         return DB::transaction(function () use ($request) {
             $inscription = Inscription::where('id_utilisateur', $request->id_utilisateur)
@@ -211,7 +180,7 @@ class InscriptionController extends Controller
                 ->first();
 
             if ($newCreneau->estComplet()) {
-                return response()->json(['message' => 'Le nouveau créneau est complet.'], 422);
+                return response()->json(['message' => 'Le nouveau crÃ©neau est complet.'], 422);
             }
 
             $exists = Inscription::where('id_utilisateur', $request->id_utilisateur)
@@ -219,14 +188,13 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($exists) {
-                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
             }
 
             $inscription->id_creneau = $request->new_id_creneau;
             $inscription->save();
 
-            // TODO: Envoyer un mail a l'utilisateur concerné
-            return response()->json(['message' => 'Inscription modifiée avec succès.']);
+            return response()->json(['message' => 'Inscription modifiÃ©e avec succÃ¨s.']);
         });
     }
 }

@@ -19,7 +19,7 @@ class UtilisateurController extends Controller
         if ($utilisateurs) {
             return response()->json($utilisateurs);
         } else {
-            return response()->json(['message' => 'Aucun utilisateur trouvé'], 404);
+            return response()->json(['message' => 'Aucun utilisateur trouvÃ©'], 404);
         }
     }
     public function show($id)
@@ -28,7 +28,7 @@ class UtilisateurController extends Controller
         if ($utilisateur) {
             return response()->json($utilisateur);
         } else {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
         }
     }
     public function store(Request $request)
@@ -37,19 +37,12 @@ class UtilisateurController extends Controller
             'mot_de_passe' => ['nullable', Password::min(8)],
         ]);
 
-        $admin = $request->user();
-        if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-        }
-
-        $donnees = $request->except(['admin_password']);
-
-        $utilisateur = Utilisateur::create($donnees);
+        $utilisateur = Utilisateur::create($request->all());
 
         if ($utilisateur) {
             return response()->json($utilisateur, 201);
         } else {
-            return response()->json(['message' => 'Erreur lors de la création de l\'utilisateur'], 500);
+            return response()->json(['message' => 'Erreur lors de la crÃ©ation de l\'utilisateur'], 500);
         }
     }
 
@@ -57,23 +50,14 @@ class UtilisateurController extends Controller
     {
         $utilisateur = Utilisateur::find($id);
         if ($utilisateur) {
-            $request->validate([
-                'admin_password' => 'required|string',
-            ]);
-
-            $admin = $request->user();
-            if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-                return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-            }
-
-            $donnees = $request->except(['admin_password']);
+            $donnees = $request->all();
             if (empty($donnees['mot_de_passe'])) {
                 unset($donnees['mot_de_passe']);
             }
             $utilisateur->update($donnees);
             return response()->json($utilisateur);
         } else {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
         }
     }
     public function destroy(Request $request, $id)
@@ -81,23 +65,10 @@ class UtilisateurController extends Controller
         $utilisateur = Utilisateur::find($id);
 
         if (!$utilisateur) {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
         }
 
-        // On vérifie le mot de passe uniquement si l'utilisateur en a un
-        if (!empty($utilisateur->mot_de_passe)) {
-            $request->validate([
-                'password' => 'required|string'
-            ]);
-
-            if (!Hash::check($request->password, $utilisateur->mot_de_passe)) {
-                return response()->json([
-                    'message' => 'Mot de passe incorrect. Suppression impossible.'
-                ], 403);
-            }
-        }
-
-        $adminId = 1; // réattribution des événements et actualités à l'admin si le user en avait créé
+        $adminId = 1;
 
         if ($utilisateur->id_utilisateur !== $adminId) {
             Evenement::where('id_auteur', $utilisateur->id_utilisateur)
@@ -113,7 +84,7 @@ class UtilisateurController extends Controller
         $utilisateur->inscriptions()->delete();
         $utilisateur->tokens()->delete();
         $utilisateur->delete();
-        return response()->json(['message' => 'Compte supprimé avec succès']);
+        return response()->json(['message' => 'Compte supprimÃ© avec succÃ¨s']);
     }
 
     public function updatePassword(Request $request, $id)

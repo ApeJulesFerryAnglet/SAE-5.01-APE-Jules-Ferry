@@ -8,7 +8,6 @@ use App\Models\Utilisateur;
 use App\Services\NewsletterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class NewsletterController extends Controller
@@ -40,26 +39,14 @@ class NewsletterController extends Controller
         }
 
         $validator = $this->makeEmailValidator($request->all());
-        $validator->after(function ($validator) use ($request) {
-            if (!$request->filled('admin_password')) {
-                $validator->errors()->add('admin_password', 'Le mot de passe administrateur est obligatoire.');
-            }
-        });
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        /** @var Utilisateur $admin */
-        $admin = $request->user();
-
-        if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-        }
-
         $this->newsletterService->inscrire($request->email);
 
-        return response()->json(['message' => 'Adresse email ajoutée à la newsletter.'], 201);
+        return response()->json(['message' => 'Adresse email ajoutÃ©e Ã  la newsletter.'], 201);
     }
 
     public function index(Request $request): JsonResponse
@@ -81,26 +68,15 @@ class NewsletterController extends Controller
             return $response;
         }
 
-        $request->validate([
-            'admin_password' => 'required|string',
-        ]);
-
-        /** @var Utilisateur $admin */
-        $admin = $request->user();
-
-        if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-        }
-
         $abonne = AbonneNewsletter::find($id);
 
         if (!$abonne) {
-            return response()->json(['message' => 'Abonné introuvable'], 404);
+            return response()->json(['message' => 'AbonnÃ© introuvable'], 404);
         }
 
         $abonne->delete();
 
-        return response()->json(['message' => 'Abonné supprimé avec succès']);
+        return response()->json(['message' => 'AbonnÃ© supprimÃ© avec succÃ¨s']);
     }
 
     private function ensureAdmin(Request $request): ?JsonResponse
@@ -109,7 +85,7 @@ class NewsletterController extends Controller
         $user = $request->user();
 
         if (!$user || $user->role !== 'administrateur') {
-            return response()->json(['message' => 'Accès réservé aux administrateurs'], 403);
+            return response()->json(['message' => 'AccÃ¨s rÃ©servÃ© aux administrateurs'], 403);
         }
 
         return null;
@@ -121,8 +97,8 @@ class NewsletterController extends Controller
             'email' => 'required|email|unique:abonnes_newsletter,email'
         ], [
             'email.required' => 'L\'adresse email est obligatoire.',
-            'email.email'    => 'Le format de l\'email n\'est pas valide.',
-            'email.unique'   => 'Cet email est déjà inscrit à notre newsletter !',
+            'email.email' => 'Le format de l\'email n\'est pas valide.',
+            'email.unique' => 'Cet email est dÃ©jÃ  inscrit Ã  notre newsletter !',
         ]);
     }
 }
