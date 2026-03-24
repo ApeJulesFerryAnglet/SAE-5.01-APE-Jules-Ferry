@@ -10,11 +10,12 @@ import { CommonModule } from '@angular/common';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-evenement-page',
   standalone: true,
-  imports: [EvenementCardComponent, SpinnerComponent, RouterLink, CommonModule, AsyncPipe],
+  imports: [EvenementCardComponent, SpinnerComponent, RouterLink, CommonModule, AsyncPipe, FormsModule],
   templateUrl: './evenement-page.component.html',
   styleUrl: './evenement-page.component.css'
 })
@@ -48,7 +49,6 @@ export class EvenementPageComponent implements OnInit {
     this.evenementService.getAllEvenements(statut).subscribe({
       next: (response: PaginatedEvenements | Evenement[]) => {
         this.listeEvenements = Array.isArray(response) ? response : (response?.data || []);
-        this.sortEvenementByDate();
         this.loadingEvenements = false;
       },
       error: (err) => {
@@ -63,14 +63,26 @@ export class EvenementPageComponent implements OnInit {
     this.listeEvenements = this.listeEvenements.filter(e => e.id_evenement !== id);
   }
 
-  public sortEvenementByDate(): void {
-    const sortedList = [...this.listeEvenements];
-    sortedList.sort((a, b) => {
+  searchQuery = '';
+  sortOrder: 'desc' | 'asc' = 'desc';
+
+  get filteredEvenements(): Evenement[] {
+    if (!this.listeEvenements) return [];
+
+    let filtered = this.listeEvenements.filter(evt => {
+      const qs = this.searchQuery.toLowerCase();
+      return (evt.titre && evt.titre.toLowerCase().includes(qs)) ||
+             (evt.description && evt.description.toLowerCase().includes(qs)) ||
+             (evt.lieu && evt.lieu.toLowerCase().includes(qs));
+    });
+
+    filtered.sort((a, b) => {
       const dateA = new Date(a.date_evenement).getTime();
       const dateB = new Date(b.date_evenement).getTime();
-      return dateB - dateA;
+      return this.sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
-    this.listeEvenements = sortedList;
+
+    return filtered;
   }
 
   getAsDate(date: string | Date): Date {

@@ -5,10 +5,12 @@ import { AuthService } from '../../services/Auth/auth.service';
 import { ActualiteCardComponent } from "../../components/card/actualite-card/actualite-card.component";
 import { SpinnerComponent } from "../../components/spinner/spinner.component";
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-actualite-page',
   standalone: true,
-  imports: [ActualiteCardComponent, SpinnerComponent, RouterLink],
+  imports: [ActualiteCardComponent, SpinnerComponent, RouterLink, FormsModule],
   templateUrl: './actualite-page.component.html',
   styleUrl: './actualite-page.component.css'
 })
@@ -19,11 +21,13 @@ export class ActualitePageComponent implements OnInit {
   errorActualites = false;
   private readonly actualiteService = inject(ActualiteService);
   protected readonly authService = inject(AuthService);
+  searchQuery = '';
+  sortOrder: 'desc' | 'asc' = 'desc';
+
   ngOnInit() {
     this.actualiteService.getAllActualites().subscribe({
       next: (data) => {
         this.listeActualites = data;
-        this.sortActualiteByDate();
         this.loadingActualites = false;
     },
       error: (err) => {
@@ -33,14 +37,23 @@ export class ActualitePageComponent implements OnInit {
       }
     });
   }
-public sortActualiteByDate(): void {
-    const sortedList = [...this.listeActualites];
-    sortedList.sort((a, b) => {
+
+  get filteredActualites(): Actualite[] {
+    if (!this.listeActualites) return [];
+
+    let filtered = this.listeActualites.filter(actu => {
+      const qs = this.searchQuery.toLowerCase();
+      return (actu.titre && actu.titre.toLowerCase().includes(qs)) || 
+             (actu.contenu && actu.contenu.toLowerCase().includes(qs));
+    });
+
+    filtered.sort((a, b) => {
       const dateA = new Date(a.date_publication).getTime();
       const dateB = new Date(b.date_publication).getTime();
-      return dateB - dateA; 
+      return this.sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
-    this.listeActualites = sortedList;
+
+    return filtered;
   }
 
   onActualiteDeleted(id: number): void {

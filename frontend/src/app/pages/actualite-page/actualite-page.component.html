@@ -1,16 +1,36 @@
 <div class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <div class="mb-6 flex justify-between items-center">
-        <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2" [routerLink]="['/']">
+        <button class="bg-[var(--primary-blue)] text-white rounded hover:shadow p-2 transition-colors" [routerLink]="['/']">
             ← Retour à l'accueil
         </button>
 
         @if (authService.hasRole('administrateur')) {
-            <button class="bg-green-600 text-white rounded hover:bg-green-700 hover:shadow p-2 px-4 transition-colors" 
+            <button class="bg-green-600 text-white rounded hover:bg-green-700 hover:shadow p-2 px-4 transition-colors font-semibold" 
                     [routerLink]="['/actualites/creer']">
-                + Créer une actualité
+                <i class="fa-solid fa-plus mr-1"></i> Créer une actualité
             </button>
         }
+    </div>
+
+    <!-- NOUVEAU BLOC DE RECHERCHE ET TRI -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+        <div class="relative w-full sm:w-96">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+            </div>
+            <input type="text" [(ngModel)]="searchQuery" 
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-[var(--primary-blue)] focus:border-[var(--primary-blue)] sm:text-sm transition-colors" 
+                placeholder="Rechercher une actualité...">
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label for="sort" class="text-sm text-gray-600 font-medium whitespace-nowrap">Trier par :</label>
+            <select id="sort" [(ngModel)]="sortOrder"
+                class="block w-full sm:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[var(--primary-blue)] focus:border-[var(--primary-blue)] sm:text-sm rounded-lg border bg-white cursor-pointer transition-colors">
+                <option value="desc">Plus récentes en premier</option>
+                <option value="asc">Plus anciennes en premier</option>
+            </select>
+        </div>
     </div>
 
     @if(this.loadingActualites){
@@ -32,16 +52,24 @@
         </div>
     }
 
-    @else if (this.listeActualites.length === 0) {
-        <div class="text-center py-12 bg-gray-50 rounded-lg">
-            <p class="text-gray-500 text-lg">Aucune actualité pour le moment.</p>
+    @else if (filteredActualites.length === 0) {
+        <div class="text-center py-12 bg-gray-50 rounded-lg border border-gray-100">
+            <div class="mb-4 text-gray-400">
+                <i class="fa-solid fa-folder-open text-5xl"></i>
+            </div>
+            <p class="text-gray-500 text-lg font-medium">Aucune actualité ne correspond à votre recherche.</p>
+            @if(searchQuery) {
+                <button (click)="searchQuery = ''" class="mt-4 text-[var(--primary-blue)] hover:underline font-semibold focus:outline-none">
+                    Réinitialiser la recherche
+                </button>
+            }
         </div>
     }
 
     @else {
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             
-    @for(actualite of this.listeActualites; track actualite.id_actualite){
+    @for(actualite of filteredActualites; track actualite.id_actualite){
         
         <app-actualite-card  
             [id_actualite]="actualite.id_actualite"
