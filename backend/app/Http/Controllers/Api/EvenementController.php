@@ -62,7 +62,7 @@ class EvenementController extends Controller
             ])->find($id);
 
             if (!$evenement) {
-                return response()->json(['message' => 'Ã‰vÃ©nement non trouvÃ©'], 404);
+                return response()->json(['message' => 'Événement  non trouvé'], 404);
             }
             return response()->json($evenement);
         } catch (\Exception $e) {
@@ -78,7 +78,7 @@ class EvenementController extends Controller
             ])->find($id);
 
             if (!$evenement) {
-                return response()->json(['message' => 'Ã‰vÃ©nement non trouvÃ©'], 404);
+                return response()->json(['message' => 'Événement  non trouvé'], 404);
             }
 
             return response()->json($evenement);
@@ -99,7 +99,7 @@ class EvenementController extends Controller
 
             $formulaire = Formulaire::create([
                 'nom_formulaire' => 'Formulaire - ' . $validatedData['titre'],
-                'description' => 'Formulaire spÃ©cifique pour l\'Ã©vÃ©nement ' . $validatedData['titre'],
+                'description' => 'Formulaire spécifique pour l\'événement ' . $validatedData['titre'],
                 'statut' => 'actif',
                 'is_template' => false,
                 'id_createur' => Auth::id() ?? 1
@@ -152,7 +152,7 @@ class EvenementController extends Controller
         try {
             $evenement = Evenement::find($id);
             if (!$evenement) {
-                return response()->json(['message' => 'Non trouvÃ©'], 404);
+                return response()->json(['message' => 'Non trouvé'], 404);
             }
 
             $validatedData = $this->validateEvenement($request);
@@ -184,7 +184,8 @@ class EvenementController extends Controller
     {
         try {
             $evenement = Evenement::find($id);
-            if (!$evenement) return response()->json(['message' => 'Non trouvÃ©'], 404);
+            if (!$evenement)
+                return response()->json(['message' => 'Non trouvé'], 404);
 
             if ($evenement->id_formulaire) {
                 $formulaire = Formulaire::find($evenement->id_formulaire);
@@ -196,7 +197,7 @@ class EvenementController extends Controller
             $this->deleteOldImage($evenement->image_url);
             $evenement->delete();
 
-            return response()->json(['message' => 'SupprimÃ© avec succÃ¨s']);
+            return response()->json(['message' => 'Supprimé avec succÃ¨s']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

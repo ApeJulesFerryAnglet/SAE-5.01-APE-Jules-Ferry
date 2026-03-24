@@ -19,7 +19,7 @@ class UtilisateurController extends Controller
         if ($utilisateurs) {
             return response()->json($utilisateurs);
         } else {
-            return response()->json(['message' => 'Aucun utilisateur trouvÃ©'], 404);
+            return response()->json(['message' => 'Aucun utilisateur trouvé'], 404);
         }
     }
     public function show($id)
@@ -28,7 +28,7 @@ class UtilisateurController extends Controller
         if ($utilisateur) {
             return response()->json($utilisateur);
         } else {
-            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
     }
     public function store(Request $request)
@@ -42,7 +42,7 @@ class UtilisateurController extends Controller
         if ($utilisateur) {
             return response()->json($utilisateur, 201);
         } else {
-            return response()->json(['message' => 'Erreur lors de la crÃ©ation de l\'utilisateur'], 500);
+            return response()->json(['message' => 'Erreur lors de la création de l\'utilisateur'], 500);
         }
     }
 
@@ -57,7 +57,7 @@ class UtilisateurController extends Controller
             $utilisateur->update($donnees);
             return response()->json($utilisateur);
         } else {
-            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
     }
     public function destroy(Request $request, $id)
@@ -65,7 +65,7 @@ class UtilisateurController extends Controller
         $utilisateur = Utilisateur::find($id);
 
         if (!$utilisateur) {
-            return response()->json(['message' => 'Utilisateur non trouvÃ©'], 404);
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
 
         $adminId = 1;
@@ -84,7 +84,7 @@ class UtilisateurController extends Controller
         $utilisateur->inscriptions()->delete();
         $utilisateur->tokens()->delete();
         $utilisateur->delete();
-        return response()->json(['message' => 'Compte supprimÃ© avec succÃ¨s']);
+        return response()->json(['message' => 'Compte supprimé avec succÃ¨s']);
     }
 
     public function updatePassword(Request $request, $id)

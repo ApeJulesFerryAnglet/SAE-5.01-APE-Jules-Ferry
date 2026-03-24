@@ -35,14 +35,14 @@ class InscriptionController extends Controller
                 ->first();
 
             if (!$creneau) {
-                return response()->json(['message' => 'CrÃ©neau non trouvÃ©.'], 404);
+                return response()->json(['message' => 'Créneau non trouvé.'], 404);
             }
 
             $evenement = $creneau->tache->formulaire->evenements()->first();
 
             if ($evenement && $evenement->date_evenement < now()->toDateString()) {
                 return response()->json([
-                    'message' => 'Impossible de s\'inscrire Ã  un Ã©vÃ©nement passÃ©.'
+                    'message' => 'Impossible de s\'inscrire Ã  un événement passé.'
                 ], 422);
             }
 
@@ -51,11 +51,11 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'Vous Ãªtes dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
+                return response()->json(['message' => 'Vous Ãªtes déjÃ  inscrit Ã  ce créneau.'], 409);
             }
 
             if ($creneau->estComplet()) {
-                return response()->json(['message' => 'Ce crÃ©neau est complet.'], 422);
+                return response()->json(['message' => 'Ce créneau est complet.'], 422);
             }
 
             Inscription::create([
@@ -64,7 +64,7 @@ class InscriptionController extends Controller
                 'commentaire' => $request->commentaire
             ]);
 
-            return response()->json(['message' => 'Inscription validÃ©e !'], 201);
+            return response()->json(['message' => 'Inscription validée !'], 201);
         });
     }
 
@@ -89,7 +89,7 @@ class InscriptionController extends Controller
             ->delete();
 
         if ($deleted) {
-            return response()->json(['message' => 'Inscription annulÃ©e.']);
+            return response()->json(['message' => 'Inscription annulée.']);
         }
 
         return response()->json(['message' => 'Inscription introuvable.'], 404);
@@ -107,7 +107,7 @@ class InscriptionController extends Controller
             ->delete();
 
         if ($deleted) {
-            return response()->json(['message' => 'Inscription supprimÃ©e par administrateur.']);
+            return response()->json(['message' => 'Inscription supprimée par administrateur.']);
         }
 
         return response()->json(['message' => 'Inscription introuvable.'], 404);
@@ -132,7 +132,7 @@ class InscriptionController extends Controller
                 ->first();
 
             if (!$creneau) {
-                return response()->json(['message' => 'CrÃ©neau non trouvÃ©.'], 404);
+                return response()->json(['message' => 'Créneau non trouvé.'], 404);
             }
 
             $existe = Inscription::where('id_utilisateur', $userId)
@@ -140,11 +140,11 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($existe) {
-                return response()->json(['message' => 'L\'utilisateur est dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est déjÃ  inscrit Ã  ce créneau.'], 409);
             }
 
             if ($creneau->estComplet()) {
-                return response()->json(['message' => 'Ce crÃ©neau est complet.'], 422);
+                return response()->json(['message' => 'Ce créneau est complet.'], 422);
             }
 
             Inscription::create([
@@ -153,7 +153,7 @@ class InscriptionController extends Controller
                 'commentaire' => $request->commentaire
             ]);
 
-            return response()->json(['message' => 'Inscription ajoutÃ©e avec succÃ¨s !'], 201);
+            return response()->json(['message' => 'Inscription ajoutée avec succÃ¨s !'], 201);
         });
     }
 
@@ -180,7 +180,7 @@ class InscriptionController extends Controller
                 ->first();
 
             if ($newCreneau->estComplet()) {
-                return response()->json(['message' => 'Le nouveau crÃ©neau est complet.'], 422);
+                return response()->json(['message' => 'Le nouveau créneau est complet.'], 422);
             }
 
             $exists = Inscription::where('id_utilisateur', $request->id_utilisateur)
@@ -188,13 +188,13 @@ class InscriptionController extends Controller
                 ->exists();
 
             if ($exists) {
-                return response()->json(['message' => 'L\'utilisateur est dÃ©jÃ  inscrit Ã  ce crÃ©neau.'], 409);
+                return response()->json(['message' => 'L\'utilisateur est déjÃ  inscrit Ã  ce créneau.'], 409);
             }
 
             $inscription->id_creneau = $request->new_id_creneau;
             $inscription->save();
 
-            return response()->json(['message' => 'Inscription modifiÃ©e avec succÃ¨s.']);
+            return response()->json(['message' => 'Inscription modifiée avec succÃ¨s.']);
         });
     }
 }
