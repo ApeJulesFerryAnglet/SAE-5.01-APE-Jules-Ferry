@@ -4,13 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\PasswordlessController;
 use App\Http\Controllers\Api\EvenementController;
 use App\Http\Controllers\Api\ActualiteController;
 use App\Http\Controllers\Api\InscriptionController;
 use App\Http\Controllers\Api\FormulaireController;
 use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\NewsletterController;
-use App\Http\Controllers\Api\CreneauController; 
+use App\Http\Controllers\Api\CreneauController;
 use App\Http\Controllers\Api\TacheController;
 
 
@@ -27,12 +28,18 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login'])
     ->middleware('throttle:10,1'); // Limite à 10 tentatives par minute
 
+Route::post('/check-email', [PasswordlessController::class, 'checkEmail']);
+Route::post('/magic-link', [PasswordlessController::class, 'requestLink']);
+Route::get('/verify-link/{id_utilisateur}', [PasswordlessController::class, 'verifyLink'])
+    ->name('auth.magic.verify');
+
 
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'store']);
 
 // Événements
 Route::get('/evenements', [EvenementController::class, 'index']);
 Route::get('/evenements/{id}', [EvenementController::class, 'show']);
+Route::get('/evenements/{id}/details', [EvenementController::class, 'getDetails']);
 
 // Actualités
 Route::get('/actualites', [ActualiteController::class, 'index']);
@@ -64,9 +71,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('utilisateurs/{id}/mot-de-passe', [UtilisateurController::class, 'updatePassword']);
 
     // Inscriptions (CRUD)
+    Route::get('/inscriptions', [InscriptionController::class, 'index']);
     Route::post('/inscriptions', [InscriptionController::class, 'store']);
     Route::get('/inscriptions/mes-inscriptions', [InscriptionController::class, 'mesInscriptions']);
     Route::delete('/inscriptions/{id_creneau}', [InscriptionController::class, 'destroy']);
+
+    // Admin Inscriptions
+    Route::post('/admin/inscriptions', [InscriptionController::class, 'storeAdmin']);
+    Route::put('/admin/inscriptions', [InscriptionController::class, 'updateAdmin']);
+    Route::delete('/admin/inscriptions', [InscriptionController::class, 'destroyAdmin']);
 
 
     Route::post('/evenements', [EvenementController::class, 'store']);
@@ -78,4 +91,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('formulaires', FormulaireController::class);
     Route::apiResource('taches', TacheController::class);
     Route::apiResource('utilisateurs', UtilisateurController::class);
+    Route::post('/newsletters', [NewsletterController::class, 'storeAdmin']);
+    Route::get('/newsletters', [NewsletterController::class, 'index']);
+    Route::delete('/newsletters/{id}', [NewsletterController::class, 'destroy']);
 });

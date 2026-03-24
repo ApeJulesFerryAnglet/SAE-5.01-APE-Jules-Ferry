@@ -1,18 +1,21 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
-import { EvenementService } from '../../services/Evenement/evenement.service';
+import { EvenementService, PaginatedEvenements } from '../../services/Evenement/evenement.service';
 import { Evenement } from '../../models/Evenement/evenement';
 import { Actualite } from '../../models/Actualite/actualite';
 import { ActualiteCardComponent } from '../../components/card/actualite-card/actualite-card.component';
 import { EvenementCardComponent } from "../../components/card/evenement-card/evenement-card.component";
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { CalendrierComponent } from '../../components/calendrier/calendrier.component';
-
+import { InstagramViewComponent } from '../../components/instagram-view/instagram-view.component';
+import { SidebarWidgetComponent } from '../../components/sidebar-widget/sidebar-widget.component';
 @Component({
   selector: 'app-accueil',
   standalone: true,
-  imports: [ActualiteCardComponent, EvenementCardComponent, SpinnerComponent, RouterLink, CalendrierComponent],
+  imports: [ActualiteCardComponent, EvenementCardComponent, 
+    SpinnerComponent, RouterLink, CalendrierComponent,
+    InstagramViewComponent, SidebarWidgetComponent],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
 })
@@ -27,7 +30,7 @@ export class AccueilComponent implements OnInit {
 
   private readonly actualiteService = inject(ActualiteService);
   private readonly evenementService = inject(EvenementService);
-  Date: Date = new Date();
+  date: Date = new Date();
 
   ngOnInit() {
     this.actualiteService.getAllActualites().subscribe({
@@ -44,8 +47,8 @@ export class AccueilComponent implements OnInit {
     });
 
     this.evenementService.getAllEvenements().subscribe({
-      next: (data) => {
-        this.listeEvenements = data;
+      next: (response: PaginatedEvenements | Evenement[]) => {
+        this.listeEvenements = Array.isArray(response) ? response : (response?.data || []);
         this.sortEvenementByDate();
         this.loadingEvents = false;
       },

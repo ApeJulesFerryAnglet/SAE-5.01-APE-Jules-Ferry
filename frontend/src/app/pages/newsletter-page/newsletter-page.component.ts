@@ -24,19 +24,19 @@ export class NewsletterPageComponent {
    */
   onSubscribe(): void {
     if (!this.rgpdAccepted) {
-      this.toastService.show("Veuillez accepter le traitement de vos données.", TypeErreurToast.ERROR);
+      this.toastService.showWithTimeout("Veuillez accepter le traitement de vos données.", TypeErreurToast.ERROR);
       return;
     }
 
     if (!this.emailNewsletter || !this.emailNewsletter.includes('@')) {
-      this.toastService.show("Veuillez saisir un email valide.", TypeErreurToast.ERROR);
+      this.toastService.showWithTimeout("Veuillez saisir un email valide.", TypeErreurToast.ERROR);
       return;
     }
 
     // Appel au service API
     this.newsletterService.subscribe({ email: this.emailNewsletter }).subscribe({
       next: (response) => {
-        this.toastService.show(response.message, TypeErreurToast.SUCCESS);
+        this.toastService.showWithTimeout(response.message, TypeErreurToast.SUCCESS);
         this.emailNewsletter = ""; 
         this.rgpdAccepted = false;
       },
@@ -49,7 +49,7 @@ export class NewsletterPageComponent {
           msg = err.error.message;
         }
 
-        this.toastService.show(msg, TypeErreurToast.ERROR);
+        this.toastService.showWithTimeout(msg, TypeErreurToast.ERROR);
       }
     });
   }

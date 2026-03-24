@@ -18,7 +18,6 @@ import { environment } from '../../../environments/environment.dev';
 })
 export class EvenementCardComponent implements OnChanges {
   showDeleteAlert = false;
-
   @Input() id_evenement!: number;
   @Input() titre = '';
   @Input() description!: string;
@@ -95,7 +94,6 @@ export class EvenementCardComponent implements OnChanges {
     });
     this.showDeleteAlert = false;
   }
-
   annulerSuppression(): void {
     this.showDeleteAlert = false;
   }
