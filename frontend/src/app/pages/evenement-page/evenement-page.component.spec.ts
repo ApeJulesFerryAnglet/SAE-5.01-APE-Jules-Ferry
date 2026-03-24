@@ -231,7 +231,8 @@ describe('EvenementPageComponent', () => {
       const originalList = [...mockEvenements];
       component.listeEvenements = [...mockEvenements];
 
-      const result = component.filteredEvenements;
+      // Appeler le getter pour s'assurer qu'il ne mute pas la liste originale
+      expect(component.filteredEvenements.length).toBe(originalList.length);
 
       // Vérifier que la liste d'origine est intacte
       expect(component.listeEvenements).toEqual(originalList);
