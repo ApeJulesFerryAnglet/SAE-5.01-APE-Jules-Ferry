@@ -12,6 +12,16 @@ class UtilisateurSeeder extends Seeder
     {
         DB::table('utilisateurs')->insert([
             [
+                'nom' => 'Keita',
+                'prenom' => 'Mouha',
+                'email' => 'mouhakeita23@gmail.com',
+                'mot_de_passe' => Hash::make('Password123*'),
+                'role' => 'administrateur',
+                'statut_compte' => 'actif',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'nom' => 'Admin',
                 'prenom' => 'Super',
                 'email' => 'admin@ape-julesferry.fr',
