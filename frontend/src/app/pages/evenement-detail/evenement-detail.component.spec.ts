@@ -117,7 +117,7 @@ describe('EvenementDetailComponent', () => {
         utilisateurServiceSpy = jasmine.createSpyObj('UtilisateurService', ['getUtilisateurById']);
         formulaireServiceSpy = jasmine.createSpyObj('FormulaireService', ['getFormulaireById']);
         inscriptionServiceSpy = jasmine.createSpyObj('InscriptionService', ['createInscription', 'deleteInscription']);
-        authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUser', 'isAuthenticated']);
+        authServiceSpy = jasmine.createSpyObj('AuthService', ['getCurrentUser', 'isAuthenticatedStatus']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         locationSpy = jasmine.createSpyObj('Location', ['back']);
 
@@ -125,7 +125,7 @@ describe('EvenementDetailComponent', () => {
         utilisateurServiceSpy.getUtilisateurById.and.returnValue(of(mockAuteur));
         formulaireServiceSpy.getFormulaireById.and.returnValue(of(JSON.parse(JSON.stringify(mockFormulaire))));
         authServiceSpy.getCurrentUser.and.returnValue(currentUser);
-        authServiceSpy.isAuthenticated.and.returnValue(true);
+        authServiceSpy.isAuthenticatedStatus.and.returnValue(true);
 
         await TestBed.configureTestingModule({
             imports: [EvenementDetailComponent],
@@ -217,14 +217,14 @@ describe('EvenementDetailComponent', () => {
         });
 
         it('toggleInscriptionForm devrait rediriger vers login si non connecté', () => {
-            authServiceSpy.isAuthenticated.and.returnValue(false);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(false);
             component.toggleInscriptionForm();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/login'], jasmine.any(Object));
             expect(component.showInscriptionForm).toBeFalse();
         });
 
         it('toggleInscriptionForm devrait afficher le formulaire si connecté', () => {
-            authServiceSpy.isAuthenticated.and.returnValue(true);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(true);
             component.showInscriptionForm = false;
             component.toggleInscriptionForm();
             expect(component.showInscriptionForm).toBeTrue();
@@ -235,7 +235,7 @@ describe('EvenementDetailComponent', () => {
         it('devrait ouvrir le formulaire automatiquement si openForm=true et conditions remplies', fakeAsync(() => {
             const mockActivatedRoute = createMockActivatedRoute({ openForm: 'true' });
 
-            authServiceSpy.isAuthenticated.and.returnValue(true);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(true);
             evenementServiceSpy.getEvenementById.and.returnValue(of(mockEvenement));
             utilisateurServiceSpy.getUtilisateurById.and.returnValue(of(mockAuteur));
             formulaireServiceSpy.getFormulaireById.and.returnValue(of(JSON.parse(JSON.stringify(mockFormulaire))));
@@ -272,7 +272,7 @@ describe('EvenementDetailComponent', () => {
         it('ne devrait pas ouvrir le formulaire si utilisateur non authentifié', fakeAsync(() => {
             const mockActivatedRoute = createMockActivatedRoute({ openForm: 'true' });
 
-            authServiceSpy.isAuthenticated.and.returnValue(false);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(false);
             evenementServiceSpy.getEvenementById.and.returnValue(of(mockEvenement));
 
             TestBed.resetTestingModule();
@@ -308,7 +308,7 @@ describe('EvenementDetailComponent', () => {
             const mockActivatedRoute = createMockActivatedRoute({ openForm: 'true' });
 
             const evenementTermine = { ...mockEvenement, statut: StatutEvenement.termine };
-            authServiceSpy.isAuthenticated.and.returnValue(true);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(true);
             evenementServiceSpy.getEvenementById.and.returnValue(of(evenementTermine));
             utilisateurServiceSpy.getUtilisateurById.and.returnValue(of(mockAuteur));
             formulaireServiceSpy.getFormulaireById.and.returnValue(of(JSON.parse(JSON.stringify(mockFormulaire))));
@@ -346,7 +346,7 @@ describe('EvenementDetailComponent', () => {
             const mockActivatedRoute = createMockActivatedRoute({ openForm: 'true' });
 
             const evenementSansFormulaire = { ...mockEvenement, id_formulaire: null };
-            authServiceSpy.isAuthenticated.and.returnValue(true);
+            authServiceSpy.isAuthenticatedStatus.and.returnValue(true);
             evenementServiceSpy.getEvenementById.and.returnValue(of(evenementSansFormulaire));
             utilisateurServiceSpy.getUtilisateurById.and.returnValue(of(mockAuteur));
 

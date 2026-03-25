@@ -137,7 +137,7 @@ export class EvenementDetailComponent implements OnInit {
   private tryOpenFormIfRequested() {
     if (
       this.shouldOpenForm &&
-      this.authService.isAuthenticated() &&
+      this.authService.isAuthenticatedStatus() &&
       this.evenement?.id_formulaire &&
       !this.isEvenementTermine() &&
       this.isInscriptionOuverte()
@@ -260,7 +260,7 @@ export class EvenementDetailComponent implements OnInit {
   }
 
   toggleInscriptionForm() {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.authService.isAuthenticatedStatus()) {
       this.router.navigate(['/login'], {
         queryParams: {
           returnUrl: `/evenements/${this.evenement.id_evenement}`,
