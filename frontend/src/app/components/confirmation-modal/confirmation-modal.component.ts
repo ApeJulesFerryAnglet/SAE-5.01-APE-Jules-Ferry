@@ -8,11 +8,11 @@ import { CommonModule } from '@angular/common';
   templateUrl: './confirmation-modal.component.html'
 })
 export class ConfirmationModalComponent {
-  @Output() confirmAction = new EventEmitter<void>();
+  @Output() validateAction = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
   confirmer() {
-    this.confirmAction.emit();
+    this.validateAction.emit();
   }
 
   annuler() {

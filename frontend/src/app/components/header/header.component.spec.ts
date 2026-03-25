@@ -15,14 +15,6 @@ describe('HeaderComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let currentUserSubject: BehaviorSubject<Utilisateur | null>;
 
-  const mockUser: Utilisateur = {
-    id_utilisateur: 1,
-    nom: 'Doe',
-    prenom: 'John',
-    email: 'john.doe@example.com',
-    role: RoleUtilisateur.parent,
-  } as Utilisateur;
-
   beforeEach(async () => {
     currentUserSubject = new BehaviorSubject<Utilisateur | null>(null);
     
