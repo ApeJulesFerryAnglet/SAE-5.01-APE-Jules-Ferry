@@ -22,8 +22,6 @@
         <span>{{ successMessage }}</span>
       </div>
     }
-
-<<<<<<< HEAD
     @if (!successMessage) {
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
 
@@ -82,7 +80,6 @@
       <p class="text-sm text-gray-600">
         Vous avez déjà un compte ? 
         <a routerLink="/login" class="text-[var(--primary-blue)] font-semibold hover:underline">Se connecter</a>
-=======
       <div>
         <label for="email" class="font-josefin text-[10px] uppercase tracking-widest text-[var(--primary-green)] font-bold mb-2 block">Email</label>
         <input 
@@ -168,7 +165,6 @@
         <a routerLink="/login" class="font-josefin text-[11px] uppercase tracking-widest font-bold text-[var(--accent-orange)] hover:text-[var(--primary-green)] transition-colors ml-1">
           Se connecter
         </a>
->>>>>>> 780f77de06c48be2592fd50dee9c4a92aae94f76
       </p>
     </div>
 
