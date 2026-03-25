@@ -1,4 +1,26 @@
 # SAE-5.01-APE-Jules-Ferry
+Solution de gestion d'évenements et d'actualités pour l'APE Jules Ferry Anglet.
+
+## 🌐 Contexte
+
+L'APE Jules Ferry a un besoin d'organiser la plannification de ses bénévoles sur les différentes tâches d'un événements, ainsi que faciliter la transmission d'informations aux parents d'élèves.
+
+## 🏗️ Architecture du dépôt
+
+Le dépôt `SAE-5.01-APE-Jules-Ferry` contient l'intégralité de l'application. Il est organisé en mono-repo pour maintenir la cohérence des codes entre le front-end et le back-end.
+
+- [Front-end](https://github.com/EtienneDumai/SAE-5.01-APE-Jules-Ferry/tree/master/frontend) 🖥️ : Solution frontend de l'application.
+- [Back-end](https://github.com/EtienneDumai/SAE-5.01-APE-Jules-Ferry/tree/master/backend) 🖥️ : Partie backend de l'application.
+
+Chaque partie contient sa documentation spécifique et sa procédure d'installation.
+
+## 🚀 Architecture de la solution et technologies
+
+### Architecture
+
+La solution `APE Jules Ferry` est conçue pour être déployée sur des serveurs GNU/Linux de type Debian. Elle utilise une architecture client-serveur avec communication par API Rest.
+
+![Inviseo Architecture](./docs/general/InfrastructureAPE.png "APE Jules Ferry Infrastructure")
 
 ## Developper en mode local : 
 - Activer l'extension php-pgsql dans le fichier php.ini
@@ -8,7 +30,7 @@
     composer install \
     cp .env.example .env \
     php artisan key:generate \
-    cd ..
+    cd ..  n
     ```
 - Installer les dépendances du frontend :
     ```bash
@@ -34,3 +56,4 @@
 ## Deployer l'application sur le serveur de production :
 - Pré-requis : 
     Avoir une clé ssh sur le serveur car le serveur refuse les connexions ssh par mot de passe
+- Connexion au serveur distant

@@ -24,7 +24,7 @@ Le dossier `app` contient le code principal de l'application.
 ### Environnements
 
 - `src/environments` ⚙️ : stocke les environnements de développement et de production.
-- 
+
 ### Guards
 
 - `src/app/guards` 👥 : contient les guards de l'application, utilisés empecher l'accès à certaines parties de l'application si l'utilisateur n'a pas de compte avec un rôle pouvant y accèder.
@@ -50,10 +50,6 @@ Le dossier `app` contient le code principal de l'application.
 - `src/app/shared` 👥 : contient les composants partagés de l'application, tels que la sidebar de navigation.
 
 ## 🚀 Lancer l'application
-
-Avant toute chose, consultez le dépôt [start-n-go](https://github.com/Inviseo/start-and-go) pour vous lancer.
-
-Assurez-vous d'avoir les droits d'accès, sinon vous ne pourrez pas cloner les dépôts.
 
 ### Clonez le dépôt de la solution :
 
