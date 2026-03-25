@@ -53,7 +53,13 @@ La solution `APE Jules Ferry` est conçue pour être déployée sur des serveurs
         ```bash
         docker compose -f docker-compose.prod.yml up --build
         ```
+
 ## Deployer l'application sur le serveur de production :
 - Pré-requis : 
     Avoir une clé ssh sur le serveur car le serveur refuse les connexions ssh par mot de passe
 - Connexion au serveur distant
+  ```bash
+  ssh debian@ADRESSE_SERVEUR
+  ```
+L'authentification se fera uniquement si la clef ssh a bien été configurée.
+
