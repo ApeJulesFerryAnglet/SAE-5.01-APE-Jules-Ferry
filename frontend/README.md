@@ -51,18 +51,7 @@ Le dossier `app` contient le code principal de l'application.
 
 ## 🚀 Lancer l'application
 
-### Clonez le dépôt de la solution :
-
-#### HTTP : 
-
-```bash
-    git clone https://github.com/EtienneDumai/SAE-5.01-APE-Jules-Ferry.git
-```
-#### SSH : 
-
-```bash
-    git clone git@github.com:EtienneDumai/SAE-5.01-APE-Jules-Ferry.git
-```
+- Pré-requis : avoir cloner le repository Github
 
 Déplacez-vous dans le front :
 
