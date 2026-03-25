@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
     this.authService.checkEmailType(emailSaisi).subscribe({
       next: (response) => {
         if (response.action === 'require_password') {
-          // C'est un admin : on affiche le champ mdp et on ajoute les validateurs
+          // C'est un admin on affiche le champ mdp et on ajoute les validateurs
           this.loginMdp = true;
           this.mot_de_passe?.setValidators([Validators.required, Validators.minLength(8)]);
           this.mot_de_passe?.updateValueAndValidity();
@@ -54,8 +54,11 @@ export class LoginComponent implements OnInit {
         } else if (response.action === 'not_found') {
           this.isLoading = false;
           this.errorMessage = "Aucun compte associé à cet email. Veuillez vous inscrire.";
-        } else {
-          // C'est un parent : on demande le lien magique
+        } else if (response.action === 'deactivated') {
+          this.isLoading = false;
+          this.errorMessage = "Votre compte a été désactivé. Veuillez contacter l'APE."; 
+        }else {
+          // C'est un parent alors on demande le lien magique
           this.demanderLienMagique(emailSaisi);
         }
       },

@@ -52,8 +52,8 @@ export class AuthService {
     );
   }
 
-  checkEmailType(email: string): Observable<{ action: string }> {
-    return this.http.post<{ action: string }>(`${this.apiUrl}/check-email`, { email });
+  checkEmailType(email: string): Observable<{ action: string; message?: string }> {
+    return this.http.post<{ action: string; message?: string }>(`${this.apiUrl}/check-email`, { email });
   }
 
   requestMagicLink(email: string, nom?: string, prenom?: string): Observable<{ message: string }> {
