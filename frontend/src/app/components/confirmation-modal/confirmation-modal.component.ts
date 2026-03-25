@@ -9,13 +9,13 @@ import { CommonModule } from '@angular/common';
 })
 export class ConfirmationModalComponent {
   @Output() validateAction = new EventEmitter<void>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() cancelAction  = new EventEmitter<void>();
 
   confirmer() {
     this.validateAction.emit();
   }
 
   annuler() {
-    this.cancel.emit();
+    this.cancelAction .emit();
   }
 }
