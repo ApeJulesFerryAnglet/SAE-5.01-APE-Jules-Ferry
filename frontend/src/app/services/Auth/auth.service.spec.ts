@@ -111,7 +111,7 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('devrait enregistrer un nouvel utilisateur et sauvegarder le token', (done) => {
+    it('devrait enregistrer un nouvel utilisateur', (done) => {
       const registerData: RegisterData = {
         nom: 'Doe',
         prenom: 'John',
@@ -119,20 +119,16 @@ describe('AuthService', () => {
         mot_de_passe: 'password123',
         mot_de_passe_confirmation: 'password123'
       };
-
+  
       service.register(registerData).subscribe({
         next: (response) => {
           expect(response).toEqual(mockAuthResponse);
-          expect(tokenService.saveToken).toHaveBeenCalledWith(mockAuthResponse.token);
-
-          service.currentUser$.subscribe(user => {
-            expect(user).toEqual(mockUtilisateur);
-            done();
-          });
+          expect(tokenService.saveToken).not.toHaveBeenCalled();
+          done();
         },
         error: () => fail('Expected successful response')
       });
-
+  
       const req = httpMock.expectOne(`${apiUrl}/register`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(registerData);
