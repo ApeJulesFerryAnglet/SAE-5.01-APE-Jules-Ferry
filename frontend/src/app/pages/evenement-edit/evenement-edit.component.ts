@@ -15,6 +15,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router'; // RouterLink retiré si inutilisé
 import { EvenementService } from '../../services/Evenement/evenement.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { StatutFormulaire } from '../../enums/StatutFormulaire/statut-formulaire';
 import { FormulaireService } from '../../services/Formulaire/formulaire.service';
 import { Formulaire } from '../../models/Formulaire/formulaire';
 
@@ -203,12 +204,9 @@ export class EvenementEditComponent implements OnInit {
   }
 
   loadData() {
-    this.formulaireService.getAllFormulaires().subscribe({
+    this.formulaireService.getTemplates(StatutFormulaire.actif).subscribe({
       next: (forms: Formulaire[]) => {
-        // Filtre strict
-        this.templates = forms.filter(
-          (f) => f.is_template === true || f.is_template === 1,
-        );
+        this.templates = forms;
 
         const id = this.route.snapshot.paramMap.get('id');
         if (id && id !== 'new') {

@@ -53,6 +53,10 @@ import { RouterLink } from '@angular/router';
 })
 export class AdminEvenementsComponent implements OnInit {
   protected readonly StatutFormulaire = StatutFormulaire;
+  protected readonly statutLabels: Record<StatutFormulaire, string> = {
+    [StatutFormulaire.actif]: 'Actif',
+    [StatutFormulaire.archive]: 'Archivé'
+  };
   private readonly evenementService = inject(EvenementService);
   private readonly tacheService = inject(TacheService);
   private readonly creneauService = inject(CreneauService);

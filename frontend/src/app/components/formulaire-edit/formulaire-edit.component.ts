@@ -30,8 +30,7 @@ export class FormulaireEditComponent implements OnInit {
   apiError: string | null = null;
   readonly statutsFormulaire = [
     { value: 'actif', label: 'Actif' },
-    { value: 'archive', label: 'Archivé' },
-    { value: 'cloture', label: 'Clôturé' }
+    { value: 'archive', label: 'Archivé' }
   ];
 
   private fb = inject(FormBuilder);

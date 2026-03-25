@@ -29,13 +29,29 @@ class FormulaireControllerTest extends TestCase
         $user = Utilisateur::factory()->create(['role' => 'administrateur']);
         $this->actingAs($user, 'sanctum');
 
-        Formulaire::factory()->create(['is_template' => true]);
+        Formulaire::factory()->create(['is_template' => true, 'statut' => 'actif']);
+        Formulaire::factory()->create(['is_template' => true, 'statut' => 'archive']);
         Formulaire::factory()->count(2)->create(['is_template' => false]);
 
         $response = $this->getJson('/api/formulaires?is_template=1');
 
         $response->assertStatus(200)
+            ->assertJsonCount(2);
+    }
+
+    public function test_index_peut_filtrer_les_modeles_actifs()
+    {
+        $user = Utilisateur::factory()->create(['role' => 'administrateur']);
+        $this->actingAs($user, 'sanctum');
+
+        Formulaire::factory()->create(['is_template' => true, 'statut' => 'actif']);
+        Formulaire::factory()->create(['is_template' => true, 'statut' => 'archive']);
+
+        $response = $this->getJson('/api/formulaires?is_template=1&statut=actif');
+
+        $response->assertStatus(200)
             ->assertJsonCount(1)
+            ->assertJsonPath('0.statut', 'actif')
             ->assertJsonPath('0.is_template', true);
     }
 
@@ -91,6 +107,20 @@ class FormulaireControllerTest extends TestCase
         $this->assertDatabaseHas('creneaux', ['quota' => 5]);
     }
 
+    public function test_store_refuse_le_statut_cloture()
+    {
+        $user = Utilisateur::factory()->create(['role' => 'administrateur']);
+        $this->actingAs($user, 'sanctum');
+
+        $response = $this->postJson('/api/formulaires', [
+            'nom_formulaire' => 'Statut invalide',
+            'statut' => 'cloture',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['statut']);
+    }
+
     public function test_update_modifie_un_formulaire()
     {
         $user = Utilisateur::factory()->create(['role' => 'administrateur']);
@@ -100,14 +130,32 @@ class FormulaireControllerTest extends TestCase
         $data = [
             'nom_formulaire' => 'Formulaire Modifie',
             'description' => 'Description Modifiee',
-            'statut' => 'actif',
+            'statut' => 'archive',
             'is_template' => true,
         ];
 
         $response = $this->putJson("/api/formulaires/{$formulaire->id_formulaire}", $data);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('formulaires', ['nom_formulaire' => 'Formulaire Modifie', 'is_template' => 1]);
+        $this->assertDatabaseHas('formulaires', [
+            'nom_formulaire' => 'Formulaire Modifie',
+            'statut' => 'archive',
+            'is_template' => 1,
+        ]);
+    }
+
+    public function test_update_refuse_le_statut_cloture()
+    {
+        $user = Utilisateur::factory()->create(['role' => 'administrateur']);
+        $this->actingAs($user, 'sanctum');
+        $formulaire = Formulaire::factory()->create();
+
+        $response = $this->putJson("/api/formulaires/{$formulaire->id_formulaire}", [
+            'statut' => 'cloture',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['statut']);
     }
 
     public function test_destroy_supprime_un_formulaire()
