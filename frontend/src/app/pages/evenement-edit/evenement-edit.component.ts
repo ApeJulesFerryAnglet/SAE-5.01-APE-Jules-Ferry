@@ -18,6 +18,7 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { StatutFormulaire } from '../../enums/StatutFormulaire/statut-formulaire';
 import { FormulaireService } from '../../services/Formulaire/formulaire.service';
 import { Formulaire } from '../../models/Formulaire/formulaire';
+import { environment } from '../../environments/environment.dev';
 
 // On définit des types partiels pour éviter le 'any' lors de la copie
 interface TacheData {
@@ -43,7 +44,8 @@ interface CreneauData {
 export class EvenementEditComponent implements OnInit {
   imageError: string | null = null;
   selectedImageFile: File | null = null;
-  previewImage: string | ArrayBuffer | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
+  currentImageUrl?: string;
 
   templates: Formulaire[] = [];
 
@@ -223,6 +225,15 @@ export class EvenementEditComponent implements OnInit {
     });
   }
 
+  getImageUrl(image_url: string): string {
+    if (!image_url) return '';
+    if (image_url.startsWith('http')) return image_url;
+    const baseUrl = environment?.apiUrl ? environment.apiUrl.replace(/\/api$/, '') : 'http://localhost:8000';
+    const cleanBase = baseUrl.replace(/\/$/, '');
+    const cleanPath = image_url.replace(/^\//, '');
+    return `${cleanBase}/${cleanPath}`;
+  }
+
   loadEvenement(id: number): void {
     this.evenementService.getEvenementById(id).subscribe({
       next: (evenement) => {
@@ -247,7 +258,7 @@ export class EvenementEditComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        alert("Erreur lors du chargement de l'événement");
+        this.toastService.showWithTimeout("Erreur lors du chargement de l'événement", TypeErreurToast.ERROR);
         this.router.navigate(['/evenements']);
       },
     });
@@ -258,7 +269,7 @@ export class EvenementEditComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {
       this.selectedImageFile = null;
-      this.previewImage = null;
+      this.imagePreview = null;
       return;
     }
     const file = input.files[0];
@@ -266,10 +277,16 @@ export class EvenementEditComponent implements OnInit {
       this.imageError = 'Seuls les fichiers images sont autorisés.';
       return;
     }
+    if (file.size > 2097152) {
+      this.imageError = "L'image est trop volumineuse (Maximum 2 Mo).";
+      this.selectedImageFile = null;
+      this.imagePreview = null;
+      return;
+    }
     this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      this.previewImage = reader.result;
+      this.imagePreview = reader.result;
     };
     reader.readAsDataURL(file);
   }
