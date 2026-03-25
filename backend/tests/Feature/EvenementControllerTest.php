@@ -146,7 +146,8 @@ class EvenementControllerTest extends TestCase
     public function test_get_details_retourne_donnees_completes()
     {
         // Given
-        $evenement = Evenement::factory()->create();
+        $formulaire = Formulaire::factory()->create();
+        $evenement = Evenement::factory()->create(['id_formulaire' => $formulaire->id_formulaire]);
 
         // When
         $response = $this->getJson("/api/evenements/{$evenement->id_evenement}/details");
