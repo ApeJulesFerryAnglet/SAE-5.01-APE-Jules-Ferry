@@ -41,7 +41,7 @@ La clé qui sera générée sera à l'emplacement :
 ```bash
 C:\Users\VotreUser\.ssh\id_ed25519
 ```
-Une clé ssh fonctionne par paire, le contenu du fichier id_ed25519 ne doit **jamais être divulgué** car il s'agit la clé privée. A l'inverse le fichier id_ed25519.pub contient votre clé publique qui sera à renseigner sur le serveur et peut être divulguée car elle ne fontionnera jamais sans la clé privée.
+Une clé ssh fonctionne par paire, le contenu du fichier id_ed25519 ne doit **JAMAIS ETRE DIVULGUÉ** sur aucun canaux même à des proches car il s'agit la clé privée qui est personelle et peut permetrre de retrouver la clé publique avec un algorithme. A l'inverse le fichier id_ed25519.pub contient votre clé publique qui sera à renseigner sur le serveur et peut être divulguée car elle ne fontionnera jamais sans la clé privée lors d'une tenetative de connexion via le protocol ssh.
 
 #### Génération d'une clé ssh sur Linux
 
