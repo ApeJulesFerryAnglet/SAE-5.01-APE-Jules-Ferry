@@ -9,7 +9,6 @@ use App\Services\Image\ImageConverterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Formulaire\FormulaireDuplicationService;
 
@@ -58,7 +57,7 @@ class EvenementController extends Controller
     {
         try {
             $evenement = Evenement::with([
-                'auteur', 
+                'auteur',
                 'formulaire.taches.creneaux.inscriptions'
             ])->find($id);
 
@@ -90,14 +89,12 @@ class EvenementController extends Controller
 
     public function store(Request $request)
     {
-        //transaction pour tout annuler si une étape plante
         return \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
-            
             $validatedData = $this->validateEvenement($request);
 
             $imagePath = null;
             if ($request->hasFile('image')) {
-                $imagePath = $this->processAndStoreImage($request->file('image'));
+                $imagePath = $this->processAndStoreImage($request->file('image'), $validatedData['titre']);
             }
 
             $formulaire = Formulaire::create([
@@ -143,7 +140,7 @@ class EvenementController extends Controller
                 'statut' => $validatedData['statut'],
                 'image_url' => $imagePath,
                 'id_formulaire' => $formulaire->id_formulaire,
-                'id_auteur' => Auth::id() ?? 1 
+                'id_auteur' => Auth::id() ?? 1
             ]);
 
             return response()->json($evenement, 201);
@@ -157,12 +154,11 @@ class EvenementController extends Controller
             if (!$evenement) {
                 return response()->json(['message' => 'Non trouvé'], 404);
             }
-
             $validatedData = $this->validateEvenement($request);
 
             if ($request->hasFile('image')) {
-                $this->deleteOldImage($evenement->image_url);
-                $evenement->image_url = $this->processAndStoreImage($request->file('image'));
+                $this->deleteOldImage($evenement->image_url);                
+                $evenement->image_url = $this->processAndStoreImage($request->file('image'), $validatedData['titre']);
             }
 
             $evenement->update([
@@ -174,30 +170,21 @@ class EvenementController extends Controller
                 'lieu' => $validatedData['lieu'],
                 'statut' => $validatedData['statut'],
                 'id_formulaire' => $this->parseFormulaireId($request->id_formulaire),
-                'image_url' => $evenement->image_url
+                'image_url' => $evenement->image_url 
             ]);
 
             return response()->json($evenement);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
     public function destroy(Request $request, $id)
     {
         try {
-            $admin = Auth::user();
-
-            if (!$request->has('admin_password')) {
-                return response()->json(['message' => 'Mot de passe administrateur requis'], 422);
-            }
-
-            if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-                return response()->json(['message' => 'Mot de passe administrateur incorrect'], 403);
-            }
-
             $evenement = Evenement::find($id);
-            if (!$evenement) return response()->json(['message' => 'Non trouvé'], 404);
+            if (!$evenement)
+                return response()->json(['message' => 'Non trouvé'], 404);
 
             if ($evenement->id_formulaire) {
                 $formulaire = Formulaire::find($evenement->id_formulaire);
@@ -236,9 +223,11 @@ class EvenementController extends Controller
     /**
      * Traite l'image, la convertit en WebP et la stocke
      */
-    private function processAndStoreImage($file): string
+    private function processAndStoreImage($file, string $titre): string
     {
-        $fileName = Str::random(20) . '.webp';
+        $slug = Str::slug($titre, '_');
+        $fileName = $slug . '_' . Str::random(5) . '.webp';
+
         $destinationPath = storage_path('app/public/evenements/' . $fileName);
 
         if (!Storage::disk('public')->exists('evenements')) {

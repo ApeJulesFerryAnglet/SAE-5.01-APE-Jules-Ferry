@@ -26,7 +26,7 @@ import {
   FormInscriptionEvenementComponent,
   InscriptionSubmitPayload,
 } from '../../components/forms/form-inscription-evenement/form-inscription-evenement.component';
-
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-evenement-detail',
   standalone: true,
@@ -79,16 +79,20 @@ export class EvenementDetailComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser$ = this.authService.currentUser$;
-    const ID = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Vérifier si on doit ouvrir le formulaire d'inscription
-    this.route.queryParams.subscribe((params) => {
-      if (params['openForm'] === 'true') {
-        this.shouldOpenForm = true;
+    this.route.paramMap.subscribe(params => {
+      const ID = Number(params.get('id'));
+      if (ID) {
+        this.loadEvenement(ID);
       }
     });
 
-    this.loadEvenement(ID);
+    this.route.queryParams.subscribe((params) => {
+      if (params['openForm'] === 'true') {
+        this.shouldOpenForm = true;
+        this.tryOpenFormIfRequested();
+      }
+    });
   }
 
   loadEvenement(id: number) {
@@ -137,7 +141,7 @@ export class EvenementDetailComponent implements OnInit {
   private tryOpenFormIfRequested() {
     if (
       this.shouldOpenForm &&
-      this.authService.isAuthenticated() &&
+      this.authService.isAuthenticatedStatus() &&
       this.evenement?.id_formulaire &&
       !this.isEvenementTermine() &&
       this.isInscriptionOuverte()
@@ -260,7 +264,7 @@ export class EvenementDetailComponent implements OnInit {
   }
 
   toggleInscriptionForm() {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.authService.isAuthenticatedStatus()) {
       this.router.navigate(['/login'], {
         queryParams: {
           returnUrl: `/evenements/${this.evenement.id_evenement}`,
@@ -388,9 +392,13 @@ export class EvenementDetailComponent implements OnInit {
     this.location.back();
   }
 
-  getImageUrl(image_url: string): string {
+  getImageUrl(image_url: string | null | undefined): string {
     if (!image_url) return '';
     if (image_url.startsWith('http')) return image_url;
-    return 'http://localhost:8000' + image_url;
+    const baseUrl = environment?.apiUrl ? environment.apiUrl.replace(/\/api$/, '') : 'http://localhost:8000';
+    const cleanBase = baseUrl.replace(/\/$/, '');
+    const cleanPath = image_url.replace(/^\//, '');
+    
+    return `${cleanBase}/${cleanPath}`;
   }
 }

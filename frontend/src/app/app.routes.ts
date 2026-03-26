@@ -22,9 +22,15 @@ export const routes: Routes = [
         loadComponent: () => import('./components/Auth/magic-link-verify/magic-link-verify.component').then(m => m.MagicLinkVerifyComponent),
         canActivate: [guestGuard]
     },
+    { 
+        path: 'set-password', 
+        loadComponent: () => import('./pages/set-password/set-password.component').then(m => m.SetPasswordComponent),
+    },
     
     { path: '', loadComponent: () => import('./pages/accueil/accueil.component').then(m => m.AccueilComponent) },
-    { path: 'newsletter', loadComponent: () => import('./pages/newsletter-page/newsletter-page.component').then(m => m.NewsletterPageComponent) },
+
+    { path: 'mentions-legales', loadComponent: () => import('./pages/mentions-legales/mentions-legales.component').then(m => m.MentionsLegalesComponent) },
+    { path: 'politique-confidentialite', loadComponent: () => import('./pages/politique-confidentialite/politique-confidentialite.component').then(m => m.PolitiqueConfidentialiteComponent) },
 
     { path: 'actualites', loadComponent: () => import('./pages/actualite-page/actualite-page.component').then(m => m.ActualitePageComponent) },
     {

@@ -13,6 +13,9 @@ use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\CreneauController;
 use App\Http\Controllers\Api\TacheController;
+use App\Http\Controllers\Api\Auth\SetPasswordController;
+use App\Http\Controllers\Api\Auth\ForgotPasswordController;
+
 use Illuminate\Http\Request;
 
 /*
@@ -28,6 +31,8 @@ Route::post('/login', [LoginController::class, 'login'])
 
 Route::post('/check-email', [PasswordlessController::class, 'checkEmail']);
 Route::post('/magic-link', [PasswordlessController::class, 'requestLink']);
+Route::post('/set-password', [SetPasswordController::class, 'store']);
+Route::post('/forgot-password', [ForgotPasswordController::class, 'store']);
 Route::get('/verify-link/{id_utilisateur}', [PasswordlessController::class, 'verifyLink'])
     ->name('auth.magic.verify');
 
@@ -89,4 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('formulaires', FormulaireController::class);
     Route::apiResource('taches', TacheController::class);
     Route::apiResource('utilisateurs', UtilisateurController::class);
+    Route::post('/newsletters', [NewsletterController::class, 'storeAdmin']);
+    Route::get('/newsletters', [NewsletterController::class, 'index']);
+    Route::delete('/newsletters/{id}', [NewsletterController::class, 'destroy']);
 });

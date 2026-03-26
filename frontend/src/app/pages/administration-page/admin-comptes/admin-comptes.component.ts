@@ -11,7 +11,7 @@ import { StatutCompte } from '../../../enums/StatutCompte/statut-compte';
 import { UserFormComponent } from '../../../components/user-form/user-form.component';
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
 import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';
-import { ExportExcelService } from '../../../services/ExportExcel/export-excel.service';
+import { ExportCsvService } from '../../../services/ExportCsv/export-csv.service';
 
 @Component({
   selector: 'app-admin-comptes',
@@ -23,7 +23,7 @@ import { ExportExcelService } from '../../../services/ExportExcel/export-excel.s
 export class AdminComptesComponent implements OnInit {
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastService);
-  private readonly exportExcelService = inject(ExportExcelService);
+  private readonly exportCsvService = inject(ExportCsvService);
   utilisateurs: Utilisateur[] = [];
   chargementEnCours = true;
   texteRecherche = '';
@@ -118,7 +118,11 @@ export class AdminComptesComponent implements OnInit {
   private executeEdition(password: string): void {
     if (!this.pendingUserFormPayload) return;
     this.utilisateurService.updateUtilisateur(this.pendingUserFormPayload, this.pendingUserFormPayload.id_utilisateur!, password).subscribe({
-      next: () => {
+      next: (userMisAJour) => {
+        const index = this.utilisateurs.findIndex(u => u.id_utilisateur === userMisAJour.id_utilisateur);
+        if (index !== -1) {
+          this.utilisateurs[index] = userMisAJour;
+        }
         this.toastService.showWithTimeout('Utilisateur modifié', TypeErreurToast.SUCCESS);
         this.idEnEdition = null;
         this.utilisateurOriginal = null;
@@ -261,7 +265,7 @@ export class AdminComptesComponent implements OnInit {
       return row;
     });
 
-    this.exportExcelService.exportAsExcelFile(dataToExport, 'Comptes_Utilisateurs');
+    this.exportCsvService.exportAsCsvFile(dataToExport, 'Comptes_Utilisateurs');
     this.showExportModal = false;
   }
 }

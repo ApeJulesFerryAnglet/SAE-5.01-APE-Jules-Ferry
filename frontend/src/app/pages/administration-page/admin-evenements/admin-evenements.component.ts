@@ -7,6 +7,7 @@ import { TacheService } from '../../../services/Tache/tache.service';
 import { CreneauService } from '../../../services/Creneau/creneau.service';
 import { InscriptionService } from '../../../services/Inscription/inscription.service';
 import { UtilisateurService } from '../../../services/Utilisateur/utilisateur.service';
+import { FormulaireService } from '../../../services/Formulaire/formulaire.service';
 import { ToastService } from '../../../services/Toast/toast.service';
 import { TypeErreurToast } from '../../../enums/TypeErreurToast/type-erreur-toast';
 
@@ -15,9 +16,11 @@ import { Tache } from '../../../models/Tache/tache';
 import { Creneau } from '../../../models/Creneau/creneau';
 import { Inscription } from '../../../models/Inscription/inscription';
 import { Utilisateur } from '../../../models/Utilisateur/utilisateur';
+import { Formulaire } from '../../../models/Formulaire/formulaire';
+import { StatutFormulaire } from '../../../enums/StatutFormulaire/statut-formulaire';
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
 import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';
-import { ExportExcelService } from '../../../services/ExportExcel/export-excel.service';
+import { ExportCsvService } from '../../../services/ExportCsv/export-csv.service';
 
 interface ExtendedCreneau extends Creneau {
   filledInscriptions?: ExtendedInscription[];
@@ -49,13 +52,19 @@ import { RouterLink } from '@angular/router';
   styleUrl: './admin-evenements.component.css'
 })
 export class AdminEvenementsComponent implements OnInit {
+  protected readonly StatutFormulaire = StatutFormulaire;
+  protected readonly statutLabels: Record<StatutFormulaire, string> = {
+    [StatutFormulaire.actif]: 'Actif',
+    [StatutFormulaire.archive]: 'Archivé'
+  };
   private readonly evenementService = inject(EvenementService);
   private readonly tacheService = inject(TacheService);
   private readonly creneauService = inject(CreneauService);
   private readonly inscriptionService = inject(InscriptionService);
   private readonly utilisateurService = inject(UtilisateurService);
+  private readonly formulaireService = inject(FormulaireService);
   private readonly toastService = inject(ToastService);
-  private readonly exportExcelService = inject(ExportExcelService);
+  private readonly exportCsvService = inject(ExportCsvService);
 
   events: ExtendedEvenement[] = [];
   currentPage = 1;
@@ -68,9 +77,12 @@ export class AdminEvenementsComponent implements OnInit {
   showPasswordModal = false;
   showMoveModal = false;
 
-  activeTab: 'MODIFICATIONS' | 'INSCRIPTIONS' = 'INSCRIPTIONS';
+  activeTab: 'MODIFICATIONS' | 'INSCRIPTIONS' | 'MODELES' = 'INSCRIPTIONS';
 
   idEvenementASupprimer: number | null = null;
+
+  templates: Formulaire[] = [];
+  loadingTemplates = false;
 
   allUsers: Utilisateur[] = [];
   showAddModal = false;
@@ -113,6 +125,7 @@ export class AdminEvenementsComponent implements OnInit {
   ngOnInit(): void {
     this.loadInitialEvents();
     this.loadUsers();
+    this.loadTemplates();
   }
 
   loadUsers(): void {
@@ -120,6 +133,36 @@ export class AdminEvenementsComponent implements OnInit {
       next: (users) => this.allUsers = users,
       error: (err) => console.error('Erreur chargement utilisateurs', err)
     });
+  }
+
+  loadTemplates(): void {
+    this.loadingTemplates = true;
+    this.formulaireService.getTemplates().subscribe({
+      next: (templates) => {
+        this.templates = templates;
+        this.loadingTemplates = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement modèles', err);
+        this.loadingTemplates = false;
+        this.toastService.show('Erreur chargement modèles de formulaire', TypeErreurToast.ERROR);
+      }
+    });
+  }
+
+  deleteTemplate(id: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle de formulaire ?')) {
+      this.formulaireService.deleteFormulaire(id).subscribe({
+        next: () => {
+          this.toastService.show('Modèle supprimé avec succès', TypeErreurToast.SUCCESS);
+          this.loadTemplates();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastService.show('Erreur lors de la suppression du modèle', TypeErreurToast.ERROR);
+        }
+      });
+    }
   }
 
   loadInitialEvents(): void {
@@ -145,6 +188,7 @@ export class AdminEvenementsComponent implements OnInit {
 
         this.events = [...this.events, ...newEvents];
         this.hasMore = response.current_page < response.last_page;
+        this.currentPage = response.current_page + 1;
         this.loading = false;
         this.loadingMore = false;
       },
@@ -468,7 +512,7 @@ export class AdminEvenementsComponent implements OnInit {
       if (selectedKeys.includes('lieu')) row['Lieu'] = event.lieu;
       return row;
     });
-    this.exportExcelService.exportAsExcelFile(dataToExport, 'Evenements');
+    this.exportCsvService.exportAsCsvFile(dataToExport, 'Evenements');
     this.showExportEventsModal = false;
   }
 
@@ -498,7 +542,7 @@ export class AdminEvenementsComponent implements OnInit {
     });
 
     const fileName = this.selectedEventForExport.titre.replace(/\s+/g, '_');
-    this.exportExcelService.exportAsExcelFile(dataToExport, fileName);
+    this.exportCsvService.exportAsCsvFile(dataToExport, fileName);
     this.showExportParticipantsModal = false;
     this.selectedEventForExport = null;
   }

@@ -10,6 +10,10 @@ use App\Models\Formulaire;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SetPasswordEmail;
 
 class UtilisateurController extends Controller
 {
@@ -37,14 +41,7 @@ class UtilisateurController extends Controller
             'mot_de_passe' => ['nullable', Password::min(8)],
         ]);
 
-        $admin = $request->user();
-        if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-            return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-        }
-
-        $donnees = $request->except(['admin_password']);
-
-        $utilisateur = Utilisateur::create($donnees);
+        $utilisateur = Utilisateur::create($request->all());
 
         if ($utilisateur) {
             return response()->json($utilisateur, 201);
@@ -55,26 +52,25 @@ class UtilisateurController extends Controller
 
     public function update(Request $request, $id)
     {
-        $utilisateur = Utilisateur::find($id);
-        if ($utilisateur) {
-            $request->validate([
-                'admin_password' => 'required|string',
-            ]);
+        $utilisateur = Utilisateur::findOrFail($id);
+        $ancienRole = $utilisateur->role;
+        $donnees = $request->except(['mot_de_passe']);
 
-            $admin = $request->user();
-            if (!Hash::check($request->admin_password, $admin->getAuthPassword())) {
-                return response()->json(['message' => 'Mot de passe administrateur incorrect.'], 403);
-            }
+        $utilisateur->update($donnees);
 
-            $donnees = $request->except(['admin_password']);
-            if (empty($donnees['mot_de_passe'])) {
-                unset($donnees['mot_de_passe']);
-            }
-            $utilisateur->update($donnees);
-            return response()->json($utilisateur);
-        } else {
-            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        $nouveauRole = $donnees['role'] ?? null;
+        
+        if ($nouveauRole === 'membre_bureau' && $ancienRole === 'parent') {
+            $token = Str::random(64);
+            Cache::put('set_password_' . $utilisateur->id_utilisateur, $token, now()->addHours(2));
+
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost');
+            $url = $frontendUrl . '/set-password?token=' . $token . '&id=' . $utilisateur->id_utilisateur;
+
+            Mail::to($utilisateur->email)->send(new SetPasswordEmail($url, $utilisateur->prenom));
         }
+
+        return response()->json($utilisateur);
     }
     public function destroy(Request $request, $id)
     {
@@ -84,20 +80,18 @@ class UtilisateurController extends Controller
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
 
-        // On vérifie le mot de passe uniquement si l'utilisateur en a un
-        if (!empty($utilisateur->mot_de_passe)) {
-            $request->validate([
-                'password' => 'required|string'
-            ]);
+        $currentUser = auth()->user();
 
-            if (!Hash::check($request->password, $utilisateur->mot_de_passe)) {
-                return response()->json([
-                    'message' => 'Mot de passe incorrect. Suppression impossible.'
-                ], 403);
+        if ($currentUser && $currentUser->id_utilisateur == $id) {
+            
+            if ($currentUser->role !== 'parent') {
+                if (!$request->has('mot_de_passe') || !Hash::check($request->mot_de_passe, $currentUser->mot_de_passe)) {
+                    return response()->json(['message' => 'Mot de passe incorrect ou manquant'], 403);
+                }
             }
         }
 
-        $adminId = 1; // réattribution des événements et actualités à l'admin si le user en avait créé
+        $adminId = 1;
 
         if ($utilisateur->id_utilisateur !== $adminId) {
             Evenement::where('id_auteur', $utilisateur->id_utilisateur)
