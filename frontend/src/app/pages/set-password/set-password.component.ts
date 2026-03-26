@@ -2,8 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { AuthService } from '../../services/Auth/auth.service';
 
 @Component({
   selector: 'app-set-password',
@@ -15,8 +14,7 @@ export class SetPasswordComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly http = inject(HttpClient);
-
+  private readonly authService = inject(AuthService);
   form!: FormGroup;
   token = '';
   idUtilisateur = '';
@@ -44,12 +42,12 @@ export class SetPasswordComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.post(`${environment.apiUrl}/set-password`, {
-      id_utilisateur: this.idUtilisateur,
-      token: this.token,
-      mot_de_passe: this.form.value.mot_de_passe,
-      mot_de_passe_confirmation: this.form.value.mot_de_passe_confirmation,
-    }).subscribe({
+    this.authService.setPassword(
+      this.idUtilisateur,
+      this.token,
+      this.form.value.mot_de_passe,
+      this.form.value.mot_de_passe_confirmation
+    ).subscribe({
       next: () => {
         this.isLoading = false;
         this.successMessage = 'Mot de passe créé ! Vous pouvez maintenant vous connecter.';

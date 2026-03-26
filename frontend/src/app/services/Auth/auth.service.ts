@@ -138,6 +138,15 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  setPassword(idUtilisateur: string, token: string, motDePasse: string, motDePasseConfirmation: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/set-password`, {
+      id_utilisateur: idUtilisateur,
+      token: token,
+      mot_de_passe: motDePasse,
+      mot_de_passe_confirmation: motDePasseConfirmation,
+    });
+  }
+
   hasRole(role: string): boolean {
     const user = this.getCurrentUser();
     return user ? String(user.role).toLowerCase() === role.toLowerCase() : false;
