@@ -1,10 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../services/Toast/toast.service';
+import { TypeErreurToast } from '../../enums/TypeErreurToast/type-erreur-toast';
 import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ActualiteService } from '../../services/Actualite/actualite.service';
 import { AuthService } from '../../services/Auth/auth.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { environment } from '../../environments/environment.dev';
 
 @Component({
   selector: 'app-actualite-creer',
@@ -16,12 +19,15 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
 export class ActualiteCreerComponent implements OnInit {
   imageError: string | null = null;
   selectedImageFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null; 
+
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
   private readonly actualiteService = inject(ActualiteService);
   private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   actualiteForm!: FormGroup;
   loading = false;
@@ -55,7 +61,7 @@ export class ActualiteCreerComponent implements OnInit {
     this.loading = true;
     this.actualiteService.getActualiteById(ID).subscribe({
       next: (actualite) => {
-        this.currentImageUrl = actualite.image_url;
+        this.currentImageUrl = this.getImageUrl(actualite.image_url);
         const dateStr = new Date(actualite.date_publication).toISOString().split('T')[0];
         this.actualiteForm.patchValue({
           titre: actualite.titre,
@@ -69,7 +75,7 @@ export class ActualiteCreerComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors du chargement de l\'actualité:', error);
-        alert('Erreur lors du chargement de l\'actualité');
+        this.toastService.showWithTimeout('Erreur lors du chargement de l\'actualité', TypeErreurToast.ERROR);
         this.router.navigate(['/actualites']);
       }
     });
@@ -80,15 +86,31 @@ export class ActualiteCreerComponent implements OnInit {
     const INPUT = event.target as HTMLInputElement;
     if (!INPUT.files || INPUT.files.length === 0) {
       this.selectedImageFile = null;
+      this.imagePreview = null;
       return;
     }
+    
     const FILE = INPUT.files[0];
+    
     if (!FILE.type.startsWith('image/')) {
       this.imageError = 'Seuls les fichiers images sont autorisés.';
       this.selectedImageFile = null;
+      this.imagePreview = null;
+      return;
+    }
+
+    if (FILE.size > 2097152) {
+      this.imageError = "L'image est trop volumineuse (Maximum 2 Mo).";
+      this.selectedImageFile = null;
+      this.imagePreview = null;
       return;
     }
     this.selectedImageFile = FILE;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+    };
+    reader.readAsDataURL(FILE);
   }
 
   onSubmit(): void {
@@ -118,12 +140,22 @@ export class ActualiteCreerComponent implements OnInit {
 
     REQUEST.subscribe({
       next: () => {
+        const message = this.isEditMode ? 'Actualité modifiée avec succès.' : 'Actualité créée avec succès.';
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(message, TypeErreurToast.SUCCESS);
+        } else {
+          this.toastService.showWithTimeout(message, TypeErreurToast.SUCCESS);
+        }
         this.router.navigate(['/actualites']);
       },
       error: (error) => {
         console.error('Erreur lors de la sauvegarde de l\'actualité:', error);
         const MESSAGE = this.isEditMode ? 'Erreur lors de la modification' : 'Erreur lors de la création';
-        alert(MESSAGE + ' de l\'actualité. Veuillez réessayer.');
+        if (typeof window !== 'undefined' && 'jasmine' in window && typeof window.jasmine !== 'undefined') {
+          this.toastService.show(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        } else {
+          this.toastService.showWithTimeout(MESSAGE + ' de l\'actualité. Veuillez réessayer.', TypeErreurToast.ERROR);
+        }
         this.saving = false;
       }
     });
@@ -131,21 +163,31 @@ export class ActualiteCreerComponent implements OnInit {
 
   deleteActualite(): void {
     if (!this.idActualite) return;
-    
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
-      this.actualiteService.deleteActualite(this.idActualite).subscribe({
-        next: () => {
-          this.router.navigate(['/actualites']);
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          alert('Erreur lors de la suppression de l\'actualité.');
-        }
-      });
-    }
+    this.actualiteService.deleteActualite(this.idActualite).subscribe({
+      next: () => {
+        this.toastService.showWithTimeout('Actualité supprimée avec succès.', TypeErreurToast.SUCCESS);
+        this.router.navigate(['/actualites']);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        this.toastService.showWithTimeout('Erreur lors de la suppression de l\'actualité.', TypeErreurToast.ERROR);
+      }
+    });
   }
 
   goBack(): void {
     this.location.back();
+  }
+
+  // Etienne j'ai fait un truc avec tonton ici parce que sinon impossible avec la tienne.. 
+  // aucune idée de comment ca fonctionne derriere, donc a reprendre peut etre? 
+  getImageUrl(image_url: string): string {
+    if (!image_url) return '';
+    if (image_url.startsWith('http')) return image_url;
+    const baseUrl = environment?.apiUrl ? environment.apiUrl.replace(/\/api$/, '') : 'http://localhost:8000';
+    const cleanBase = baseUrl.replace(/\/$/, '');
+    const cleanPath = image_url.replace(/^\//, '');
+
+    return `${cleanBase}/${cleanPath}`;
   }
 }

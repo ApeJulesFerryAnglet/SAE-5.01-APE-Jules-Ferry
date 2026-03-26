@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class InscriptionController extends Controller
 {
+    public function index(Request $request)
+    {
+        $inscriptions = Inscription::with(['creneau.tache.formulaire.evenements'])
+            ->get();
+        return response()->json($inscriptions);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -21,12 +28,16 @@ class InscriptionController extends Controller
         $creneauId = $request->id_creneau;
 
         return DB::transaction(function () use ($user, $creneauId, $request) {
-
+            /** @var Creneau|null $creneau */
             $creneau = Creneau::with('tache.formulaire.evenements')
+                ->where('id_creneau', $creneauId)
                 ->lockForUpdate()
-                ->find($creneauId);
+                ->first();
 
-            // Verif date evenement pas expirée
+            if (!$creneau) {
+                return response()->json(['message' => 'Créneau non trouvé.'], 404);
+            }
+
             $evenement = $creneau->tache->formulaire->evenements()->first();
 
             if ($evenement && $evenement->date_evenement < now()->toDateString()) {
@@ -35,7 +46,6 @@ class InscriptionController extends Controller
                 ], 422);
             }
 
-            // Verif quota, doublon et inscription
             $existe = Inscription::where('id_utilisateur', $user->id_utilisateur)
                 ->where('id_creneau', $creneauId)
                 ->exists();
@@ -44,7 +54,7 @@ class InscriptionController extends Controller
                 return response()->json(['message' => 'Vous êtes déjà inscrit à ce créneau.'], 409);
             }
 
-            if ($creneau->inscriptions()->count() >= $creneau->quota) {
+            if ($creneau->estComplet()) {
                 return response()->json(['message' => 'Ce créneau est complet.'], 422);
             }
 
@@ -70,7 +80,6 @@ class InscriptionController extends Controller
         return response()->json($inscriptions);
     }
 
-    //desinscription
     public function destroy(Request $request, $id_creneau)
     {
         $user = $request->user();
@@ -85,5 +94,107 @@ class InscriptionController extends Controller
 
         return response()->json(['message' => 'Inscription introuvable.'], 404);
     }
-    //ajout de modif d'inscription eventuellement après pmv? ou direct a voir
+
+    public function destroyAdmin(Request $request)
+    {
+        $request->validate([
+            'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
+            'id_creneau' => 'required|exists:creneaux,id_creneau',
+        ]);
+
+        $deleted = Inscription::where('id_utilisateur', $request->id_utilisateur)
+            ->where('id_creneau', $request->id_creneau)
+            ->delete();
+
+        if ($deleted) {
+            return response()->json(['message' => 'Inscription supprimée par administrateur.']);
+        }
+
+        return response()->json(['message' => 'Inscription introuvable.'], 404);
+    }
+
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
+            'id_creneau' => 'required|exists:creneaux,id_creneau',
+            'commentaire' => 'nullable|string|max:500',
+        ]);
+
+        $userId = $request->id_utilisateur;
+        $creneauId = $request->id_creneau;
+
+        return DB::transaction(function () use ($userId, $creneauId, $request) {
+            /** @var Creneau|null $creneau */
+            $creneau = Creneau::with('tache.formulaire.evenements')
+                ->where('id_creneau', $creneauId)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$creneau) {
+                return response()->json(['message' => 'Créneau non trouvé.'], 404);
+            }
+
+            $existe = Inscription::where('id_utilisateur', $userId)
+                ->where('id_creneau', $creneauId)
+                ->exists();
+
+            if ($existe) {
+                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
+            }
+
+            if ($creneau->estComplet()) {
+                return response()->json(['message' => 'Ce créneau est complet.'], 422);
+            }
+
+            Inscription::create([
+                'id_utilisateur' => $userId,
+                'id_creneau' => $creneauId,
+                'commentaire' => $request->commentaire
+            ]);
+
+            return response()->json(['message' => 'Inscription ajoutée avec succès !'], 201);
+        });
+    }
+
+    public function updateAdmin(Request $request)
+    {
+        $request->validate([
+            'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
+            'old_id_creneau' => 'required|exists:creneaux,id_creneau',
+            'new_id_creneau' => 'required|exists:creneaux,id_creneau',
+        ]);
+
+        return DB::transaction(function () use ($request) {
+            $inscription = Inscription::where('id_utilisateur', $request->id_utilisateur)
+                ->where('id_creneau', $request->old_id_creneau)
+                ->first();
+
+            if (!$inscription) {
+                return response()->json(['message' => 'Inscription introuvable.'], 404);
+            }
+
+            /** @var Creneau|null $newCreneau */
+            $newCreneau = Creneau::where('id_creneau', $request->new_id_creneau)
+                ->lockForUpdate()
+                ->first();
+
+            if ($newCreneau->estComplet()) {
+                return response()->json(['message' => 'Le nouveau créneau est complet.'], 422);
+            }
+
+            $exists = Inscription::where('id_utilisateur', $request->id_utilisateur)
+                ->where('id_creneau', $request->new_id_creneau)
+                ->exists();
+
+            if ($exists) {
+                return response()->json(['message' => 'L\'utilisateur est déjà inscrit à ce créneau.'], 409);
+            }
+
+            $inscription->id_creneau = $request->new_id_creneau;
+            $inscription->save();
+
+            return response()->json(['message' => 'Inscription modifiée avec succès.']);
+        });
+    }
 }

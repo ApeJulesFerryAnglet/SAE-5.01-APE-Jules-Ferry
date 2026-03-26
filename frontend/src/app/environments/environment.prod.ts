@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const environment = {
+export const environment = {
     production: true,
-    apiUrl: 'https://api.productionserver.com/api',
+    apiUrl: '/api',
+    apiImage:'http://localhost',
 }

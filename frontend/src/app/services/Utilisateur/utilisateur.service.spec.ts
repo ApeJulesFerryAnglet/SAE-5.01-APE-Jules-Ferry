@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { UtilisateurService } from './utilisateur.service';
 import { Utilisateur } from '../../models/Utilisateur/utilisateur';
 import { RoleUtilisateur } from '../../enums/RoleUtilisateur/role-utilisateur';
-import { environment } from '../../environments/environment.dev';
+import { environment } from '../../environments/environment';
 
 describe('UtilisateurService', () => {
   let service: UtilisateurService;
@@ -68,7 +68,7 @@ describe('UtilisateurService', () => {
   describe('setUtilisateurCourant', () => {
     it('devrait définir l\'utilisateur actuel', (done) => {
       service.setUtilisateurCourant(mockUtilisateur);
-      
+
       service.utilisateurCourant.subscribe((utilisateur) => {
         if (utilisateur) {
           expect(utilisateur).toEqual(mockUtilisateur);
@@ -85,7 +85,7 @@ describe('UtilisateurService', () => {
     it('devrait définir l\'utilisateur à null', (done) => {
       service.setUtilisateurCourant(mockUtilisateur);
       service.setUtilisateurCourant(null);
-      
+
       service.utilisateurCourant.subscribe((utilisateur) => {
         if (utilisateur === null) {
           expect(utilisateur).toBeNull();
@@ -96,7 +96,7 @@ describe('UtilisateurService', () => {
 
     it('devrait notifier les abonnés quand l\'utilisateur change', () => {
       const values: (Utilisateur | null)[] = [];
-      
+
       service.utilisateurCourant.subscribe((utilisateur) => {
         values.push(utilisateur);
       });
@@ -186,7 +186,7 @@ describe('UtilisateurService', () => {
 
       const req = httpMock.expectOne(`${environment.apiUrl}/utilisateurs`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(newUtilisateur);
+      expect(req.request.body).toEqual({ ...newUtilisateur, admin_password: undefined });
       req.flush({ ...newUtilisateur, id_utilisateur: 3 });
     });
 
@@ -219,7 +219,7 @@ describe('UtilisateurService', () => {
 
       const req = httpMock.expectOne(`${environment.apiUrl}/utilisateurs/1`);
       expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual(updatedUtilisateur);
+      expect(req.request.body).toEqual({ ...updatedUtilisateur, admin_password: undefined });
       req.flush(updatedUtilisateur);
     });
 
