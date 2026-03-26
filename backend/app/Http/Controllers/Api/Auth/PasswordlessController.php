@@ -16,10 +16,19 @@ class PasswordlessController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'nom' => 'nullable|string',
+            'prenom' => 'nullable|string',
         ]);
 
-        $user = Utilisateur::where('email', $request->email)->firstOrFail();
-
+        $user = Utilisateur::firstOrCreate(
+            ['email' => $request->email],
+            [
+                'nom' => $request->nom ?? 'Inconnu',
+                'prenom' => $request->prenom ?? 'Inconnu',
+                'role' => 'parent',
+                'statut_compte' => 'actif',
+            ]
+        );
         // Crée une URL signée valable 2 heures (pour l'API)
         $urlApi = URL::temporarySignedRoute(
             'auth.magic.verify', 
