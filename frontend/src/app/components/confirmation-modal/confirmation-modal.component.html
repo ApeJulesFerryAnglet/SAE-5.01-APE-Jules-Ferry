@@ -1,5 +1,14 @@
-<div class="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in" (click)="annuler()">
-  <div class="bg-[var(--white-cards)] rounded-[8px] border-[1.5px] border-[var(--border-light)] shadow-[6px_6px_0_var(--primary-green)] p-8 w-full max-w-sm animate-fade-up" (click)="$event.stopPropagation()">
+<div class="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in" 
+     (click)="annuler()" 
+     (keydown.escape)="annuler()"
+     tabindex="0"
+     role="dialog"
+     aria-modal="true">
+  <div class="bg-[var(--white-cards)] rounded-[8px] border-[1.5px] border-[var(--border-light)] shadow-[6px_6px_0_var(--primary-green)] p-8 w-full max-w-sm animate-fade-up"
+       (click)="$event.stopPropagation()"
+       (keydown)="$event.stopPropagation()"
+       tabindex="-1"
+       role="document">
     
     <div class="text-center mb-6">
       <h2 class="font-abril text-2xl text-[var(--primary-green)] mb-2 tracking-wide">DÉCONNEXION</h2>
