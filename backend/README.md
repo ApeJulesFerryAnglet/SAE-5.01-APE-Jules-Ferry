@@ -6,9 +6,9 @@
 - `app` 📁 : contient toute la **logique applicative** du backend Laravel.  
   Il est organisé en sous-dossiers permettant de séparer clairement les responsabilités (HTTP, métier, données, configuration…).
 
-## 📦 Organisation interne
+### 📦 Organisation interne
 
-### 🔁 Concerns
+#### 🔁 Concerns
 
 - `app/Concerns` 🧩 : contient des **traits réutilisables** (morceaux de logique partagée entre plusieurs classes).
 
@@ -17,7 +17,7 @@
 - éviter la duplication
 - garder des classes simples
 
-### 📚 Console
+#### 📚 Console
 
 - `app/Console` 🖥️ : contient les **commandes Artisan personnalisées**.
 
@@ -26,7 +26,7 @@
 - tâches automatisées (cron)
 - maintenance
 
-### 🧠 Enums
+#### 🧠 Enums
 
 - `app/Enums` 🔧 : contient les **énumérations PHP (types métier stricts)**.
 
@@ -34,16 +34,14 @@
 - remplacer les chaînes de caractères “magiques”
 - sécuriser les valeurs utilisées dans l’application
 
-### 🌐 HTTP
+#### 🌐 HTTP
 
 - `app/Http` 🌍 : gère toute la **couche HTTP** (entrée des requêtes).
 
 #### Contenu :
 
-- `Controllers/` 🎯 : reçoivent les requêtes et orchestrent la réponse  
-- `Middleware/` 🛡️ : filtrent les requêtes (auth, sécurité, CORS…)  
-- `Requests/` 📥 : valident les données entrantes  
-
+- `Controllers/Api` 🎯 : reçoivent les requêtes et orchestrent la réponse 
+- `Controllers/Api/Auth` : gère toutes les requêtes concernant l'authetification sur l'application
 👉 Flux global :
 ```
 Requête → Middleware → Controller → Service → Réponse
