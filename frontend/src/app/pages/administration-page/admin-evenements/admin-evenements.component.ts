@@ -21,6 +21,7 @@ import { StatutFormulaire } from '../../../enums/StatutFormulaire/statut-formula
 import { PasswordConfirmModalComponent } from '../../../components/password-confirm-modal/password-confirm-modal.component';
 import { ExportModalComponent } from '../../../components/export-modal/export-modal.component';
 import { ExportCsvService } from '../../../services/ExportCsv/export-csv.service';
+import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 
 interface ExtendedCreneau extends Creneau {
   filledInscriptions?: ExtendedInscription[];
@@ -47,7 +48,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-admin-evenements',
   standalone: true,
-  imports: [CommonModule, FormsModule, PasswordConfirmModalComponent, RouterLink, ExportModalComponent],
+  imports: [CommonModule, FormsModule, PasswordConfirmModalComponent, RouterLink, ExportModalComponent, SpinnerComponent],
   templateUrl: './admin-evenements.component.html',
   styleUrl: './admin-evenements.component.css'
 })
