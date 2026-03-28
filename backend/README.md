@@ -23,7 +23,7 @@
 
 👉 Utilisé pour :
 - scripts internes
-- tâches automatisées (cron)
+- tâches automatisées
 - maintenance
 
 #### 🧠 Enums
