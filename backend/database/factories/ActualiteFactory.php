@@ -6,6 +6,12 @@
  * Description : Ce fichier genere des donnees de test pour ActualiteFactory.
  */
 
+namespace Database\Factories;
+
+use App\Models\Actualite;
+use App\Models\Utilisateur;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
 class ActualiteFactory extends Factory
 {
 
