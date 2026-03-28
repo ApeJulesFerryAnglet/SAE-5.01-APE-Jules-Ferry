@@ -24,7 +24,6 @@ class ActualiteControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
         Storage::fake('public');
     }
 
@@ -96,7 +95,8 @@ class ActualiteControllerTest extends TestCase
         ];
 
         // WHEN
-        $response = $this->postJson('/api/actualites', $data);
+        $response = $this->actingAs($auteur, 'sanctum')
+                         ->postJson('/api/actualites', $data);
 
         // THEN
         $response->assertStatus(201)
@@ -124,8 +124,9 @@ class ActualiteControllerTest extends TestCase
             'image' => $file,
         ];
 
-        // WHEN
-        $response = $this->postJson('/api/actualites', $data);
+        // WHEN 
+        $response = $this->actingAs($auteur, 'sanctum')
+                         ->postJson('/api/actualites', $data);
 
         // THEN
         $response->assertStatus(201);
@@ -136,13 +137,15 @@ class ActualiteControllerTest extends TestCase
     public function should_return_validation_errors_for_store_endpoint_when_data_is_invalid(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $data = [
             'titre' => '',
             'statut' => 'invalid',
         ];
 
         // WHEN
-        $response = $this->postJson('/api/actualites', $data);
+        $response = $this->actingAs($user, 'sanctum')
+                         ->postJson('/api/actualites', $data);
 
         // THEN
         $response->assertStatus(422)
@@ -153,6 +156,7 @@ class ActualiteControllerTest extends TestCase
     public function should_update_actualite_for_update_endpoint_when_actualite_exists(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $actualite = Actualite::factory()->create(['titre' => 'Ancien Titre']);
         $data = [
             'titre' => 'Nouveau Titre',
@@ -162,7 +166,8 @@ class ActualiteControllerTest extends TestCase
         ];
 
         // WHEN
-        $response = $this->putJson("/api/actualites/{$actualite->id_actualite}", $data);
+        $response = $this->actingAs($user, 'sanctum')
+                         ->putJson("/api/actualites/{$actualite->id_actualite}", $data);
 
         // THEN
         $response->assertStatus(200)
@@ -174,6 +179,7 @@ class ActualiteControllerTest extends TestCase
     public function should_replace_image_for_update_endpoint_when_new_image_is_provided(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $this->mock(ImageConverterService::class, function ($mock) {
             $mock->shouldReceive('convertImageToWebp')->once();
         });
@@ -193,7 +199,8 @@ class ActualiteControllerTest extends TestCase
         ];
 
         // WHEN
-        $response = $this->putJson("/api/actualites/{$actualite->id_actualite}", $data);
+        $response = $this->actingAs($user, 'sanctum')
+                         ->putJson("/api/actualites/{$actualite->id_actualite}", $data);
 
         // THEN
         $response->assertStatus(200);
@@ -204,6 +211,7 @@ class ActualiteControllerTest extends TestCase
     public function should_return_not_found_for_update_endpoint_when_actualite_does_not_exist(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $data = [
             'titre' => 'Titre',
             'contenu' => 'Contenu',
@@ -212,7 +220,8 @@ class ActualiteControllerTest extends TestCase
         ];
 
         // WHEN
-        $response = $this->putJson('/api/actualites/999', $data);
+        $response = $this->actingAs($user, 'sanctum')
+                         ->putJson('/api/actualites/999', $data);
 
         // THEN
         $response->assertStatus(404);
@@ -222,13 +231,15 @@ class ActualiteControllerTest extends TestCase
     public function should_delete_actualite_and_image_for_destroy_endpoint_when_actualite_exists(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $actualite = Actualite::factory()->create([
             'image_url' => '/storage/actualites/test.webp',
         ]);
         Storage::disk('public')->put('actualites/test.webp', 'content');
 
         // WHEN
-        $response = $this->deleteJson("/api/actualites/{$actualite->id_actualite}");
+        $response = $this->actingAs($user, 'sanctum')
+                         ->deleteJson("/api/actualites/{$actualite->id_actualite}");
 
         // THEN
         $response->assertStatus(200)
@@ -241,10 +252,12 @@ class ActualiteControllerTest extends TestCase
     public function should_return_not_found_for_destroy_endpoint_when_actualite_does_not_exist(): void
     {
         // GIVEN
+        $user = Utilisateur::factory()->create();
         $missingId = 999;
 
         // WHEN
-        $response = $this->deleteJson("/api/actualites/{$missingId}");
+        $response = $this->actingAs($user, 'sanctum')
+                         ->deleteJson("/api/actualites/{$missingId}");
 
         // THEN
         $response->assertStatus(404);
