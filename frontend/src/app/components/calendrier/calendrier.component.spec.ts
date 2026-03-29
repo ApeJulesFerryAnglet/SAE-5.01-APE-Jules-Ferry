@@ -23,7 +23,6 @@ describe('CalendrierComponent', () => {
   let component: CalendrierComponent;
   let fixture: ComponentFixture<CalendrierComponent>;
   let evenementService: jasmine.SpyObj<EvenementService>;
-  let authService: jasmine.SpyObj<AuthService>;
   const currentUserSubject = new BehaviorSubject<Utilisateur | null>(null);
 
   const mockEvenements: Evenement[] = [
@@ -62,7 +61,6 @@ describe('CalendrierComponent', () => {
     }).compileComponents();
 
     evenementService = TestBed.inject(EvenementService) as jasmine.SpyObj<EvenementService>;
-    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     fixture = TestBed.createComponent(CalendrierComponent);
     component = fixture.componentInstance;
   });
