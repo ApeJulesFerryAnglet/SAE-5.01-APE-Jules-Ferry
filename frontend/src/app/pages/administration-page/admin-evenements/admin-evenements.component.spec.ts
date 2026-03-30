@@ -137,10 +137,10 @@ describe('AdminEvenementsComponent', () => {
     });
 
     it('devrait supprimer un modèle puis recharger la liste', () => {
-      spyOn(window, 'confirm').and.returnValue(true);
       formulaireServiceSpy.getTemplates.calls.reset();
 
       component.deleteTemplate(10);
+      component.confirmDeleteTemplate();
 
       expect(formulaireServiceSpy.deleteFormulaire).toHaveBeenCalledWith(10);
       expect(formulaireServiceSpy.getTemplates).toHaveBeenCalled();

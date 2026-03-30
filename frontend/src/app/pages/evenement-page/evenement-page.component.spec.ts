@@ -124,9 +124,9 @@ describe('EvenementPageComponent', () => {
     it('devrait trier les événements par date après le chargement', () => {
       fixture.detectChanges();
 
-      expect(component.listeEvenements[0].id_evenement).toBe(1); // Événement le plus ancien
+      expect(component.listeEvenements[0].id_evenement).toBe(3); // Événement le plus récent
       expect(component.listeEvenements[1].id_evenement).toBe(2);
-      expect(component.listeEvenements[2].id_evenement).toBe(3); // Événement le plus récent
+      expect(component.listeEvenements[2].id_evenement).toBe(1); // Événement le plus ancien
     });
 
     it('devrait mettre loadingEvenements à false après le chargement réussi', () => {
@@ -204,7 +204,7 @@ describe('EvenementPageComponent', () => {
   });
 
   describe('sortEvenementByDate', () => {
-    it('devrait trier les événements du plus ancien au plus récent', () => {
+    it('devrait trier les événements du plus récent au plus ancien', () => {
       component.listeEvenements = [
         { ...mockEvenements[0], date_evenement: new Date('2025-01-01') },
         { ...mockEvenements[1], date_evenement: new Date('2026-06-01') },
@@ -214,9 +214,9 @@ describe('EvenementPageComponent', () => {
       component.sortEvenementByDate();
 
       expect(new Date(component.listeEvenements[0].date_evenement).getTime())
-        .toBeLessThan(new Date(component.listeEvenements[1].date_evenement).getTime());
+        .toBeGreaterThan(new Date(component.listeEvenements[1].date_evenement).getTime());
       expect(new Date(component.listeEvenements[1].date_evenement).getTime())
-        .toBeLessThan(new Date(component.listeEvenements[2].date_evenement).getTime());
+        .toBeGreaterThan(new Date(component.listeEvenements[2].date_evenement).getTime());
     });
 
     it('devrait gérer une liste vide', () => {
@@ -262,8 +262,8 @@ describe('EvenementPageComponent', () => {
       const secondDate = new Date(component.listeEvenements[1].date_evenement).getTime();
       const thirdDate = new Date(component.listeEvenements[2].date_evenement).getTime();
 
-      expect(firstDate).toBeLessThanOrEqual(secondDate);
-      expect(secondDate).toBeLessThanOrEqual(thirdDate);
+      expect(firstDate).toBeGreaterThanOrEqual(secondDate);
+      expect(secondDate).toBeGreaterThanOrEqual(thirdDate);
     });
 
     it('devrait gérer la suppression d\'un événement et maintenir le tri', () => {
@@ -278,7 +278,7 @@ describe('EvenementPageComponent', () => {
       if (component.listeEvenements.length > 1) {
         const firstDate = new Date(component.listeEvenements[0].date_evenement).getTime();
         const secondDate = new Date(component.listeEvenements[1].date_evenement).getTime();
-        expect(firstDate).toBeLessThanOrEqual(secondDate);
+        expect(firstDate).toBeGreaterThanOrEqual(secondDate);
       }
     });
   });
