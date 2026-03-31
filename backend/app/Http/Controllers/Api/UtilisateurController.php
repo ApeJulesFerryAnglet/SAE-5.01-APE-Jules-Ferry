@@ -19,6 +19,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\RoleChangedEmail;
 use App\Mail\SetPasswordEmail;
 
 class UtilisateurController extends Controller
@@ -65,7 +66,7 @@ class UtilisateurController extends Controller
         $utilisateur->update($donnees);
 
         $nouveauRole = $donnees['role'] ?? null;
-        
+
         if ($nouveauRole === 'membre_bureau' && $ancienRole === 'parent') {
             $token = Str::random(64);
             Cache::put('set_password_' . $utilisateur->id_utilisateur, $token, now()->addHours(2));
@@ -75,6 +76,10 @@ class UtilisateurController extends Controller
 
             Mail::to($utilisateur->email)->send(new SetPasswordEmail($url, $utilisateur->prenom));
         }
+        if ($nouveauRole === 'administrateur' && $ancienRole === 'membre_bureau') {
+            Mail::to($utilisateur->email)->send(new RoleChangedEmail($utilisateur->prenom, 'Administrateur'));
+        }
+
 
         return response()->json($utilisateur);
     }
@@ -89,7 +94,7 @@ class UtilisateurController extends Controller
         $currentUser = auth()->user();
 
         if ($currentUser && $currentUser->id_utilisateur == $id) {
-            
+
             if ($currentUser->role !== 'parent') {
                 if (!$request->has('mot_de_passe') || !Hash::check($request->mot_de_passe, $currentUser->mot_de_passe)) {
                     return response()->json(['message' => 'Mot de passe incorrect ou manquant'], 403);
