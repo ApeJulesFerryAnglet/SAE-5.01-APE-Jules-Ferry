@@ -41,50 +41,38 @@ describe('authInterceptor', () => {
     // GIVEN
     tokenService.getToken.and.returnValue('abc123');
     const request = new HttpRequest('GET', 'http://localhost:8000/api/user');
-    let authorizationHeader: string | null = null;
     const next: HttpHandlerFn = (req) => {
-      authorizationHeader = req.headers.get('Authorization');
+      expect(req.headers.get('Authorization')).toBe('Bearer abc123');
       return of(new HttpResponse({ status: 200 }));
     };
 
     // WHEN
     interceptor(request, next).subscribe();
-
-    // THEN
-    expect(authorizationHeader).toBe('Bearer abc123');
   });
 
   it('should_laisse_requete_intacte_when_no_token_n_existe', () => {
     // GIVEN
     tokenService.getToken.and.returnValue(null);
     const request = new HttpRequest('GET', 'http://localhost:8000/api/user');
-    let hasAuthorizationHeader: boolean | null = null;
     const next: HttpHandlerFn = (req) => {
-      hasAuthorizationHeader = req.headers.has('Authorization');
+      expect(req.headers.has('Authorization')).toBeFalse();
       return of(new HttpResponse({ status: 200 }));
     };
 
     // WHEN
     interceptor(request, next).subscribe();
-
-    // THEN
-    expect(hasAuthorizationHeader).toBeFalse();
   });
 
   it('should_laisse_requete_intacte_when_url_ne_vise_pas_api', () => {
     // GIVEN
     tokenService.getToken.and.returnValue('abc123');
     const request = new HttpRequest('GET', 'http://example.com/assets/file.json');
-    let hasAuthorizationHeader: boolean | null = null;
     const next: HttpHandlerFn = (req) => {
-      hasAuthorizationHeader = req.headers.has('Authorization');
+      expect(req.headers.has('Authorization')).toBeFalse();
       return of(new HttpResponse({ status: 200 }));
     };
 
     // WHEN
     interceptor(request, next).subscribe();
-
-    // THEN
-    expect(hasAuthorizationHeader).toBeFalse();
   });
 });
