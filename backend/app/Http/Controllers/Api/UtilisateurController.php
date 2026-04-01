@@ -81,6 +81,14 @@ class UtilisateurController extends Controller
             Mail::to($utilisateur->email)->send(new RoleChangedEmail($utilisateur->prenom, 'Administrateur'));
         }
 
+        if ($nouveauRole === 'parent' && $ancienRole === 'membre_bureau') {
+            Mail::to($utilisateur->email)->send(new RoleChangedEmail($utilisateur->prenom, 'Parent'));
+        }
+
+        if ($nouveauRole === 'membre_bureau' && $ancienRole === 'administrateur') {
+            Mail::to($utilisateur->email)->send(new RoleChangedEmail($utilisateur->prenom, 'Membre du bureau'));
+        }
+
         return response()->json($utilisateur);
     }
 
