@@ -30,12 +30,22 @@ describe('NewsletterService', () => {
     httpMock.verify();
   });
 
-  it('devrait être créé', () => {
+  it('should_be_create', () => {
+  // GIVEN
+
+  // WHEN
+
+  // THEN
     expect(service).toBeTruthy();
   });
 
-  it('abonne une adresse email', () => {
+  it('should_abonne_adresse_email', () => {
+  // GIVEN
+
+  // WHEN
     service.subscribe({ email: 'test@example.com' }).subscribe(response => {
+
+  // THEN
       expect(response.message).toBe('ok');
     });
 
@@ -45,8 +55,13 @@ describe('NewsletterService', () => {
     req.flush({ message: 'ok' });
   });
 
-  it('récupère tous les abonnés', () => {
+  it('should_fetch_all_abonnes', () => {
+  // GIVEN
+
+  // WHEN
     service.getAllSubscribers().subscribe(subscribers => {
+
+  // THEN
       expect(subscribers.length).toBe(1);
       expect(subscribers[0].email).toBe('a@example.com');
     });
@@ -56,8 +71,13 @@ describe('NewsletterService', () => {
     req.flush([{ id: 1, email: 'a@example.com' }]);
   });
 
-  it('ajoute un abonné depuis l admin', () => {
+  it('should_add_abonne_admin', () => {
+  // GIVEN
+
+  // WHEN
     service.addSubscriber({ email: 'admin@example.com', admin_password: 'secret' }).subscribe(response => {
+
+  // THEN
       expect(response.message).toBe('created');
     });
 
@@ -67,8 +87,13 @@ describe('NewsletterService', () => {
     req.flush({ message: 'created' });
   });
 
-  it('supprime un abonné sans mot de passe admin', () => {
+  it('should_delete_abonne_sans_password_password_admin', () => {
+  // GIVEN
+
+  // WHEN
     service.deleteSubscriber(3).subscribe(response => {
+
+  // THEN
       expect(response.message).toBe('deleted');
     });
 
@@ -78,8 +103,13 @@ describe('NewsletterService', () => {
     req.flush({ message: 'deleted' });
   });
 
-  it('supprime un abonné avec mot de passe admin', () => {
+  it('should_delete_abonne_password_password_admin', () => {
+  // GIVEN
+
+  // WHEN
     service.deleteSubscriber(3, 'secret').subscribe(response => {
+
+  // THEN
       expect(response.message).toBe('deleted');
     });
 

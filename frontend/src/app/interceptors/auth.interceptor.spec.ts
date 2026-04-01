@@ -28,40 +28,63 @@ describe('authInterceptor', () => {
     });
   });
 
-  it('devrait être créé', () => {
+  it('should_be_create', () => {
+    // GIVEN
+
+    // WHEN
+
+    // THEN
     expect(interceptor).toBeTruthy();
   });
 
-  it('ajoute le header authorization quand un token existe pour l api', () => {
+  it('should_add_header_authorization_when_token_existe_api', () => {
+    // GIVEN
     tokenService.getToken.and.returnValue('abc123');
     const request = new HttpRequest('GET', 'http://localhost:8000/api/user');
+    let authorizationHeader: string | null = null;
     const next: HttpHandlerFn = (req) => {
-      expect(req.headers.get('Authorization')).toBe('Bearer abc123');
+      authorizationHeader = req.headers.get('Authorization');
       return of(new HttpResponse({ status: 200 }));
     };
 
+    // WHEN
     interceptor(request, next).subscribe();
+
+    // THEN
+    expect(authorizationHeader).toBe('Bearer abc123');
   });
 
-  it('laisse la requête intacte quand aucun token n existe', () => {
+  it('should_laisse_requete_intacte_when_no_token_n_existe', () => {
+    // GIVEN
     tokenService.getToken.and.returnValue(null);
     const request = new HttpRequest('GET', 'http://localhost:8000/api/user');
+    let hasAuthorizationHeader: boolean | null = null;
     const next: HttpHandlerFn = (req) => {
-      expect(req.headers.has('Authorization')).toBeFalse();
+      hasAuthorizationHeader = req.headers.has('Authorization');
       return of(new HttpResponse({ status: 200 }));
     };
 
+    // WHEN
     interceptor(request, next).subscribe();
+
+    // THEN
+    expect(hasAuthorizationHeader).toBeFalse();
   });
 
-  it('laisse la requête intacte quand l url ne vise pas l api', () => {
+  it('should_laisse_requete_intacte_when_url_ne_vise_pas_api', () => {
+    // GIVEN
     tokenService.getToken.and.returnValue('abc123');
     const request = new HttpRequest('GET', 'http://example.com/assets/file.json');
+    let hasAuthorizationHeader: boolean | null = null;
     const next: HttpHandlerFn = (req) => {
-      expect(req.headers.has('Authorization')).toBeFalse();
+      hasAuthorizationHeader = req.headers.has('Authorization');
       return of(new HttpResponse({ status: 200 }));
     };
 
+    // WHEN
     interceptor(request, next).subscribe();
+
+    // THEN
+    expect(hasAuthorizationHeader).toBeFalse();
   });
 });

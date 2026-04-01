@@ -31,53 +31,80 @@ describe('AppComponent', () => {
     });
   });
 
-  it('devrait créer l\'application', () => {
+  it('should_create_application', () => {
+  // GIVEN
     const app = instantiate();
+
+  // WHEN
+
+  // THEN
     expect(app).toBeTruthy();
   });
 
-  it('devrait avoir le titre \'frontend\'', () => {
+  it('should_avoir_title_frontend', () => {
+  // GIVEN
     const app = instantiate();
+
+  // WHEN
+
+  // THEN
     expect(app.title).toEqual('frontend');
   });
 
-  it('initialise l auth et détecte un écran mobile', () => {
+  it('should_initialize_auth_detecte_screen_mobile', () => {
+  // GIVEN
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 500 });
     const app = instantiate();
 
     app.ngOnInit();
 
+  // WHEN
+
+  // THEN
     expect(authService.init).toHaveBeenCalled();
     expect(app.isMobile).toBeTrue();
   });
 
-  it('cache les widgets sur les routes masquées', () => {
+  it('should_cache_widgets_routes_masquees', () => {
+  // GIVEN
     const app = instantiate();
 
     app.ngOnInit();
+
+  // WHEN
     routerEvents.next(new NavigationEnd(1, '/login', '/login'));
 
+  // THEN
     expect(app.showWidgets).toBeFalse();
   });
 
-  it('affiche les widgets sur les routes publiques', () => {
+  it('should_display_widgets_routes_publiques', () => {
+  // GIVEN
     const app = instantiate();
     app.showWidgets = false;
 
     app.ngOnInit();
+
+  // WHEN
     routerEvents.next(new NavigationEnd(1, '/actualites', '/actualites'));
 
+  // THEN
     expect(app.showWidgets).toBeTrue();
   });
 
-  it('met à jour la taille d écran lors du resize', () => {
+  it('should_met_jour_size_screen_lors_resize', () => {
+  // GIVEN
     const app = instantiate();
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1200 });
     app.ngOnInit();
 
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 600 });
+
     app.onResize();
 
+  // WHEN
+
+  // THEN
     expect(app.isMobile).toBeTrue();
   });
 });

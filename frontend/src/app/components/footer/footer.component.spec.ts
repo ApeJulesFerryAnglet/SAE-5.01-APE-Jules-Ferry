@@ -56,30 +56,51 @@ describe('FooterComponent', () => {
     component = TestBed.runInInjectionContext(() => new FooterComponent());
   });
 
-  it('devrait créer', () => {
+  it('should_create', () => {
+  // GIVEN
+
+  // WHEN
+
+  // THEN
     expect(component).toBeTruthy();
   });
 
   describe('ngOnInit', () => {
-    it('devrait initialiser utilisateurCourant depuis le service', () => {
+    it('should_initialize_utilisateurcourant_service', () => {
+    // GIVEN
+
+    // WHEN
       component.ngOnInit();
+
+    // THEN
       expect(component.utilisateurCourant).toBeDefined();
       expect(component.utilisateurCourant).toBe(utilisateurService.utilisateurCourant);
     });
 
-    it('devrait recevoir un utilisateur null initialement', (done) => {
+    it('should_recevoir_user_null_initialement', (done) => {
+    // GIVEN
+
+    // WHEN
       component.ngOnInit();
       component.utilisateurCourant.subscribe(user => {
+
+    // THEN
         expect(user).toBeNull();
         done();
       });
     });
 
-    it('devrait recevoir les mises à jour d\'utilisateur depuis le service', (done) => {
+    it('should_recevoir_mises_jour_utilisateur_depuis_le_service', (done) => {
+    // GIVEN
+
+    // WHEN
       component.ngOnInit();
+
       utilisateurCourantSubject.next(mockUser);
       
       component.utilisateurCourant.subscribe(user => {
+
+    // THEN
         expect(user).toEqual(mockUser);
         done();
       });
@@ -87,30 +108,48 @@ describe('FooterComponent', () => {
   });
 
   describe('setUtilisateur', () => {
-    it('devrait appeler utilisateurService.setUtilisateurCourant avec l\'utilisateur', () => {
+    it('should_call_utilisateurservice_setutilisateurcourant_utilisateur', () => {
+    // GIVEN
+
+    // WHEN
       component.setUtilisateur(mockUser);
+
+    // THEN
       expect(utilisateurService.setUtilisateurCourant).toHaveBeenCalledWith(mockUser);
     });
 
-    it('devrait appeler utilisateurService.setUtilisateurCourant avec null', () => {
+    it('should_call_utilisateurservice_setutilisateurcourant_null', () => {
+    // GIVEN
+
+    // WHEN
       component.setUtilisateur(null);
+
+    // THEN
       expect(utilisateurService.setUtilisateurCourant).toHaveBeenCalledWith(null);
     });
   });
 
   describe('roleUtilisateur', () => {
-    it('devrait avoir la propriété roleUtilisateur définie sur l\'enum RoleUtilisateur', () => {
+    it('should_avoir_property_roleutilisateur_definie_enum_roleutilisateur', () => {
+    // GIVEN
+
+    // WHEN
+
+    // THEN
       expect(component.roleUtilisateur).toBe(RoleUtilisateur);
     });
   });
 
   describe('onSubscribe', () => {
-    it('refuse si le rgpd n est pas accepté', () => {
+    it('should_deny_rgpd_n_pas_accepte', () => {
+    // GIVEN
       component.rgpdAccepted = false;
       component.emailNewsletter = 'ok@example.com';
 
+    // WHEN
       component.onSubscribe();
 
+    // THEN
       expect(toastService.showWithTimeout).toHaveBeenCalledWith(
         'Veuillez accepter le traitement de vos données.',
         TypeErreurToast.ERROR
@@ -118,12 +157,15 @@ describe('FooterComponent', () => {
       expect(newsletterService.subscribe).not.toHaveBeenCalled();
     });
 
-    it('refuse si l email est invalide', () => {
+    it('should_deny_email_invalid', () => {
+    // GIVEN
       component.rgpdAccepted = true;
       component.emailNewsletter = 'bad-email';
 
+    // WHEN
       component.onSubscribe();
 
+    // THEN
       expect(toastService.showWithTimeout).toHaveBeenCalledWith(
         'Veuillez saisir un email valide.',
         TypeErreurToast.ERROR
@@ -131,13 +173,16 @@ describe('FooterComponent', () => {
       expect(newsletterService.subscribe).not.toHaveBeenCalled();
     });
 
-    it('gère une inscription newsletter réussie', () => {
+    it('should_handle_inscription_newsletter_reussie', () => {
+    // GIVEN
       component.rgpdAccepted = true;
       component.emailNewsletter = 'ok@example.com';
       newsletterService.subscribe.and.returnValue(of({ message: 'Inscription ok' }));
 
+    // WHEN
       component.onSubscribe();
 
+    // THEN
       expect(newsletterService.subscribe).toHaveBeenCalledWith({ email: 'ok@example.com' });
       expect(toastService.showWithTimeout).toHaveBeenCalledWith('Inscription ok', TypeErreurToast.SUCCESS);
       expect(component.emailNewsletter).toBe('');
@@ -145,7 +190,8 @@ describe('FooterComponent', () => {
       expect(component.isSubmitting).toBeFalse();
     });
 
-    it('affiche le message de validation email du backend', () => {
+    it('should_display_message_validation_email_backend', () => {
+    // GIVEN
       component.rgpdAccepted = true;
       component.emailNewsletter = 'ok@example.com';
       newsletterService.subscribe.and.returnValue(throwError(() => ({
@@ -153,13 +199,16 @@ describe('FooterComponent', () => {
         error: { errors: { email: ['Email déjà utilisé'] } }
       })));
 
+    // WHEN
       component.onSubscribe();
 
+    // THEN
       expect(toastService.showWithTimeout).toHaveBeenCalledWith('Email déjà utilisé', TypeErreurToast.ERROR);
       expect(component.isSubmitting).toBeFalse();
     });
 
-    it('affiche le message générique du backend en cas d erreur', () => {
+    it('should_display_message_generique_backend_cas_error', () => {
+    // GIVEN
       component.rgpdAccepted = true;
       component.emailNewsletter = 'ok@example.com';
       newsletterService.subscribe.and.returnValue(throwError(() => ({
@@ -167,8 +216,10 @@ describe('FooterComponent', () => {
         error: { message: 'Erreur personnalisée' }
       })));
 
+    // WHEN
       component.onSubscribe();
 
+    // THEN
       expect(toastService.showWithTimeout).toHaveBeenCalledWith('Erreur personnalisée', TypeErreurToast.ERROR);
       expect(component.isSubmitting).toBeFalse();
     });

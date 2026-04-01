@@ -31,24 +31,37 @@ describe('guestGuard', () => {
     });
   });
 
-  it('devrait être créé', () => {
+  it('should_be_create', () => {
+  // GIVEN
+
+  // WHEN
+
+  // THEN
     expect(executeGuard).toBeTruthy();
   });
 
-  it('autorise l accès quand l utilisateur n est pas connecté', () => {
+  it('should_allow_acces_when_user_n_pas_authenticated', () => {
+  // GIVEN
     authService.isAuthenticatedStatus.and.returnValue(false);
 
     const result = executeGuard({} as never, {} as never);
 
+  // WHEN
+
+  // THEN
     expect(result).toBeTrue();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('redirige vers l accueil quand l utilisateur est connecté', () => {
+  it('should_redirect_vers_accueil_when_user_authenticated', () => {
+  // GIVEN
     authService.isAuthenticatedStatus.and.returnValue(true);
 
     const result = executeGuard({} as never, {} as never);
 
+  // WHEN
+
+  // THEN
     expect(result).toBeFalse();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });

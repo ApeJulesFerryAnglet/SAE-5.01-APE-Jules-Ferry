@@ -23,23 +23,34 @@ describe('ConfirmationModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should_create', () => {
+    // GIVEN
+
+    // WHEN
+
+    // THEN
     expect(component).toBeTruthy();
   });
 
-  it('émet validateAction quand confirmer est appelé', () => {
+  it('should_emit_validateaction_when_confirmer_appele', () => {
+    // GIVEN
     spyOn(component.validateAction, 'emit');
 
+    // WHEN
     component.confirmer();
 
+    // THEN
     expect(component.validateAction.emit).toHaveBeenCalled();
   });
 
-  it('émet cancelAction quand annuler est appelé', () => {
+  it('should_emit_cancelaction_when_annuler_appele', () => {
+    // GIVEN
     spyOn(component.cancelAction, 'emit');
 
+    // WHEN
     component.annuler();
 
+    // THEN
     expect(component.cancelAction.emit).toHaveBeenCalled();
   });
 });

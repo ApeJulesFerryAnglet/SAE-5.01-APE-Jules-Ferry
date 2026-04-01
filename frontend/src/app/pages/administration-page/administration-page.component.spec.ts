@@ -27,16 +27,31 @@ describe('AdministrationPageComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should_create', () => {
+  // GIVEN
+
+  // WHEN
+
+  // THEN
     expect(component).toBeTruthy();
   });
 
-  it('initialise l onglet comptes par défaut', () => {
+  it('should_initialize_onglet_comptes_par_default', () => {
+  // GIVEN
+
+  // WHEN
+
+  // THEN
     expect(component.activeTab).toBe('comptes');
   });
 
-  it('change l onglet actif quand switchTab est appelé', () => {
+  it('should_change_onglet_actif_when_switchtab_appele', () => {
+  // GIVEN
+
+  // WHEN
     component.switchTab('evenements');
+
+  // THEN
     expect(component.activeTab).toBe('evenements');
 
     component.switchTab('newsletters');

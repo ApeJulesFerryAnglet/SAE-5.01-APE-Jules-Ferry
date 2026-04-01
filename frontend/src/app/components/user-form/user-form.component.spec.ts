@@ -16,7 +16,8 @@ describe('UserFormComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('crée le composant et initialise le formulaire sans mot de passe en édition', () => {
+  it('should_create_component_and_initialize_form_without_password_in_edit_mode', () => {
+    // GIVEN
     component.user = {
       id_utilisateur: 3,
       nom: 'Dupont',
@@ -27,22 +28,28 @@ describe('UserFormComponent', () => {
     };
     component.isCreation = false;
 
+    // WHEN
     fixture.detectChanges();
 
+    // THEN
     expect(component.userForm.get('nom')?.value).toBe('Dupont');
     expect(component.userForm.contains('mot_de_passe')).toBeFalse();
     expect(component.labelsStatuts[StatutCompte.desactive]).toBe('Inactif');
   });
 
-  it('ajoute le mot de passe en mode création', () => {
+  it('should_add_password_control_in_creation_mode', () => {
+    // GIVEN
     component.isCreation = true;
 
+    // WHEN
     fixture.detectChanges();
 
+    // THEN
     expect(component.userForm.contains('mot_de_passe')).toBeTrue();
   });
 
-  it('émet save avec les valeurs fusionnées quand le formulaire est valide', () => {
+  it('should_emit_save_with_merged_values_when_form_is_valid', () => {
+    // GIVEN
     spyOn(component.save, 'emit');
     component.user = {
       id_utilisateur: 3,
@@ -53,6 +60,7 @@ describe('UserFormComponent', () => {
       statut_compte: StatutCompte.actif
     };
 
+    // WHEN
     fixture.detectChanges();
 
     component.userForm.patchValue({
@@ -65,6 +73,7 @@ describe('UserFormComponent', () => {
 
     component.onSubmit();
 
+    // THEN
     expect(component.save.emit).toHaveBeenCalledWith(jasmine.objectContaining({
       id_utilisateur: 3,
       nom: 'Martin',
@@ -73,7 +82,8 @@ describe('UserFormComponent', () => {
     }));
   });
 
-  it('marque tous les champs comme touchés quand le formulaire est invalide', () => {
+  it('should_mark_all_fields_as_touched_when_form_is_invalid', () => {
+    // GIVEN
     fixture.detectChanges();
     spyOn(component.userForm, 'markAllAsTouched');
 
@@ -83,14 +93,20 @@ describe('UserFormComponent', () => {
       email: 'bad-mail'
     });
 
+    // WHEN
     component.onSubmit();
 
+    // THEN
     expect(component.userForm.markAllAsTouched).toHaveBeenCalled();
   });
 
-  it('expose les contrôles via le getter f', () => {
+  it('should_expose_form_controls_through_f_getter', () => {
+    // GIVEN
+
+    // WHEN
     fixture.detectChanges();
 
+    // THEN
     expect(component.f['email']).toBeDefined();
     expect(component.f['nom']).toBeDefined();
   });

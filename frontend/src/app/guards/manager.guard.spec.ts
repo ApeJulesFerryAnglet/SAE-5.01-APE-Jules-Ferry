@@ -38,20 +38,35 @@ describe('managerGuard', () => {
     );
   }
 
-  it('Devrait autoriser un administrateur', async () => {
+  it('should_allow_access_when_user_is_administrator', async () => {
+  // GIVEN
     await expectAsync(executeGuard(RoleUtilisateur.administrateur)).toBeResolvedTo(true);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('Devrait autoriser un membre du bureau', async () => {
+  it('should_allow_access_when_user_is_member_bureau', async () => {
+  // GIVEN
     await expectAsync(executeGuard(RoleUtilisateur.membre_bureau)).toBeResolvedTo(true);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('Devrait refuser un utilisateur sans rôle manager', async () => {
+  it('should_deny_access_when_user_is_not_manager', async () => {
+  // GIVEN
     await expectAsync(executeGuard(RoleUtilisateur.parent)).toBeResolvedTo(false);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).toHaveBeenCalledWith(
       'Accès réservé aux gestionnaires (Admin ou Bureau).',
       TypeErreurToast.ERROR,

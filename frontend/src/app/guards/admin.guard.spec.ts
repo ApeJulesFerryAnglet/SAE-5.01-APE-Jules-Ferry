@@ -38,14 +38,24 @@ describe('adminGuard', () => {
     );
   }
 
-  it('Devrait autoriser un administrateur', async () => {
+  it('should_allow_access_when_user_is_administrator', async () => {
+  // GIVEN
     await expectAsync(executeGuard(RoleUtilisateur.administrateur)).toBeResolvedTo(true);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('Devrait refuser un utilisateur non administrateur', async () => {
+  it('should_deny_access_when_user_is_not_administrator', async () => {
+  // GIVEN
     await expectAsync(executeGuard(RoleUtilisateur.membre_bureau)).toBeResolvedTo(false);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).toHaveBeenCalledWith(
       'Accès réservé aux administrateurs.',
       TypeErreurToast.ERROR,
@@ -53,8 +63,13 @@ describe('adminGuard', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
-  it('Devrait refuser un visiteur non connecté', async () => {
+  it('should_deny_access_when_user_is_not_authenticated', async () => {
+  // GIVEN
     await expectAsync(executeGuard(null)).toBeResolvedTo(false);
+
+  // WHEN
+
+  // THEN
     expect(toastService.show).toHaveBeenCalledWith(
       'Accès réservé aux administrateurs.',
       TypeErreurToast.ERROR,
